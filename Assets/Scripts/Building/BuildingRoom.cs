@@ -2,27 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Buildings : MonoBehaviour {
+/// <summary>
+/// 唯一对象，存放所有放置建筑的父类
+/// </summary>
+public class BuildingRoom : BaseUniqueObject<BuildingRoom>
+{
 
-    private static Buildings _instance;
-    public static Buildings current
+    public void Build(Building building)
     {
-        get
-        {
-            if(_instance == null)
-            {
-                _instance = GameObject.FindObjectOfType<Buildings>();
-            }
-            if(_instance == null)
-            {
-                _instance = GameObject.Find("Buildings").AddComponent<Buildings>();
-            }
-            return _instance;
-        }
-    }
+        building.Recovery();
 
-    public void Build(Transform t)
-    {
+        Transform t = building.transform;
         t.SetParent(transform);
         t.localPosition = new Vector3(FixPos(t.localPosition.x), t.localPosition.y, FixPos(t.localPosition.z));
         t.localEulerAngles = new Vector3(FixEuler(t.localEulerAngles.x), FixEuler(t.localEulerAngles.y), FixEuler(t.localEulerAngles.z));

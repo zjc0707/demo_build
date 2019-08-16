@@ -1,33 +1,74 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// 行走脚本
+/// </summary>
 public class MoveAndRotate : MonoBehaviour {
 
     public float speedMove = 3f;
     public float speedRotate = 40f;
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (Input.GetKey(KeyCode.W))
+
+    private KeyCode up, down, left, right;
+
+    private void Awake()
+    {
+        WASD();
+    }
+    // Update is called once per frame
+    void Update () {
+        if (Input.GetKey(up))
         {
             transform.position += transform.forward * speedMove * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(down))
         {
             transform.position -= transform.forward * speedMove * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(left))
         {
             transform.Rotate(transform.up, -1 * speedRotate * Time.deltaTime);
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(right))
         {
             transform.Rotate(transform.up, speedRotate * Time.deltaTime);
         }
+        //按下方向键时的其他处理
+        
 	}
+
+    private void OnGUI()
+    {
+        if (Input.anyKeyDown)
+        {
+            Event e = Event.current;
+            if (e.isKey && IsCurrent(e.keyCode))
+            {
+                PanelControl.current.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private bool IsCurrent(KeyCode key)
+    {
+        return key == up || key == down || key == left || key == right;
+    }
+
+    private void WASD()
+    {
+        up = KeyCode.W;
+        down = KeyCode.S;
+        left = KeyCode.A;
+        right = KeyCode.D;
+    }
+
+    private void Arrow()
+    {
+        up = KeyCode.UpArrow;
+        down = KeyCode.DownArrow;
+        left = KeyCode.LeftArrow;
+        right = KeyCode.RightArrow;
+    }
 }

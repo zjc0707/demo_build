@@ -3,24 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PanelController : MonoBehaviour {
+public class PanelModel : BasePanel<PanelModel>
+{
+    public Transform item;
 
-    private Button buttonMenu;
-
-	// Use this for initialization
-	void Start () {
-        buttonMenu = transform.parent.Find("ButtonMenu").GetComponent<Button>();
-        buttonMenu.onClick.AddListener(delegate
-        {
-            gameObject.SetActive(!gameObject.activeInHierarchy);
-        });
+    protected override void _Start()
+    {
         Load();
     }
-	
+
     private void Load()
     {
-        List<PanelControllerItem> items = PanelControllerItem.List;
-        Transform item = transform.Find("Item");
+        List<PanelControllerItem> items = PanelControllerItemTest.List;
         foreach(PanelControllerItem t in items)
         {
             Transform clone = Instantiate(item.gameObject).transform;
@@ -29,9 +23,11 @@ public class PanelController : MonoBehaviour {
             {
                 Debug.Log(t.Url);
                 GameObject cube = Instantiate(Resources.Load("Prefabs/" + t.Url)) as GameObject;
+                cube.name = t.Name;
+                cube.AddComponent<Building>().Choose();
                 Person.current.Catch(cube.transform);
             });
-            clone.SetParent(transform);
+            clone.SetParent(item.parent);
         }
         item.gameObject.SetActive(false);
     }

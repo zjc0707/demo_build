@@ -4,27 +4,36 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class Person : MonoBehaviour
+/// <summary>
+/// 操作者脚本，通过键盘操作
+/// </summary>
+public class Person : BaseUniqueObject<Person>
 {
-    private static Person _instance;
-    public static Person current
+    private Transform target, model;
+
+    private void Start()
     {
-        get
+        target = transform.Find("Target");
+        model = transform.Find("Model");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            if(_instance == null)
+            if (target.childCount == 0)
             {
-                _instance = GameObject.FindObjectOfType<Person>();
+                return;
             }
-            if(_instance == null)
+            Building building = target.GetChild(0).GetComponent<Building>();
+            if(building == null)
             {
-                _instance = GameObject.Find("Person").AddComponent<Person>();
+                return;
             }
-            return _instance;
+            BuildingRoom.current.Build(building);
         }
     }
 
-    private Transform target, model;
-    
     public void Catch(Transform t)
     {
         Debug.Log("Catch");
@@ -52,23 +61,6 @@ public class Person : MonoBehaviour
         foreach(Transform t in target)
         {
             DestroyImmediate(t.gameObject);
-        }
-    }
-
-    private void Start()
-    {
-        target = transform.Find("Target");
-        model = transform.Find("Model");
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            if(target.childCount > 0)
-            {
-                Buildings.current.Build(target.GetChild(0));
-            }
         }
     }
 
