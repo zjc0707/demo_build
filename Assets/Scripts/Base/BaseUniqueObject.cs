@@ -25,5 +25,10 @@ public abstract class BaseUniqueObject<T> : MonoBehaviour where T : Object
             return _instance;
         }
     }
+
+    protected BaseUniqueObject()
+    {
+        _instance = this as T;
+    }
     
 }

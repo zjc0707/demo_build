@@ -13,10 +13,15 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : Object
     {
         buttonClose.onClick.AddListener(delegate
         {
-            gameObject.SetActive(false);
-            OnButtonCloseClickSupply();
+            this.Close();
         });
 
         _Start();
+    }
+
+    public void Close()
+    {
+        gameObject.SetActive(false);
+        OnButtonCloseClickSupply();
     }
 }

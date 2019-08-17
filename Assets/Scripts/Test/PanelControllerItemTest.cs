@@ -15,7 +15,8 @@ public class PanelControllerItemTest
                 new PanelControllerItem("绿色方块", "CubeGreen"),
                 new PanelControllerItem("红色方块", "CubeRed"),
                 new PanelControllerItem("黄色方块", "CubeYellow"),
-                new PanelControllerItem("组合方块", "CubeGroup")
+                new PanelControllerItem("组合方块", "CubeGroup"),
+                new PanelControllerItem("wall","Wall")
             };
             return temp;
         }

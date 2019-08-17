@@ -25,6 +25,7 @@ public class MouseClick : MonoBehaviour
                     //Debug.Log("is Building");
                     PanelControl.current.SetData(building);
                     building.Choose();
+                    State.current.SetStateToBuilding();
                 }
             }
         }

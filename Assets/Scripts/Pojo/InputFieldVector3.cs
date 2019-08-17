@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class InputFieldVector3
@@ -30,6 +31,18 @@ public class InputFieldVector3
         X.text = v.x.ToString();
         Y.text = v.y.ToString();
         Z.text = v.z.ToString();
+    }
+
+    public Vector3 ToVector3()
+    {
+        return new Vector3(float.Parse(X.text), float.Parse(Y.text), float.Parse(Z.text));
+    }
+
+    public void AddValueChangedListener(UnityAction<string> call)
+    {
+        X.onValueChanged.AddListener(call);
+        Y.onValueChanged.AddListener(call);
+        Z.onValueChanged.AddListener(call);
     }
 
     public override string ToString()

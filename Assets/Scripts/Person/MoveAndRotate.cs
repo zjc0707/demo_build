@@ -19,6 +19,10 @@ public class MoveAndRotate : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
+        if (!State.current.IsPerson)
+        {
+            return;
+        }
         if (Input.GetKey(up))
         {
             transform.position += transform.forward * speedMove * Time.deltaTime;
@@ -39,17 +43,17 @@ public class MoveAndRotate : MonoBehaviour {
         
 	}
 
-    private void OnGUI()
-    {
-        if (Input.anyKeyDown)
-        {
-            Event e = Event.current;
-            if (e.isKey && IsCurrent(e.keyCode))
-            {
-                PanelControl.current.gameObject.SetActive(false);
-            }
-        }
-    }
+    //private void OnGUI()
+    //{
+    //    if (Input.anyKeyDown)
+    //    {
+    //        Event e = Event.current;
+    //        if (e.isKey && IsCurrent(e.keyCode))
+    //        {
+    //            PanelControl.current.Close();
+    //        }
+    //    }
+    //}
 
     private bool IsCurrent(KeyCode key)
     {

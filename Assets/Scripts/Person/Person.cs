@@ -19,6 +19,10 @@ public class Person : BaseUniqueObject<Person>
 
     private void Update()
     {
+        if (!State.current.IsPerson)
+        {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.X))
         {
             if (target.childCount == 0)
@@ -32,6 +36,11 @@ public class Person : BaseUniqueObject<Person>
             }
             BuildingRoom.current.Build(building);
         }
+    }
+
+    public void ResetByFloor(Floor floor)
+    {
+        this.transform.position = floor.transform.position;
     }
 
     public void Catch(Transform t)

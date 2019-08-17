@@ -13,11 +13,13 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void _Start()
     {
         Load();
+        this.gameObject.SetActive(false);
     }
 
     protected override void OnButtonCloseClickSupply()
     {
         Building.LastRecovery();
+        State.current.SetStateToPerson();
     }
 
     public void SetData(Building building)
@@ -32,6 +34,30 @@ public class PanelControl : BasePanel<PanelControl>
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
+
+        AddValueChangedListener(target);
+    }
+
+    /// <summary>
+    /// 绑定输入框值变换监听事件
+    /// </summary>
+    private void AddValueChangedListener(Transform target)
+    {
+        this.position.AddValueChangedListener(delegate
+        {
+            target.localPosition = this.position.ToVector3();
+        });
+
+        this.rotation.AddValueChangedListener(delegate
+        {
+            target.localEulerAngles = this.rotation.ToVector3();
+        });
+
+        this.scale.AddValueChangedListener(delegate
+        {
+            target.localScale = this.scale.ToVector3();
+        });
+
     }
 
     /// <summary>
