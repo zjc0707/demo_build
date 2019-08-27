@@ -7,6 +7,7 @@ public static class MaterialStatic
     //public static readonly string BLUE = "Blue";
     //public static readonly string RED = "Red";
     //public static readonly string GREEN = "Green";
+    //123
     public static Material BLUE { get { return GetTranslucentMaterial("Blue"); } }
     public static Material RED { get { return GetTranslucentMaterial("Red"); } }
     public static Material GREEN { get { return GetTranslucentMaterial("Green"); } }
