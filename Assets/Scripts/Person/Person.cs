@@ -53,7 +53,7 @@ public class Person : BaseUniqueObject<Person>
         t.SetParent(target);
         t.localPosition = Vector3.zero;
         t.localEulerAngles = Vector3.zero;
-
+        
         target.localPosition = Vector3.zero;
         CenterAndSize targetCS = CenterAndSizeUtil.Get(target);
         CenterAndSize modelCS = CenterAndSizeUtil.Get(model);
