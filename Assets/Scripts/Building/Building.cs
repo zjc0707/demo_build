@@ -45,6 +45,7 @@ public class Building : MonoBehaviour
         SetMaterial(MaterialStatic.BLUE);
 
         LastTarget = this;
+
     }
     /// <summary>
     /// 复原物体材质
@@ -52,6 +53,7 @@ public class Building : MonoBehaviour
     public void Recovery()
     {
         RecovercyMaterial();
+
     }
     /// <summary>
     /// 设置在awake中记录的renderer的材质
