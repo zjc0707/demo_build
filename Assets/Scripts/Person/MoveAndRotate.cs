@@ -6,8 +6,8 @@ using UnityEngine.UI;
 /// <summary>
 /// 行走脚本
 /// </summary>
-public class MoveAndRotate : MonoBehaviour {
-
+public class MoveAndRotate : MonoBehaviour
+{
     public float speedMove = 3f;
     public float speedRotate = 40f;
 
@@ -18,7 +18,8 @@ public class MoveAndRotate : MonoBehaviour {
         WASD();
     }
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (!State.current.IsPerson)
         {
             return;
@@ -40,20 +41,8 @@ public class MoveAndRotate : MonoBehaviour {
             transform.Rotate(transform.up, speedRotate * Time.deltaTime);
         }
         //按下方向键时的其他处理
-        
-	}
 
-    //private void OnGUI()
-    //{
-    //    if (Input.anyKeyDown)
-    //    {
-    //        Event e = Event.current;
-    //        if (e.isKey && IsCurrent(e.keyCode))
-    //        {
-    //            PanelControl.current.Close();
-    //        }
-    //    }
-    //}
+    }
 
     private bool IsCurrent(KeyCode key)
     {
