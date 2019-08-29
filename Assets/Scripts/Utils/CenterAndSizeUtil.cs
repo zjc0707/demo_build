@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CenterAndSizeUtil
+public static class CenterAndSizeUtil
 {
     /// <summary>
     /// 根据子物体计算出物体的中心点和尺寸，数据为世界坐标系下
@@ -14,7 +11,7 @@ public class CenterAndSizeUtil
     public static CenterAndSize Get(Transform t)
     {
         MeshRenderer[] meshRenderers = t.GetComponentsInChildren<MeshRenderer>();
-        if(meshRenderers == null || meshRenderers.Length == 0)
+        if (meshRenderers == null || meshRenderers.Length == 0)
         {
             return new CenterAndSize() { Center = Vector3.zero, Size = Vector3.zero };
         }
