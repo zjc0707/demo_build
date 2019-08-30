@@ -23,6 +23,7 @@ public class Person : BaseUniqueObject<Person>
         {
             return;
         }
+        //放置
         if (Input.GetKeyDown(KeyCode.X))
         {
             if (target.childCount == 0)
@@ -30,17 +31,12 @@ public class Person : BaseUniqueObject<Person>
                 return;
             }
             Building building = target.GetChild(0).GetComponent<Building>();
-            if(building == null)
+            if (building == null)
             {
                 return;
             }
-            BuildingRoom.current.Build(building);
+            building.Build();
         }
-    }
-
-    public void ResetByFloor(Floor floor)
-    {
-        this.transform.position = floor.transform.position;
     }
 
     public void Catch(Transform t)
@@ -53,12 +49,12 @@ public class Person : BaseUniqueObject<Person>
         t.SetParent(target);
         t.localPosition = Vector3.zero;
         t.localEulerAngles = Vector3.zero;
-        
+
         target.localPosition = Vector3.zero;
         CenterAndSize targetCS = CenterAndSizeUtil.Get(target);
         CenterAndSize modelCS = CenterAndSizeUtil.Get(model);
         float offsetZ = (targetCS.Size.z + modelCS.Size.z) / 2;
-        t.localPosition +=  Vector3.forward * offsetZ;
+        t.localPosition += Vector3.forward * offsetZ;
         float offsetY = targetCS.Size.y / 2 - targetCS.Center.y;
         t.localPosition += Vector3.up * offsetY;
 
@@ -67,7 +63,7 @@ public class Person : BaseUniqueObject<Person>
 
     private void ClearTarget()
     {
-        foreach(Transform t in target)
+        foreach (Transform t in target)
         {
             DestroyImmediate(t.gameObject);
         }

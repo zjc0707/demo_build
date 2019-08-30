@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// 抽象类，场景中只存在一个的对象
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class BaseUniqueObject<T> : MonoBehaviour where T : Object
+public abstract class BaseUniqueObject<T> : BaseObject<T> where T : MonoBehaviour
 {
     private static T _instance;
     public static T current
@@ -18,7 +18,7 @@ public abstract class BaseUniqueObject<T> : MonoBehaviour where T : Object
             {
                 _instance = GameObject.FindObjectOfType<T>();
             }
-            if(_instance == null)
+            if (_instance == null)
             {
                 throw new System.NullReferenceException("not found");
             }
@@ -30,5 +30,5 @@ public abstract class BaseUniqueObject<T> : MonoBehaviour where T : Object
     {
         _instance = this as T;
     }
-    
+
 }

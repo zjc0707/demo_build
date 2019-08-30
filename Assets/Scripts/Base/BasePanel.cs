@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class BasePanel<T> : BaseUniqueObject<T> where T : Object
+public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
 {
     public Button buttonClose;
     protected abstract void _Start();

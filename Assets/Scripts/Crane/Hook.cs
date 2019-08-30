@@ -14,11 +14,6 @@ public class Hook : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // centerAndSize = CenterAndSizeUtil.Get(this.transform);
-        // Debug.Log(centerAndSize);
-        // BoxCollider boxCollider = this.gameObject.AddComponent<BoxCollider>();
-        // boxCollider.center = centerAndSize.Center;
-        // boxCollider.size = centerAndSize.Size;
     }
 
     // Update is called once per frame

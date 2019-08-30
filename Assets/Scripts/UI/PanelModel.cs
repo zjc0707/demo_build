@@ -15,7 +15,7 @@ public class PanelModel : BasePanel<PanelModel>
     private void Load()
     {
         List<PanelControllerItem> items = PanelControllerItemTest.List;
-        foreach(PanelControllerItem t in items)
+        foreach (PanelControllerItem t in items)
         {
             Transform clone = Instantiate(item.gameObject).transform;
             clone.GetComponentInChildren<Text>().text = t.Name;
@@ -24,8 +24,10 @@ public class PanelModel : BasePanel<PanelModel>
                 Debug.Log(t.Url);
                 GameObject cube = Instantiate(Resources.Load("Prefabs/" + t.Url)) as GameObject;
                 cube.name = t.Name;
-                cube.AddComponent<Building>().Choose();
-                Person.current.Catch(cube.transform);
+                Building building = cube.AddComponent<Building>();
+                building.Choose();
+                // Person.current.Catch(cube.transform);
+                MouseMove.current.Catch(building);
             });
             clone.SetParent(item.parent);
         }

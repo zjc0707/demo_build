@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Crane : MonoBehaviour
+public class Crane : BaseObject<Crane>
 {
     /// <summary>
     /// 整个顶部组合
@@ -32,10 +32,6 @@ public class Crane : MonoBehaviour
     /// 伸展部分1
     /// </summary>
     public Transform part1;
-    /// <summary>
-    /// 吊车整体的，用于将吊车放置与地面
-    /// </summary>
-    private CenterAndSize centerAndSize;
     /// <summary>
     /// head旋转速度，考虑到可行性及需要同时矫正吊钩+绳子，所以没有使用lerp的形式进行动画
     /// </summary>
@@ -71,8 +67,7 @@ public class Crane : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        centerAndSize = CenterAndSizeUtil.Get(this.transform);
-        DownToFloor();
+        base.DownToFloor();
         distanceLineAndHookAfterChange = distanceLineAndHook = lineHookRotationPoint.position - lineAndHook.position;
         lineLenth = CenterAndSizeUtil.Get(line).Size.y;
         hookStartLocalPos = hook.localPosition;
@@ -133,12 +128,6 @@ public class Crane : MonoBehaviour
         distanceLineAndHookAfterChange = distanceLineAndHook + distance / 2;
         lineAndHook.position = lineHookRotationPoint.position - distanceLineAndHookAfterChange;
         hook.localPosition = hookStartLocalPos - distance / 2;
-    }
-    private void DownToFloor()
-    {
-        float floorY = 0f;
-        float distance = centerAndSize.Center.y - centerAndSize.Size.y / 2 - floorY;
-        this.transform.position -= Vector3.up * distance;
     }
     /// <summary>
     /// 设定最大最小值，判断变量是否超出范围，查看比率

@@ -21,4 +21,28 @@ public static class BuildingUtil
         }
         return null;
     }
+    public static void AdjustPosition(Building building)
+    {
+        Transform t = building.transform;
+        t.localEulerAngles = new Vector3(FixEuler(t.localEulerAngles.x),
+            FixEuler(t.localEulerAngles.y),
+            FixEuler(t.localEulerAngles.z));
+        Vector3 afterFix = new Vector3(FixPos(building.LeftFrontBottom.x),
+            FixPos(building.LeftFrontBottom.y),
+            FixPos(building.LeftFrontBottom.z));
+        //Debug.Log(building.LeftFrontBottom + "_after:" + afterFix + "_pos:" + t.localPosition);
+        t.localPosition += afterFix - building.LeftFrontBottom;
+    }
+
+    private static int FixEuler(float f)
+    {
+        return ((int)(f + 45) / 90) * 90;
+    }
+    private static int FixPos(float f)
+    {
+        if (f > 0)
+            return (int)(f + 0.5);
+        else
+            return (int)(f - 0.5);
+    }
 }
