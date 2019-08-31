@@ -14,9 +14,9 @@ public class FloorTile : BaseUniqueObject<FloorTile>
     private void Load()
     {
         Vector3 start = new Vector3(0.5f, 0, 0.5f);
-        for (int i = 0; i < Floor.current.width; i++)
+        for (int i = 0; i < Floor.current.x; i++)
         {
-            for (int j = 0; j < Floor.current.length; j++)
+            for (int j = 0; j < Floor.current.z; j++)
             {
                 Transform cube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
                 Vector3 vector3 = start + Vector3.right * i + Vector3.forward * j;

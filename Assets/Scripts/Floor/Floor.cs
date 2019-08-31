@@ -5,8 +5,8 @@ using UnityEngine;
 public class Floor : BaseUniqueObject<Floor>
 {
 
-    public float length = 10;
-    public float width = 10;
+    public float x = 10;
+    public float z = 20;
 
     private void OnMouseOver()
     {
@@ -29,8 +29,8 @@ public class Floor : BaseUniqueObject<Floor>
 
     private void Load()
     {
-        this.transform.localScale = new Vector3(length, width, 1);
-        this.transform.localPosition = new Vector3(length / 2, 0, width / 2);
+        this.transform.localScale = new Vector3(x, z, 1);
+        this.transform.localPosition = new Vector3(x / 2, 0, z / 2);
 
         MyCamera.current.Reset();
         //Person.current.Reset();
