@@ -31,7 +31,7 @@ public class PanelModel : BasePanel<PanelModel>
                 }
                 building.Choose();
                 // Person.current.Catch(cube.transform);
-                MouseMove.current.Catch(building);
+                MouseBehaviour.current.Catch(building);
             });
             clone.SetParent(item.parent);
         }

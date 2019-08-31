@@ -1,5 +1,5 @@
 using UnityEngine;
-public class MouseMove : BaseUniqueObject<MouseMove>
+public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
 {
     new Camera camera;
     public Transform catchParent;
