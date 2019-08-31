@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Crane : BaseObject<Crane>
+public class Crane : Building
 {
     /// <summary>
     /// 整个顶部组合
@@ -94,10 +94,14 @@ public class Crane : BaseObject<Crane>
             ExpandLine(deltaTime);
         }
     }
+
+    public override void MyUpdate()
+    {
+
+    }
     /// <summary>
     /// 旋转吊车头部
     /// </summary>
-    /// <param name="deltaTime"></param>
     private void RotationHead(float deltaTime)
     {
         if (!rotateHeadTimeGroup.Add(deltaTime)) return;
@@ -109,7 +113,6 @@ public class Crane : BaseObject<Crane>
     /// <summary>
     /// 伸展吊车头部 1 部分
     /// </summary>
-    /// <param name="deltaTime"></param>
     private void ExpandPart1(float deltaTime)
     {
         expandPart1TimeGroup.Add(deltaTime);
@@ -118,7 +121,6 @@ public class Crane : BaseObject<Crane>
     /// <summary>
     /// 伸缩绳子，并调整绳钩父类位置（-1/2*生长的值），再调整钩子的位置（再-1/2*生长的值）
     /// </summary>
-    /// <param name="deltaTime"></param>
     private void ExpandLine(float deltaTime)
     {
         expandLineTimeGroup.Add(deltaTime);
@@ -129,45 +131,5 @@ public class Crane : BaseObject<Crane>
         lineAndHook.position = lineHookRotationPoint.position - distanceLineAndHookAfterChange;
         hook.localPosition = hookStartLocalPos - distance / 2;
     }
-    /// <summary>
-    /// 设定最大最小值，判断变量是否超出范围，查看比率
-    /// </summary>
-    class TimeGroup
-    {
-        public float use { get; set; }
-        public float account { get; set; }
-        private readonly float least = 0f;
-        public float rate
-        {
-            get
-            {
-                return use / (account - least);
-            }
-        }
-        public TimeGroup(float account)
-        {
-            this.use = 0f;
-            this.account = account;
-        }
-        /// <summary>
-        /// 增长变量，超出范围取边缘值，超出返回为false
-        /// </summary>
-        /// <param name="a"></param>
-        /// <returns></returns>
-        public bool Add(float a)
-        {
-            use += a;
-            if (use < least)
-            {
-                use = least;
-                return false;
-            }
-            if (use > account)
-            {
-                use = account;
-                return false;
-            }
-            return true;
-        }
-    }
+
 }

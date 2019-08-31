@@ -23,15 +23,16 @@ public static class BuildingUtil
     }
     public static void AdjustPosition(Building building)
     {
+        // Debug.Log("调整坐标:" + building.name);
         Transform t = building.transform;
-        t.localEulerAngles = new Vector3(FixEuler(t.localEulerAngles.x),
-            FixEuler(t.localEulerAngles.y),
-            FixEuler(t.localEulerAngles.z));
+        t.eulerAngles = new Vector3(FixEuler(t.eulerAngles.x),
+            FixEuler(t.eulerAngles.y),
+            FixEuler(t.eulerAngles.z));
         Vector3 afterFix = new Vector3(FixPos(building.LeftFrontBottom.x),
             FixPos(building.LeftFrontBottom.y),
             FixPos(building.LeftFrontBottom.z));
         //Debug.Log(building.LeftFrontBottom + "_after:" + afterFix + "_pos:" + t.localPosition);
-        t.localPosition += afterFix - building.LeftFrontBottom;
+        t.position += afterFix - building.LeftFrontBottom;
     }
 
     private static int FixEuler(float f)

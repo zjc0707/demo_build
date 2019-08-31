@@ -35,9 +35,22 @@ public class InputFieldVector3
 
     public Vector3 ToVector3()
     {
-        return new Vector3(float.Parse(X.text), float.Parse(Y.text), float.Parse(Z.text));
+        try
+        {
+            return new Vector3(float.Parse(X.text), float.Parse(Y.text), float.Parse(Z.text));
+
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message + ":" + String.Format("({},{},{})", X.text, Y.text, Z.text));
+            return Vector3.zero;
+        }
     }
 
+    /// <summary>
+    /// 添加监听事件
+    /// </summary>
+    /// <param name="call"></param>
     public void AddValueChangedListener(UnityAction<string> call)
     {
         X.onValueChanged.AddListener(call);
@@ -45,12 +58,21 @@ public class InputFieldVector3
         Z.onValueChanged.AddListener(call);
     }
 
+    public void RemoveValueChangedListener()
+    {
+        //不清楚监听事件会叠加
+        X.onValueChanged.RemoveAllListeners();
+        Y.onValueChanged.RemoveAllListeners();
+        Y.onValueChanged.RemoveAllListeners();
+    }
+
     public override string ToString()
     {
         try
         {
             return string.Format("[x: {0}, y: {1}, z: {2} ]", X.text, Y.text, Z.text);
-        }catch(NullReferenceException e)
+        }
+        catch (NullReferenceException e)
         {
             return e.Message;
         }

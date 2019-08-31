@@ -9,6 +9,8 @@ public class PanelControl : BasePanel<PanelControl>
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
     private const int INPUT_FIELD_NUM = 10;
+    private Transform target;
+    private bool isFirst = true;
 
     protected override void _Start()
     {
@@ -24,40 +26,40 @@ public class PanelControl : BasePanel<PanelControl>
 
     public void SetData(Building building)
     {
-        if(this.gameObject.activeInHierarchy == false)
-        {
-            this.gameObject.SetActive(true);
-        }
+        Debug.Log("更新面板信息：" + building.name);
+        this.gameObject.SetActive(true);
 
-        Transform target = building.transform;
+        target = building.transform;
         objectName.text = target.name;
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
-
-        AddValueChangedListener(target);
+        AddValueChangedListener();
     }
 
     /// <summary>
     /// 绑定输入框值变换监听事件
     /// </summary>
-    private void AddValueChangedListener(Transform target)
+    private void AddValueChangedListener()
     {
+        if (!isFirst) return;
         this.position.AddValueChangedListener(delegate
         {
+            if (target == null) return;
             target.localPosition = this.position.ToVector3();
         });
 
         this.rotation.AddValueChangedListener(delegate
         {
+            if (target == null) return;
             target.localEulerAngles = this.rotation.ToVector3();
         });
 
         this.scale.AddValueChangedListener(delegate
         {
+            if (target == null) return;
             target.localScale = this.scale.ToVector3();
         });
-
     }
 
     /// <summary>
@@ -72,7 +74,7 @@ public class PanelControl : BasePanel<PanelControl>
         }
 
         objectName = inputFields[0];
-        for(int i = 1; i < INPUT_FIELD_NUM; i++)
+        for (int i = 1; i < INPUT_FIELD_NUM; i++)
         {
             inputFields[i].contentType = InputField.ContentType.DecimalNumber;
         }
@@ -88,5 +90,5 @@ public class PanelControl : BasePanel<PanelControl>
         rotation.Set(4, 5, 6);
         scale.Set(7, 8, 9);
     }
-    
+
 }

@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class BuildingRoom : BaseUniqueObject<BuildingRoom>
 {
+    public List<Building> buildingList;
     // Use this for initialization
     void Start()
     {
@@ -17,5 +18,11 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
     void Update()
     {
 
+    }
+
+    public void Add(Building building)
+    {
+        building.transform.SetParent(this.transform);
+        buildingList.Add(building);
     }
 }

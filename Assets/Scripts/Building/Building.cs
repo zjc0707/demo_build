@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class Building : BaseObject<Building>
 {
-    public Vector3 Size { get; private set; }
+    /// <summary>
+    /// 基于世界坐标
+    /// </summary>
     public Vector3 LeftFrontBottom
     {
         get
         {
-            int a = ((int)Mathf.Abs(this.transform.localEulerAngles.y / 90)) % 2;
+            int a = ((int)Mathf.Abs(this.transform.eulerAngles.y / 90)) % 2;
             if (a == 0)
             {
-                return this.transform.localPosition - posToLeftFront;
+                return this.transform.position - posToLeftFront;
             }
             else
             {
-                return this.transform.localPosition - new Vector3(posToLeftFront.z, posToLeftFront.y, posToLeftFront.x);
+                return this.transform.position - new Vector3(posToLeftFront.z, posToLeftFront.y, posToLeftFront.x);
             }
         }
     }
@@ -37,6 +39,7 @@ public class Building : BaseObject<Building>
             return;
         }
         LastTarget.Recovery();
+        LastTarget = null;
     }
 
     /// <summary>
@@ -53,10 +56,9 @@ public class Building : BaseObject<Building>
     public void Build()
     {
         Recovery();
-        this.transform.SetParent(BuildingRoom.current.transform);
+        BuildingRoom.current.Add(this);
         this.AdjustPosition();
     }
-
     public void AdjustPosition()
     {
         BuildingUtil.AdjustPosition(this);
@@ -104,21 +106,24 @@ public class Building : BaseObject<Building>
     /// </summary>
     private void LoadSizeAndPosToLeftFront()
     {
-        Size = base.centerAndSize.Size;
         // Debug.Log(string.Format("center:{0},position:{1}", centerAndSize.Center, this.transform.localPosition));
-        if (base.centerAndSize.Center != this.transform.localPosition)
+        if (base.centerAndSize.Center != this.transform.position)
         {
             Debug.LogWarning("中心与坐标不相等:" + this.transform.name);
             //throw new System.Exception("中心与坐标不相等:" + this.transform.name);
         }
-        Vector3 dValue = this.transform.localPosition - base.centerAndSize.Center;
-        posToLeftFront = Size / 2 + dValue;
+        Vector3 dValue = this.transform.position - base.centerAndSize.Center;
+        posToLeftFront = base.centerAndSize.Size / 2 + dValue;
     }
 
     private void Awake()
     {
         LoadDicMaterial();
         LoadSizeAndPosToLeftFront();
+    }
+
+    public virtual void MyUpdate()
+    {
 
     }
 }
