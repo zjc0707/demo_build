@@ -26,7 +26,7 @@ public class PanelControl : BasePanel<PanelControl>
 
     public void SetData(Building building)
     {
-        Debug.Log("更新面板信息：" + building.name);
+        // Debug.Log("更新面板信息：" + building.name);
         this.gameObject.SetActive(true);
 
         target = building.transform;

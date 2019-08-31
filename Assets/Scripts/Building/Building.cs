@@ -22,7 +22,7 @@ public class Building : BaseObject<Building>
             }
         }
     }
-    private Dictionary<Renderer, Material> dicMaterial;
+    private Dictionary<Renderer, Material[]> dicMaterial;
     private Vector3 posToLeftFront;
 
     /// <summary>
@@ -79,7 +79,13 @@ public class Building : BaseObject<Building>
     {
         foreach (Renderer renderer in dicMaterial.Keys)
         {
-            renderer.sharedMaterial = material;
+            //下标替换无效，需整体数组替换
+            Material[] materials = new Material[renderer.sharedMaterials.Length];
+            for (int i = 0; i < materials.Length; ++i)
+            {
+                materials.SetValue(material, i);
+            }
+            renderer.sharedMaterials = materials;
         }
     }
 
@@ -87,7 +93,7 @@ public class Building : BaseObject<Building>
     {
         foreach (var t in dicMaterial)
         {
-            t.Key.sharedMaterial = t.Value;
+            t.Key.sharedMaterials = t.Value;
         }
     }
     /// <summary>
@@ -95,10 +101,10 @@ public class Building : BaseObject<Building>
     /// </summary>
     private void LoadDicMaterial()
     {
-        dicMaterial = new Dictionary<Renderer, Material>();
+        dicMaterial = new Dictionary<Renderer, Material[]>();
         foreach (Renderer renderer in this.GetComponentsInChildren<Renderer>())
         {
-            dicMaterial.Add(renderer, renderer.sharedMaterial);
+            dicMaterial.Add(renderer, renderer.sharedMaterials);
         }
     }
     /// <summary>
@@ -120,6 +126,7 @@ public class Building : BaseObject<Building>
     {
         LoadDicMaterial();
         LoadSizeAndPosToLeftFront();
+        BuildingUtil.AddBoxCollider(this);
     }
 
     public virtual void MyUpdate()

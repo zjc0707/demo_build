@@ -22,9 +22,13 @@ public class PanelModel : BasePanel<PanelModel>
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
                 Debug.Log(t.Url);
-                GameObject cube = Instantiate(Resources.Load("Prefabs/" + t.Url)) as GameObject;
-                cube.name = t.Name;
-                Building building = cube.AddComponent<Building>();
+                GameObject targetObj = Instantiate(Resources.Load("Prefabs/" + t.Url)) as GameObject;
+                targetObj.name = t.Name;
+                Building building = BuildingUtil.GetComponentBuilding(targetObj.transform);
+                if (building == null)
+                {
+                    building = targetObj.AddComponent<Building>();
+                }
                 building.Choose();
                 // Person.current.Catch(cube.transform);
                 MouseMove.current.Catch(building);

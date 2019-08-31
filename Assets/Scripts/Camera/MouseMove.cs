@@ -27,6 +27,7 @@ public class MouseMove : BaseUniqueObject<MouseMove>
             //鼠标单击
             if (Input.GetMouseButtonDown(0))
             {
+                //Debug.Log(hit.collider.transform.name);
                 if (catchBuilding != null)
                 {
                     Debug.Log("放置物品：" + catchBuilding.name);
