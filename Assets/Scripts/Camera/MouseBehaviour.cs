@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
 {
     new Camera camera;
@@ -18,6 +19,10 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit))
@@ -30,21 +35,15 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             //鼠标单击
             if (Input.GetMouseButtonDown(0))
             {
+                Debug.Log("hit:" + hit.collider.transform.name);
                 this.MouseLeftClick(hit);
             }
         }
     }
-    public void Catch(Building building)
-    {
-        catchBuilding = building;
-
-        Transform t = catchBuilding.transform;
-        t.SetParent(catchParent);
-        t.localPosition = Vector3.zero;
-        //catchBuilding.AdjustPosition();
-        catchBuilding.DownToFloor();
-        localPosition = t.localPosition;
-    }
+    /// <summary>
+    /// 鼠标左键点击事件
+    /// </summary>
+    /// <param name="hit"></param>
     private void MouseLeftClick(RaycastHit hit)
     {
         //放置物品
@@ -75,18 +74,19 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             return;
         }
     }
-    private void Build()
-    {
-        Debug.Log("放置物品：" + catchBuilding.name);
-        catchBuilding.Build();
-        catchBuilding = null;
-    }
+    /// <summary>
+    /// 更新面板显示数据，并标记该building为选中
+    /// </summary>
+    /// <param name="building"></param>
     private void SetPanelControlData(Building building)
     {
         Debug.Log("获取物体参数：" + building.name);
         PanelControl.current.SetData(building);
         building.Choose();
     }
+    /// <summary>
+    /// 调整building在catchParent中的位置
+    /// </summary>
     private void AdjustCatchBuilding()
     {
         catchBuilding.transform.localPosition = localPosition;
@@ -105,6 +105,40 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         Debug.Log(ts.TotalMilliseconds);
         lastClickDateTime = DateTime.Now;
         return ts.TotalMilliseconds < DOUBLE_CLICK_TIME_MILLISECOND;
+    }
+    /// <summary>
+    /// 拾取物体，在点击面板选项和双击场景中到物体时调用
+    /// </summary>
+    /// <param name="building"></param>
+    public void Catch(Building building)
+    {
+        this.ClearCatch();
+        catchBuilding = building;
+
+        Transform t = catchBuilding.transform;
+        t.SetParent(catchParent);
+        t.localPosition = Vector3.zero;
+        //catchBuilding.AdjustPosition();
+        catchBuilding.DownToFloor();
+        localPosition = t.localPosition;
+    }
+    /// <summary>
+    /// 清空已经拾取的内容
+    /// </summary>
+    public void ClearCatch()
+    {
+        if (catchBuilding == null) return;
+        DestroyImmediate(catchBuilding.gameObject);
+        catchBuilding = null;
+    }
+    /// <summary>
+    /// 放置物体，并清空已经拾取的内容
+    /// </summary>
+    private void Build()
+    {
+        Debug.Log("放置物品：" + catchBuilding.name);
+        catchBuilding.Build();
+        catchBuilding = null;
     }
 
 }

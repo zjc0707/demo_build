@@ -5,7 +5,7 @@ using UnityEngine;
 public class Building : BaseObject<Building>
 {
     /// <summary>
-    /// 基于世界坐标
+    /// 基于世界坐标的左上角位置
     /// </summary>
     public Vector3 LeftFrontBottom
     {
@@ -22,7 +22,13 @@ public class Building : BaseObject<Building>
             }
         }
     }
+    /// <summary>
+    /// 记录该物体的全部材质，用于替换及复原
+    /// </summary>
     private Dictionary<Renderer, Material[]> dicMaterial;
+    /// <summary>
+    /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
+    /// </summary>
     private Vector3 posToLeftFront;
 
     /// <summary>
@@ -52,13 +58,18 @@ public class Building : BaseObject<Building>
 
         LastTarget = this;
     }
-
+    /// <summary>
+    /// 放置该物体
+    /// </summary>
     public void Build()
     {
         Recovery();
         BuildingRoom.current.Add(this);
         this.AdjustPosition();
     }
+    /// <summary>
+    /// 通过工具类调整物体坐标
+    /// </summary>
     public void AdjustPosition()
     {
         BuildingUtil.AdjustPosition(this);
@@ -89,7 +100,9 @@ public class Building : BaseObject<Building>
             renderer.sharedMaterials = materials;
         }
     }
-
+    /// <summary>
+    /// 通过dic的value项进行复原材质
+    /// </summary>
     private void RecovercyMaterial()
     {
         foreach (var t in dicMaterial)
