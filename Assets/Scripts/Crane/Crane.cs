@@ -67,7 +67,7 @@ public class Crane : Building
     // Start is called before the first frame update
     void Start()
     {
-        base.DownToFloor();
+        //base.DownToFloor();
         distanceLineAndHookAfterChange = distanceLineAndHook = lineHookRotationPoint.position - lineAndHook.position;
         lineLenth = CenterAndSizeUtil.Get(line).Size.y;
         hookStartLocalPos = hook.localPosition;

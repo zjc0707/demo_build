@@ -33,7 +33,7 @@ public class Floor : BaseUniqueObject<Floor>
         this.transform.localPosition = new Vector3(length / 2, 0, width / 2);
 
         MyCamera.current.Reset();
-        Person.current.Reset();
+        //Person.current.Reset();
     }
 
 

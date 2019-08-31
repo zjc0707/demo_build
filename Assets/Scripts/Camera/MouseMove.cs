@@ -57,6 +57,7 @@ public class MouseMove : BaseUniqueObject<MouseMove>
         Transform t = catchBuilding.transform;
         t.SetParent(catchParent);
         t.localPosition = Vector3.zero;
+        //catchBuilding.AdjustPosition();
         catchBuilding.DownToFloor();
         localPosition = t.localPosition;
     }

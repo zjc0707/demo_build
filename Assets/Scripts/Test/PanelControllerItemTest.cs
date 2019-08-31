@@ -16,6 +16,7 @@ public static class PanelControllerItemTest
                 new PanelControllerItem("红色方块", "CubeRed"),
                 new PanelControllerItem("黄色方块", "CubeYellow"),
                 new PanelControllerItem("组合方块", "CubeGroup"),
+                new PanelControllerItem("Crane","Crane"),
                 new PanelControllerItem("wall","Wall")
             };
             return temp;

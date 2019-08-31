@@ -62,6 +62,7 @@ public class Building : BaseObject<Building>
     public void AdjustPosition()
     {
         BuildingUtil.AdjustPosition(this);
+        base.DownToFloor();
     }
     /// <summary>
     /// 复原物体材质
