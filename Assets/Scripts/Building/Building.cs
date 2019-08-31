@@ -5,20 +5,20 @@ using UnityEngine;
 public class Building : BaseObject<Building>
 {
     /// <summary>
-    /// 基于世界坐标的左上角位置
+    /// 基于世界坐标
     /// </summary>
-    public Vector3 LeftFrontBottom
+    public Vector3 LeftBackBottom
     {
         get
         {
             int a = ((int)Mathf.Abs(this.transform.eulerAngles.y / 90)) % 2;
             if (a == 0)
             {
-                return this.transform.position - posToLeftFront;
+                return this.transform.position - posToLeftBackBottom;
             }
             else
             {
-                return this.transform.position - new Vector3(posToLeftFront.z, posToLeftFront.y, posToLeftFront.x);
+                return this.transform.position - new Vector3(posToLeftBackBottom.z, posToLeftBackBottom.y, posToLeftBackBottom.x);
             }
         }
     }
@@ -29,7 +29,7 @@ public class Building : BaseObject<Building>
     /// <summary>
     /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
     /// </summary>
-    private Vector3 posToLeftFront;
+    private Vector3 posToLeftBackBottom;
 
     /// <summary>
     /// 记录上一个被选中的物体
@@ -133,7 +133,7 @@ public class Building : BaseObject<Building>
             //throw new System.Exception("中心与坐标不相等:" + this.transform.name);
         }
         Vector3 dValue = this.transform.position - base.centerAndSize.Center;
-        posToLeftFront = base.centerAndSize.Size / 2 + dValue;
+        posToLeftBackBottom = base.centerAndSize.Size / 2 + dValue;
     }
 
     private void Awake()

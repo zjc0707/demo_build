@@ -51,6 +51,10 @@ public static class BuildingUtil
         }
         return result;
     }
+    /// <summary>
+    /// 通过对齐左上角来使整体对齐
+    /// </summary>
+    /// <param name="building"></param>
     public static void AdjustPosition(Building building)
     {
         // Debug.Log("调整坐标:" + building.name);
@@ -58,11 +62,31 @@ public static class BuildingUtil
         t.eulerAngles = new Vector3(FixEuler(t.eulerAngles.x),
             FixEuler(t.eulerAngles.y),
             FixEuler(t.eulerAngles.z));
-        Vector3 afterFix = new Vector3(FixPos(building.LeftFrontBottom.x),
-            FixPos(building.LeftFrontBottom.y),
-            FixPos(building.LeftFrontBottom.z));
+        Vector3 afterFix = new Vector3(FixPos(building.LeftBackBottom.x),
+            FixPos(building.LeftBackBottom.y),
+            FixPos(building.LeftBackBottom.z));
         //Debug.Log(building.LeftFrontBottom + "_after:" + afterFix + "_pos:" + t.localPosition);
-        t.position += afterFix - building.LeftFrontBottom;
+        t.position += afterFix - building.LeftBackBottom;
+
+        Vector3 vector3 = building.LeftBackBottom;
+        if (vector3.x < 0)
+        {
+            t.position += new Vector3(0 - vector3.x, 0, 0);
+        }
+        if (vector3.z < 0)
+        {
+            t.position += new Vector3(0, 0, 0 - vector3.z);
+        }
+        float x = vector3.x + building.centerAndSize.Size.x;
+        if (x > Floor.current.x)
+        {
+            t.position -= new Vector3(x - Floor.current.x, 0, 0);
+        }
+        float z = vector3.z + building.centerAndSize.Size.z;
+        if (z > Floor.current.z)
+        {
+            t.position -= new Vector3(0, 0, z - Floor.current.z);
+        }
     }
 
     private static int FixEuler(float f)
