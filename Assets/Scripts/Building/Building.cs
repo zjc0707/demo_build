@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Building : BaseObject<Building>
 {
+    public PanelControllerItem data;
+    public new Rigidbody rigidbody;
     /// <summary>
     /// 基于世界坐标
     /// </summary>
@@ -75,6 +77,10 @@ public class Building : BaseObject<Building>
         BuildingUtil.AdjustPosition(this);
         base.DownToFloor();
     }
+    public void Rotate90()
+    {
+        this.transform.Rotate(transform.up, 90f);
+    }
     /// <summary>
     /// 复原物体材质
     /// </summary>
@@ -141,10 +147,12 @@ public class Building : BaseObject<Building>
         LoadDicMaterial();
         LoadSizeAndPosToLeftFront();
         BuildingUtil.AddBoxCollider(this);
+        rigidbody = this.gameObject.AddComponent<Rigidbody>();
+        rigidbody.isKinematic = true;
     }
 
     public virtual void MyUpdate()
     {
-
+        MoveAndRotateUtil.Update(this.transform);
     }
 }

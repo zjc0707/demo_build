@@ -35,16 +35,11 @@ public class InputFieldVector3
 
     public Vector3 ToVector3()
     {
-        try
-        {
-            return new Vector3(float.Parse(X.text), float.Parse(Y.text), float.Parse(Z.text));
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message + ":" + String.Format("({},{},{})", X.text, Y.text, Z.text));
-            return Vector3.zero;
-        }
+        float x = 0f, y = 0f, z = 0f;
+        float.TryParse(X.text, out x);
+        float.TryParse(Y.text, out y);
+        float.TryParse(Z.text, out z);
+        return new Vector3(x, y, z);
     }
 
     /// <summary>
@@ -56,6 +51,12 @@ public class InputFieldVector3
         X.onValueChanged.AddListener(call);
         Y.onValueChanged.AddListener(call);
         Z.onValueChanged.AddListener(call);
+    }
+    public void AddEndEditListener(UnityAction<string> call)
+    {
+        X.onEndEdit.AddListener(call);
+        Y.onEndEdit.AddListener(call);
+        Z.onEndEdit.AddListener(call);
     }
 
     public void RemoveValueChangedListener()

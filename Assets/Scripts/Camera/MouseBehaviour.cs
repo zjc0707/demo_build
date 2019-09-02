@@ -19,9 +19,14 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
+        //点击到ugui上
+        if (Input.GetMouseButtonDown(0))
         {
-            return;
+            Building.LastRecovery();
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
         }
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -32,11 +37,20 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             {
                 this.AdjustCatchBuilding();
             }
-            //鼠标单击
+            //鼠标左键
             if (Input.GetMouseButtonDown(0))
             {
                 Debug.Log("hit:" + hit.collider.transform.name);
                 this.MouseLeftClick(hit);
+            }
+            //鼠标右键
+            if (Input.GetMouseButtonDown(1))
+            {
+                if (catchBuilding == null)
+                {
+                    return;
+                }
+                catchBuilding.Rotate90();
             }
         }
     }
@@ -56,21 +70,16 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         //点击到其他地方
         if (building == null)
         {
-            Building.LastRecovery();
             return;
         }
+        //对buildind单击，并记录点击物体
+        clickBuilding = building;
+        this.SetPanelControlData(building);
         //双击时间检测，并检测两次点击是否为一个物体
         if (this.IsMouseLeftDoubleClick() && building.Equals(clickBuilding))
         {
             Debug.Log("doubleClick");
             this.Catch(building);
-            return;
-        }
-        //对buildind单击，并记录点击物体
-        else
-        {
-            clickBuilding = building;
-            this.SetPanelControlData(building);
             return;
         }
     }

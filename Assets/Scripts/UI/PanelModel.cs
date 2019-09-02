@@ -29,6 +29,7 @@ public class PanelModel : BasePanel<PanelModel>
                 {
                     building = targetObj.AddComponent<Building>();
                 }
+                building.data = t;
                 building.Choose();
                 // Person.current.Catch(cube.transform);
                 MouseBehaviour.current.Catch(building);

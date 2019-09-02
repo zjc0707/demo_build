@@ -11,15 +11,14 @@ public static class BuildingUtil
     {
         GameObject obj = building.gameObject;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
-        if (boxCollider != null)
+        if (boxCollider == null)
         {
-            return;
+            boxCollider = obj.AddComponent<BoxCollider>();
+            boxCollider.center = Vector3.zero;
+            boxCollider.size = building.centerAndSize.Size;
         }
-        boxCollider = obj.AddComponent<BoxCollider>();
-        boxCollider.center = Vector3.zero;
-        boxCollider.size = building.centerAndSize.Size;
         //避免碰撞
-        boxCollider.isTrigger = true;
+        // boxCollider.isTrigger = true;
     }
     /// <summary>
     /// 鼠标点击到的为子物体，所以需要遍历所有父级查看是否为Building

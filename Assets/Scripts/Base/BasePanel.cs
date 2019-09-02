@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
 {
     public Button buttonClose;
+    /// <summary>
+    /// 子类中用该函数代替原来的Start()
+    /// </summary>
     protected abstract void _Start();
     protected virtual void OnButtonCloseClickSupply() { }
     // Use this for initialization

@@ -8,8 +8,10 @@ public class PanelControl : BasePanel<PanelControl>
 {
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
+    private Button buttonOperate, buttonClear;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
+    private Building targetBuilding;
     private bool isFirst = true;
 
     protected override void _Start()
@@ -17,48 +19,76 @@ public class PanelControl : BasePanel<PanelControl>
         Load();
         this.gameObject.SetActive(false);
     }
-
     protected override void OnButtonCloseClickSupply()
     {
         Building.LastRecovery();
-        State.current.SetStateToPerson();
+        // State.current.SetStateToPerson();
     }
-
     public void SetData(Building building)
     {
         // Debug.Log("更新面板信息：" + building.name);
         this.gameObject.SetActive(true);
 
-        target = building.transform;
+        targetBuilding = building;
+        target = targetBuilding.transform;
         objectName.text = target.name;
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
-        AddValueChangedListener();
+        buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
+
+        AddListener();
     }
 
     /// <summary>
-    /// 绑定输入框值变换监听事件
+    /// 绑定事件
     /// </summary>
-    private void AddValueChangedListener()
+    private void AddListener()
     {
         if (!isFirst) return;
+        isFirst = false;
+        //输入框监听事件
         this.position.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localPosition = this.position.ToVector3();
+            targetBuilding.AdjustPosition();
         });
-
         this.rotation.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localEulerAngles = this.rotation.ToVector3();
+            targetBuilding.AdjustPosition();
         });
-
         this.scale.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localScale = this.scale.ToVector3();
+            // targetBuilding.AdjustPosition();
+            // this.position.Set(ta)
+        });
+        //输入框编辑完监听事件
+        this.position.AddEndEditListener(delegate
+        {
+            this.position.Set(target.localPosition);
+        });
+        this.rotation.AddEndEditListener(delegate
+        {
+            this.rotation.Set(target.localEulerAngles);
+        });
+        //按钮点击事件
+        this.buttonOperate.onClick.AddListener(delegate
+        {
+            Sport.current.TurnToOperate(targetBuilding);
+        });
+        this.buttonClear.onClick.AddListener(delegate
+        {
+            if (target == null)
+            {
+                return;
+            }
+            DestroyImmediate(target.gameObject);
+            base.Close();
         });
     }
 
@@ -67,7 +97,7 @@ public class PanelControl : BasePanel<PanelControl>
     /// </summary>
     private void Load()
     {
-        InputField[] inputFields = GetComponentsInChildren<InputField>();
+        InputField[] inputFields = this.GetComponentsInChildren<InputField>();
         if (inputFields.Length != INPUT_FIELD_NUM)
         {
             throw new Exception("输入框数量不匹配：" + inputFields.Length);
@@ -81,6 +111,8 @@ public class PanelControl : BasePanel<PanelControl>
         position = new InputFieldVector3(inputFields[1], inputFields[2], inputFields[3]);
         rotation = new InputFieldVector3(inputFields[4], inputFields[5], inputFields[6]);
         scale = new InputFieldVector3(inputFields[7], inputFields[8], inputFields[9]);
+        buttonOperate = this.transform.Find("Content").Find("ButtonOperate").GetComponent<Button>();
+        buttonClear = this.transform.Find("Content").Find("ButtonClear").GetComponent<Button>();
     }
 
     private void DataTest()

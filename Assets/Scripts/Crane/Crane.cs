@@ -16,10 +16,10 @@ public class Crane : Building
     /// 吊钩
     /// </summary>
     public Transform hook;
-    /// <summary>
-    /// 吊钩和绳子的父类，在head旋转时同时旋转该父类对象，使之一直竖直向下
-    /// </summary>
-    public Transform lineAndHook;
+    // /// <summary>
+    // /// 吊钩和绳子的父类，在head旋转时同时旋转该父类对象，使之一直竖直向下
+    // /// </summary>
+    // public Transform lineAndHook;
     /// <summary>
     /// head旋转的参照点
     /// </summary>
@@ -50,32 +50,22 @@ public class Crane : Building
     /// </summary>
     private float lineLenth;
     /// <summary>
-    /// 吊钩和绳子的初始化时距离参照点的值，后续不再改变，用于计算 *AfterChange的值
-    /// </summary>
-    private Vector3 distanceLineAndHook;
-    /// <summary>
-    /// 因绳子伸缩后改变的值，用于各处位置调整
-    /// </summary>
-    private Vector3 distanceLineAndHookAfterChange;
-    /// <summary>
     /// 吊钩初始化的局部坐标，用于绳子伸缩后调整
     /// </summary>
-    private Vector3 hookStartLocalPos;
+    private Vector3 hookStartLocalPos, lineStartLocalPos;
     private TimeGroup expandPart1TimeGroup = new TimeGroup(2f);
     private TimeGroup rotateHeadTimeGroup = new TimeGroup(2f);
     private TimeGroup expandLineTimeGroup = new TimeGroup(2f);
     // Start is called before the first frame update
     void Start()
     {
-        //base.DownToFloor();
-        distanceLineAndHookAfterChange = distanceLineAndHook = lineHookRotationPoint.position - lineAndHook.position;
         lineLenth = CenterAndSizeUtil.Get(line).Size.y;
         hookStartLocalPos = hook.localPosition;
+        lineStartLocalPos = line.localPosition;
     }
-
-    // Update is called once per frame
-    void Update()
+    public override void MyUpdate()
     {
+        base.MyUpdate();
         //J,K,L分别操作三个部位，shift组合键为反方向
         float deltaTime = Input.GetKey(KeyCode.LeftShift) ? -1 * Time.deltaTime : Time.deltaTime;
         //吊车头部向外旋转
@@ -94,11 +84,6 @@ public class Crane : Building
             ExpandLine(deltaTime);
         }
     }
-
-    public override void MyUpdate()
-    {
-
-    }
     /// <summary>
     /// 旋转吊车头部
     /// </summary>
@@ -106,9 +91,8 @@ public class Crane : Building
     {
         if (!rotateHeadTimeGroup.Add(deltaTime)) return;
         deltaTime *= rotateHeadSpeed;
-        head.RotateAround(headRotationPoint.localPosition, head.forward, -1 * deltaTime);
-        lineAndHook.RotateAround(lineHookRotationPoint.localPosition, head.forward, deltaTime);
-        lineAndHook.position = lineHookRotationPoint.position - distanceLineAndHookAfterChange;
+        head.RotateAround(headRotationPoint.position, head.forward, -1 * deltaTime);
+        lineHookRotationPoint.RotateAround(lineHookRotationPoint.position, head.forward, deltaTime);
     }
     /// <summary>
     /// 伸展吊车头部 1 部分
@@ -127,9 +111,8 @@ public class Crane : Building
         line.localScale = Vector3.Lerp(lineStartScale, lineEndScale, expandLineTimeGroup.rate);
         float changeScaleY = lineEndScale.y - lineStartScale.y;
         Vector3 distance = Vector3.up * lineLenth * changeScaleY * expandLineTimeGroup.rate;
-        distanceLineAndHookAfterChange = distanceLineAndHook + distance / 2;
-        lineAndHook.position = lineHookRotationPoint.position - distanceLineAndHookAfterChange;
-        hook.localPosition = hookStartLocalPos - distance / 2;
+        line.localPosition = lineStartLocalPos - distance / 2;
+        hook.localPosition = hookStartLocalPos - distance;
     }
 
 }
