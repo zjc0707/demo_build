@@ -14,8 +14,26 @@ public class PanelEditFloor : BasePanel<PanelEditFloor>
     }
     private void EditFloor()
     {
-        Floor.current.x = int.Parse(length.text);
-        Floor.current.z = int.Parse(width.text);
+        int x = int.Parse(length.text);
+        int z = int.Parse(width.text);
+
+        if (x < Floor.current.x || z < Floor.current.z)
+        {
+            PanelDialog.current.Open("场景将缩小，超出边界物体将自动调整，是否继续", delegate
+            {
+                Edit(x, z);
+            });
+        }
+        else
+        {
+            Edit(x, z);
+        }
+    }
+
+    private void Edit(int x, int z)
+    {
+        Floor.current.x = x;
+        Floor.current.z = z;
         Floor.current.Load();
         base.Close();
     }
