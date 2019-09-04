@@ -38,4 +38,8 @@ public class TimeGroup
         }
         return true;
     }
+    public void UseToZero()
+    {
+        use = 0f;
+    }
 }

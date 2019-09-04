@@ -5,7 +5,8 @@ using UnityEngine;
 public class Building : BaseObject<Building>
 {
     public PanelControllerItem data;
-    public new Rigidbody rigidbody;
+    public BoxCollider boxCollider;
+    // public new Rigidbody rigidbody;
     /// <summary>
     /// 基于世界坐标
     /// </summary>
@@ -13,8 +14,7 @@ public class Building : BaseObject<Building>
     {
         get
         {
-            int a = ((int)Mathf.Abs(this.transform.eulerAngles.y / 90)) % 2;
-            if (a == 0)
+            if (!base.isRotate)
             {
                 return this.transform.position - posToLeftBackBottom;
             }
@@ -57,8 +57,17 @@ public class Building : BaseObject<Building>
     {
         LastRecovery();
         SetMaterial(MaterialStatic.BLUE);
+        this.boxCollider.enabled = false;
 
         LastTarget = this;
+    }
+    /// <summary>
+    /// 复原物体材质
+    /// </summary>
+    private void Recovery()
+    {
+        RecovercyMaterial();
+        this.boxCollider.enabled = true;
     }
     /// <summary>
     /// 放置该物体
@@ -81,14 +90,6 @@ public class Building : BaseObject<Building>
     {
         this.transform.Rotate(transform.up, 90f);
     }
-    /// <summary>
-    /// 复原物体材质
-    /// </summary>
-    private void Recovery()
-    {
-        RecovercyMaterial();
-    }
-
     /// <summary>
     /// 设置在awake中记录的renderer的材质
     /// </summary>
@@ -146,11 +147,14 @@ public class Building : BaseObject<Building>
     {
         LoadDicMaterial();
         LoadSizeAndPosToLeftFront();
-        BuildingUtil.AddBoxCollider(this);
-        rigidbody = this.gameObject.AddComponent<Rigidbody>();
-        rigidbody.isKinematic = true;
+        boxCollider = BuildingUtil.AddBoxCollider(this);
+        // rigidbody = this.gameObject.AddComponent<Rigidbody>();
+        // rigidbody.isKinematic = true;
     }
 
+    /// <summary>
+    /// 默认的操控移动方法
+    /// </summary>
     public virtual void MyUpdate()
     {
         MoveAndRotateUtil.Update(this.transform);

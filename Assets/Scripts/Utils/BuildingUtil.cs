@@ -7,7 +7,7 @@ public static class BuildingUtil
     /// 根据centerAndSize添加包围盒
     /// </summary>
     /// <param name="building"></param>
-    public static void AddBoxCollider(Building building)
+    public static BoxCollider AddBoxCollider(Building building)
     {
         GameObject obj = building.gameObject;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
@@ -19,6 +19,7 @@ public static class BuildingUtil
         }
         //避免碰撞
         // boxCollider.isTrigger = true;
+        return boxCollider;
     }
     /// <summary>
     /// 鼠标点击到的为子物体，所以需要遍历所有父级查看是否为Building
@@ -86,6 +87,7 @@ public static class BuildingUtil
         {
             t.position -= new Vector3(0, 0, z - Floor.current.z);
         }
+        // Debug.Log(building.centerAndSize + "_" + building.LeftBackBottom + "_" + building.transform.position);
     }
 
     private static int FixEuler(float f)

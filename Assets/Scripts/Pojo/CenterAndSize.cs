@@ -8,6 +8,14 @@ public class CenterAndSize
 {
     public Vector3 Center { get; set; }
     public Vector3 Size { get; set; }
+    public CenterAndSize ChangeSizeXZ()
+    {
+        return new CenterAndSize()
+        {
+            Size = new Vector3(this.Size.z, this.Size.y, this.Size.x),
+            Center = this.Center
+        };
+    }
 
     public override string ToString()
     {
