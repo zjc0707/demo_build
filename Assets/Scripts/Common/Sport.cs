@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,8 +25,8 @@ public class Sport : BaseUniqueObject<Sport>
     void Start()
     {
         //MyCamera的Reset()调用在awake中，所以这里得到的是定位后的坐标
-        cameraStart = new TransformGroup(camera.transform.position, camera.transform.eulerAngles);
-        cameraEnd = new TransformGroup(11, 2, 5, 0, -90, 0);
+        // cameraStart = new TransformGroup(camera.transform.position, camera.transform.eulerAngles);
+        // cameraEnd = new TransformGroup(11, 2, 5, 0, -90, 0);
         cameraTimeGroup = new TimeGroup(0.5f);
         state = INIT;
     }
@@ -51,6 +52,7 @@ public class Sport : BaseUniqueObject<Sport>
     {
         ChangeUI(true);
         target = building;
+        cameraStart = new TransformGroup(camera.transform.position, camera.transform.eulerAngles);
         //根据target计算相机移动后的位置
         UpdateCameraEnd(building);
 
@@ -89,7 +91,22 @@ public class Sport : BaseUniqueObject<Sport>
     /// <param name="deltaTime"></param>
     private void ChangeCamera(float deltaTime)
     {
-        if (!cameraTimeGroup.Add(deltaTime))
+        // if (!cameraTimeGroup.Add(deltaTime))
+        // {
+        //     if (cameraTimeGroup.rate == 1)
+        //     {
+        //         state = OPERATE;
+        //     }
+        //     if (cameraTimeGroup.rate == 0)
+        //     {
+        //         state = INIT;
+        //     }
+        //     // return;
+        // }
+        // this.camera.transform.position = Vector3.Lerp(cameraStart.position, cameraEnd.position, cameraTimeGroup.rate);
+        // this.camera.transform.eulerAngles = Vector3.Lerp(cameraStart.eulerAngles, cameraEnd.eulerAngles, cameraTimeGroup.rate);
+
+        LerpUtil.Anim(this.camera.transform, cameraStart, cameraEnd, cameraTimeGroup, deltaTime, delegate
         {
             if (cameraTimeGroup.rate == 1)
             {
@@ -99,9 +116,8 @@ public class Sport : BaseUniqueObject<Sport>
             {
                 state = INIT;
             }
-            // return;
-        }
-        this.camera.transform.position = Vector3.Lerp(cameraStart.position, cameraEnd.position, cameraTimeGroup.rate);
-        this.camera.transform.eulerAngles = Vector3.Lerp(cameraStart.eulerAngles, cameraEnd.eulerAngles, cameraTimeGroup.rate);
+        });
     }
+
+
 }

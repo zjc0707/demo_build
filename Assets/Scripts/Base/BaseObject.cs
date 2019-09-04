@@ -34,6 +34,13 @@ public abstract class BaseObject<T> : MonoBehaviour where T : MonoBehaviour
             return ((int)Mathf.Abs(this.transform.eulerAngles.y / 90)) % 2 == 1;
         }
     }
+    public TransformGroup transformGroup
+    {
+        get
+        {
+            return new TransformGroup(this.transform.position, this.transform.eulerAngles);
+        }
+    }
     /// <summary>
     /// floor的y值，用于落至地面计算
     /// </summary>
