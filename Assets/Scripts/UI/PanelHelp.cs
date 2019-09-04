@@ -8,7 +8,7 @@ public class PanelHelp : BasePanel<PanelHelp>
                             "3.双击放置物品后拾取物体\n" +
                             "4.可操作物体属性界面（如吊车）会出现操作按钮，点击进入操作模式";
     private string textOperate = "1.wasd移动物体\n" +
-                            "2.(吊车专用)j-装置上升，k-装置伸长，l-吊绳伸长。按住shift则相反";
+                            "2.(吊车专用)\n  j-装置上升，\n  k-装置伸长，\n  l-吊绳伸长。\n  按住shift则相反";
     protected override void _Start()
     {
         TurnToInit();

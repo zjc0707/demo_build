@@ -56,7 +56,7 @@ public class Building : BaseObject<Building>
     public void Choose()
     {
         LastRecovery();
-        SetMaterial(MaterialStatic.BLUE);
+        SetMaterial(ResourceStatic.BLUE);
         this.boxCollider.enabled = false;
 
         LastTarget = this;
