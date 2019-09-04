@@ -6,8 +6,9 @@ public class TourCamera : MonoBehaviour
     //使用 鼠标右键 控制视角旋转。
     // 在场景中游览的相机（不要给相机加碰撞器！）
     public Transform tourCamera;
-    public float moveSpeed = 0.1f;
+    public float moveSpeed = 0.2f;
     public float rotateSpeed = 60.0f;
+    public float scaleSpeed = 2f;
     public float shiftRate = 2.0f;// 按住Shift加速
     void Start()
     {
@@ -25,14 +26,17 @@ public class TourCamera : MonoBehaviour
         {
             // 转相机朝向
             tourCamera.RotateAround(tourCamera.position, Vector3.up, Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime);
-            tourCamera.Rotate(tourCamera.right, -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime);
+            tourCamera.RotateAround(tourCamera.position, tourCamera.right, -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime);
         }
+        tourCamera.Translate(Vector3.forward * Input.GetAxis("Mouse ScrollWheel") * scaleSpeed, Space.Self);
     }
     private void MoveCamera(float _MouseX, float _MouseY, float _Speed)     //移动相机
     {
-        tourCamera.Translate(tourCamera.right * -_MouseX * _Speed);
-        tourCamera.Translate(tourCamera.forward * _MouseY * _Speed);
+        tourCamera.position += tourCamera.right * -_MouseX * _Speed;
+        tourCamera.position += tourCamera.up * -_MouseY * _Speed;
+        // Debug.Log("up:" + tourCamera.up + "_right" + tourCamera.right);
     }
+
 }
 //--------------------- 
 //作者：VDer
