@@ -5,19 +5,19 @@ using System.Text;
 
 public static class PanelControllerItemTest
 {
-    public static List<PanelControllerItem> List
+    public static List<PanelControllerItemData> List
     {
         get
         {
-            List<PanelControllerItem> temp = new List<PanelControllerItem>
+            List<PanelControllerItemData> temp = new List<PanelControllerItemData>
             {
-                new PanelControllerItem("蓝色方块", "CubeBlue"),
-                new PanelControllerItem("绿色方块", "CubeGreen"),
-                new PanelControllerItem("红色方块", "CubeRed"),
-                new PanelControllerItem("黄色方块", "CubeYellow"),
+                new PanelControllerItemData("蓝色方块", "CubeBlue"),
+                new PanelControllerItemData("绿色方块", "CubeGreen"),
+                new PanelControllerItemData("红色方块", "CubeRed"),
+                new PanelControllerItemData("黄色方块", "CubeYellow"),
                 // new PanelControllerItem("组合方块", "CubeGroup"),
-                new PanelControllerItem("吊车","Crane", 1),
-                new PanelControllerItem("墙","Wall")
+                new PanelControllerItemData("吊车","Crane", 1),
+                new PanelControllerItemData("墙","Wall")
             };
             return temp;
         }

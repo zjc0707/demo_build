@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using cakeslice;
 
 public class Building : BaseObject<Building>
 {
-    public PanelControllerItem data;
+    public PanelControllerItemData data;
     public BoxCollider boxCollider;
+    private List<Outline> outlineList;
     // public new Rigidbody rigidbody;
     /// <summary>
     /// 基于世界坐标
@@ -56,7 +58,8 @@ public class Building : BaseObject<Building>
     public void Choose()
     {
         LastRecovery();
-        SetMaterial(ResourceStatic.BLUE);
+        //SetMaterial(ResourceStatic.BLUE);
+        ShowHighLight();
         this.boxCollider.enabled = false;
 
         LastTarget = this;
@@ -66,7 +69,8 @@ public class Building : BaseObject<Building>
     /// </summary>
     private void Recovery()
     {
-        RecovercyMaterial();
+        //RecovercyMaterial();
+        HideHighLight();
         this.boxCollider.enabled = true;
     }
     /// <summary>
@@ -117,6 +121,20 @@ public class Building : BaseObject<Building>
             t.Key.sharedMaterials = t.Value;
         }
     }
+    private void ShowHighLight()
+    {
+        foreach (Outline outline in outlineList)
+        {
+            outline.enabled = true;
+        }
+    }
+    private void HideHighLight()
+    {
+        foreach (Outline outline in outlineList)
+        {
+            outline.enabled = false;
+        }
+    }
     /// <summary>
     /// 加载材质到dic中
     /// </summary>
@@ -148,8 +166,13 @@ public class Building : BaseObject<Building>
         LoadDicMaterial();
         LoadSizeAndPosToLeftFront();
         boxCollider = BuildingUtil.AddBoxCollider(this);
-        // rigidbody = this.gameObject.AddComponent<Rigidbody>();
-        // rigidbody.isKinematic = true;
+        outlineList = new List<Outline>();
+        //outline = this.transform.gameObject.AddComponent<Outline>();
+        foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
+        {
+            outlineList.Add(mesh.gameObject.AddComponent<Outline>());
+        }
+        HideHighLight();
     }
 
     /// <summary>

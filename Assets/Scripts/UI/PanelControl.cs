@@ -115,12 +115,12 @@ public class PanelControl : BasePanel<PanelControl>
         buttonClear = this.transform.Find("Content").Find("ButtonClear").GetComponent<Button>();
     }
 
-    private void DataTest()
-    {
-        objectName.text = "zjc";
-        position.Set(1, 2, 3);
-        rotation.Set(4, 5, 6);
-        scale.Set(7, 8, 9);
-    }
+    // private void DataTest()
+    // {
+    //     objectName.text = "zjc";
+    //     position.Set(1, 2, 3);
+    //     rotation.Set(4, 5, 6);
+    //     scale.Set(7, 8, 9);
+    // }
 
 }

@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class UGUITree : BaseUniqueObject<UGUITree>
 {
     public Canvas canvasInit;
     public Canvas canvasOperate;
     public Canvas canvasStatic;
+    private List<GameObject> leftUIList;
 
     private void Awake()
     {
@@ -29,5 +31,22 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         {
             Sport.current.TurnToInit();
         });
+
+        leftUIList = new List<GameObject>{
+            PanelModel.current.gameObject,
+            PanelMaterial.current.gameObject
+        };
     }
+    public void Open(GameObject obj)
+    {
+        if (leftUIList.Contains(obj))
+        {
+            foreach (GameObject o in leftUIList)
+            {
+                o.SetActive(false);
+            }
+        }
+        obj.SetActive(true);
+    }
+
 }

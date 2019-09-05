@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class PanelModel : BasePanel<PanelModel>
 {
-    public Transform item;
+    public Transform baseItem;
 
     protected override void _Start()
     {
@@ -15,15 +15,15 @@ public class PanelModel : BasePanel<PanelModel>
 
     private void Load()
     {
-        List<PanelControllerItem> items = PanelControllerItemTest.List;
-        foreach (PanelControllerItem t in items)
+        List<PanelControllerItemData> items = PanelControllerItemTest.List;
+        foreach (PanelControllerItemData t in items)
         {
-            Transform clone = Instantiate(item.gameObject).transform;
+            Transform clone = Instantiate(baseItem.gameObject).transform;
             clone.GetComponentInChildren<Text>().text = t.Name;
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
                 Debug.Log(t.Url);
-                GameObject targetObj = Instantiate(Resources.Load("Prefabs/" + t.Url)) as GameObject;
+                GameObject targetObj = Instantiate(Resources.Load(t.Url)) as GameObject;
                 targetObj.name = t.Name;
                 Building building = BuildingUtil.GetComponentBuilding(targetObj.transform);
                 if (building == null)
@@ -35,11 +35,10 @@ public class PanelModel : BasePanel<PanelModel>
                 // Person.current.Catch(cube.transform);
                 MouseBehaviour.current.Catch(building);
             });
-            Texture2D tex = AssetPreview.GetAssetPreview(Resources.Load("Prefabs/" + t.Url)) as Texture2D;
-            clone.Find("Image").GetComponent<Image>().sprite
-            = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
-            clone.SetParent(item.parent);
+            // clone.Find("Image").GetComponent<Image>().sprite = t.Sprite;
+            clone.SetParent(baseItem.parent);
         }
-        item.gameObject.SetActive(false);
+
+        baseItem.gameObject.SetActive(false);
     }
 }
