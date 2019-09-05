@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class PanelModel : BasePanel<PanelModel>
 {
@@ -34,6 +35,9 @@ public class PanelModel : BasePanel<PanelModel>
                 // Person.current.Catch(cube.transform);
                 MouseBehaviour.current.Catch(building);
             });
+            Texture2D tex = AssetPreview.GetAssetPreview(Resources.Load("Prefabs/" + t.Url)) as Texture2D;
+            clone.Find("Image").GetComponent<Image>().sprite
+            = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
             clone.SetParent(item.parent);
         }
         item.gameObject.SetActive(false);
