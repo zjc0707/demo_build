@@ -25,7 +25,7 @@ public class Hook : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.X) && target != null
-            && target.gameObject.GetComponent<Crane>() == null && !isDown)
+             && !isDown)
         {
             //拾取
             if (!target.parent.Equals(this.transform))
@@ -60,13 +60,16 @@ public class Hook : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("enter:" + other.name);
         target = other.transform;
         targetBuilding = target.GetComponent<Building>();
         //只有building对象可以抓的起来
         if (targetBuilding == null)
         {
             target = null;
+        }
+        else
+        {
+            Debug.Log("enter:" + other.name);
         }
         // targetRigidbody = target.GetComponent<Rigidbody>();
 

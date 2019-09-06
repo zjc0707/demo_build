@@ -25,4 +25,12 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
         building.transform.SetParent(this.transform);
         buildingList.Add(building);
     }
+
+    public void SetBuildingsColliderEnable(bool enable)
+    {
+        foreach (Building building in buildingList)
+        {
+            building.boxCollider.enabled = enable;
+        }
+    }
 }

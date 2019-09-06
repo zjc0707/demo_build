@@ -130,6 +130,9 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         //catchBuilding.AdjustPosition();
         catchBuilding.DownToFloor();
         localPosition = t.localPosition;
+        catchBuilding.boxCollider.enabled = false;
+
+        BuildingRoom.current.SetBuildingsColliderEnable(false);
     }
     /// <summary>
     /// 清空已经拾取的内容
@@ -148,6 +151,8 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         Debug.Log("放置物品：" + catchBuilding.name);
         catchBuilding.Build();
         catchBuilding = null;
+
+        BuildingRoom.current.SetBuildingsColliderEnable(true);
     }
 
 }

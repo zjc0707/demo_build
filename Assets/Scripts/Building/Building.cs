@@ -58,7 +58,7 @@ public class Building : BaseObject
     {
         LastRecovery();
         ShowHighLight();
-        this.boxCollider.enabled = false;
+        // this.boxCollider.enabled = false;
 
         LastTarget = this;
     }
@@ -68,7 +68,7 @@ public class Building : BaseObject
     private void Recovery()
     {
         HideHighLight();
-        this.boxCollider.enabled = true;
+        // this.boxCollider.enabled = true;
     }
     /// <summary>
     /// 放置该物体
@@ -77,7 +77,7 @@ public class Building : BaseObject
     {
         Recovery();
         BuildingRoom.current.Add(this);
-        this.AdjustPosition();
+        // this.AdjustPosition();
     }
     /// <summary>
     /// 通过工具类调整物体坐标
