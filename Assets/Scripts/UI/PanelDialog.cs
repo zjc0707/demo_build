@@ -8,7 +8,8 @@ public class PanelDialog : BasePanel<PanelDialog>
     private UnityAction action;
     protected override void _Start()
     {
-        close.GetComponent<Button>().onClick.AddListener(base.Close);
+        close.onClick.AddListener(base.Close);
+        submit.onClick.AddListener(this.action);
     }
     public void Open(string contentText, UnityAction submitAction)
     {
@@ -26,7 +27,6 @@ public class PanelDialog : BasePanel<PanelDialog>
             submitAction();
             base.Close();
         };
-        submit.onClick.AddListener(this.action);
 
         this.gameObject.SetActive(true);
     }

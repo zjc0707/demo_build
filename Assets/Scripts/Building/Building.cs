@@ -34,7 +34,6 @@ public class Building : BaseObject<Building>
     /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
     /// </summary>
     private Vector3 posToLeftBackBottom;
-
     /// <summary>
     /// 记录上一个被选中的物体
     /// </summary>
@@ -58,7 +57,6 @@ public class Building : BaseObject<Building>
     public void Choose()
     {
         LastRecovery();
-        //SetMaterial(ResourceStatic.BLUE);
         ShowHighLight();
         this.boxCollider.enabled = false;
 
@@ -69,7 +67,6 @@ public class Building : BaseObject<Building>
     /// </summary>
     private void Recovery()
     {
-        //RecovercyMaterial();
         HideHighLight();
         this.boxCollider.enabled = true;
     }
@@ -98,7 +95,7 @@ public class Building : BaseObject<Building>
     /// 设置在awake中记录的renderer的材质
     /// </summary>
     /// <param name="material"></param>
-    private void SetMaterial(Material material)
+    public void SetMaterial(Material material)
     {
         foreach (Renderer renderer in dicMaterial.Keys)
         {
@@ -114,7 +111,7 @@ public class Building : BaseObject<Building>
     /// <summary>
     /// 通过dic的value项进行复原材质
     /// </summary>
-    private void RecovercyMaterial()
+    public void RecovercyMaterial()
     {
         foreach (var t in dicMaterial)
         {

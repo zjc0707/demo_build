@@ -8,7 +8,6 @@ public class PanelMaterial : BasePanel<PanelMaterial>
     {
         Load();
     }
-
     private void Load()
     {
         List<PanelMaterialItemData> items = PanelMaterialItemDataTest.List;
@@ -18,9 +17,10 @@ public class PanelMaterial : BasePanel<PanelMaterial>
             clone.GetComponentInChildren<Text>().text = t.Name;
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
-
+                Material material = Resources.Load(t.Url) as Material;
+                PanelControl.current.SetTargetMaterial(material);
             });
-            // clone.Find("Image").GetComponent<Image>().sprite = t.Sprite;
+            StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
             clone.SetParent(baseItem.parent);
         }
 

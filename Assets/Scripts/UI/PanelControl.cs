@@ -8,7 +8,7 @@ public class PanelControl : BasePanel<PanelControl>
 {
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
-    private Button buttonOperate, buttonClear;
+    private Button buttonOperate, buttonClear, buttonMaterialRecovery;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
@@ -22,7 +22,6 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void OnButtonCloseClickSupply()
     {
         Building.LastRecovery();
-        // State.current.SetStateToPerson();
     }
     public void SetData(Building building)
     {
@@ -38,6 +37,10 @@ public class PanelControl : BasePanel<PanelControl>
         buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
 
         AddListener();
+    }
+    public void SetTargetMaterial(Material material)
+    {
+        targetBuilding.SetMaterial(material);
     }
 
     /// <summary>
@@ -64,8 +67,6 @@ public class PanelControl : BasePanel<PanelControl>
         {
             if (target == null) return;
             target.localScale = this.scale.ToVector3();
-            // targetBuilding.AdjustPosition();
-            // this.position.Set(ta)
         });
         //输入框编辑完监听事件
         this.position.AddEndEditListener(delegate
@@ -90,6 +91,10 @@ public class PanelControl : BasePanel<PanelControl>
             DestroyImmediate(target.gameObject);
             base.Close();
         });
+        this.buttonMaterialRecovery.onClick.AddListener(delegate
+        {
+            targetBuilding.RecovercyMaterial();
+        });
     }
 
     /// <summary>
@@ -111,8 +116,10 @@ public class PanelControl : BasePanel<PanelControl>
         position = new InputFieldVector3(inputFields[1], inputFields[2], inputFields[3]);
         rotation = new InputFieldVector3(inputFields[4], inputFields[5], inputFields[6]);
         scale = new InputFieldVector3(inputFields[7], inputFields[8], inputFields[9]);
-        buttonOperate = this.transform.Find("Content").Find("ButtonOperate").GetComponent<Button>();
-        buttonClear = this.transform.Find("Content").Find("ButtonClear").GetComponent<Button>();
+        Transform content = this.transform.Find("Content");
+        buttonOperate = content.Find("ButtonOperate").GetComponent<Button>();
+        buttonClear = content.Find("ButtonClear").GetComponent<Button>();
+        buttonMaterialRecovery = content.Find("Material").Find("ButtonGroup").Find("ButtonRecovery").GetComponent<Button>();
     }
 
     // private void DataTest()
