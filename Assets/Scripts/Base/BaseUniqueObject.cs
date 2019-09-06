@@ -4,7 +4,7 @@
 /// 抽象类，场景中只存在一个的对象
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class BaseUniqueObject<T> : BaseObject<T> where T : MonoBehaviour
+public abstract class BaseUniqueObject<T> : BaseObject where T : MonoBehaviour
 {
     private static T _instance;
     public static T current

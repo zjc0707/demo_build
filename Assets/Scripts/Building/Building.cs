@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using cakeslice;
 
-public class Building : BaseObject<Building>
+public class Building : BaseObject
 {
     public PanelControllerItemData data;
     public BoxCollider boxCollider;

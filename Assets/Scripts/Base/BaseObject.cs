@@ -1,5 +1,5 @@
 using UnityEngine;
-public abstract class BaseObject<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class BaseObject : MonoBehaviour
 {
     private CenterAndSize _centerAndSize, _centerAndSizeChangeSizeXZ;
     public CenterAndSize centerAndSize

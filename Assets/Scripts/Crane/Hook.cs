@@ -18,12 +18,14 @@ public class Hook : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.gameObject.AddComponent<Rigidbody>().isKinematic = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X) && target != null && !isDown)
+        if (Input.GetKeyDown(KeyCode.X) && target != null
+            && target.gameObject.GetComponent<Crane>() == null && !isDown)
         {
             //拾取
             if (!target.parent.Equals(this.transform))
