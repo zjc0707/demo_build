@@ -22,11 +22,11 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         //点击到ugui上
         if (Input.GetMouseButtonDown(0))
         {
-            Building.LastRecovery();
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
+            Building.LastRecovery();
         }
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
