@@ -20,7 +20,8 @@ public class PanelMaterial : BasePanel<PanelMaterial>
                 Material material = Resources.Load(t.Url) as Material;
                 PanelControl.current.SetTargetMaterial(material);
             });
-            StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
+            // StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
+            clone.Find("Image").GetComponent<Image>().sprite = t.sprite;
             clone.SetParent(baseItem.parent);
         }
 

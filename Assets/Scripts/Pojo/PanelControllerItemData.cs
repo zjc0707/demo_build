@@ -1,6 +1,6 @@
 ﻿public class PanelControllerItemData : BaseItemData
 {
-    public override string Prefix { get { return "Prefabs/"; } }
+    public override string UrlFolder { get { return "Prefabs/"; } }
     /// <summary>
     /// 是否生效building的MyUpdate  0-不可操作；1-可操作
     /// </summary>

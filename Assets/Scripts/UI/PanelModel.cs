@@ -35,7 +35,12 @@ public class PanelModel : BasePanel<PanelModel>
                 // Person.current.Catch(cube.transform);
                 MouseBehaviour.current.Catch(building);
             });
-            StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
+            // StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
+            if (t.sprite == null)
+            {
+                Debug.Log("null:" + t.ImgUrl);
+            }
+            clone.Find("Image").GetComponent<Image>().sprite = t.sprite;
             clone.SetParent(baseItem.parent);
         }
 

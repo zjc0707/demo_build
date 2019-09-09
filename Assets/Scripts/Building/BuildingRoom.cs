@@ -25,7 +25,10 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
         building.transform.SetParent(this.transform);
         buildingList.Add(building);
     }
-
+    /// <summary>
+    /// 统一修改building对象的boxcollider.enable,使放置时不会被挡住位置
+    /// </summary>
+    /// <param name="enable"></param>
     public void SetBuildingsColliderEnable(bool enable)
     {
         foreach (Building building in buildingList)
