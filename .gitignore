@@ -62,13 +62,13 @@ sysinfo.txt
 crashlytics-build.properties
 
 #jc
-1_Data/
-Assets/Perfabs/
-Assets/Plugins/
-Assets/Resources/
-Assets/Scene/
-Assets/Setting/
+# 1_Data/
+# Assets/Perfabs/
+# Assets/Plugins/
+# Assets/Resources/
+# Assets/Scene/
+# Assets/Setting/
 *.meta
-*.dll
-*.asset
-*.txt
+# *.dll
+# *.asset
+# *.txt
