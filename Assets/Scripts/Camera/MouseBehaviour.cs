@@ -1,10 +1,10 @@
+using System.Data;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
 {
     new Camera camera;
-
     public Transform catchParent;
     private Building catchBuilding;
     private Building clickBuilding;
