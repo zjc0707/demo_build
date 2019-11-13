@@ -68,7 +68,7 @@ crashlytics-build.properties
 # Assets/Resources/
 # Assets/Scene/
 # Assets/Setting/
-*.meta
+# *.meta
 # *.dll
 # *.asset
 # *.txt
