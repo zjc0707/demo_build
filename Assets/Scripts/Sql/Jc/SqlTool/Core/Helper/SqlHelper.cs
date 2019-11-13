@@ -26,7 +26,7 @@ namespace Jc.SqlTool.Core.Helper
                     {
                         continue;
                     }
-                    Debug.Log("注入:" + fieldInfo.Column + ":[" + value + "]");
+                    // Debug.Log("注入:" + fieldInfo.Column + ":[" + value + "]");
                     type.GetProperty(fieldInfo.Property).SetValue(entity, value);
                 }
                 rs.Add(entity);

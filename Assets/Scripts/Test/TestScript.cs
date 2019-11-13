@@ -30,11 +30,24 @@ public class TestScript : BaseUniqueObject<TestScript>
         {
             Debug.Log(t);
         }
-        rs = testMapper.Select(new Test());
-        foreach (Test t in rs)
-        {
-            Debug.Log(t);
-        }
+        Test selectByIdRS = testMapper.SelectById(1);
+        Debug.Log(selectByIdRS);
+        // rs = testMapper.Select(new Test());
+        // foreach (Test t in rs)
+        // {
+        //     Debug.Log(t);
+        // }
+        // Test insert = new Test()
+        // {
+        //     Content = "insertWithNull",
+        //     // OtherContent = "other"
+        // };
+        // testMapper.Insert(insert);
+        // rs = testMapper.Select(new Test());
+        // foreach (Test t in rs)
+        // {
+        //     Debug.Log(t);
+        // }
     }
 
     // public void ToStringTest()

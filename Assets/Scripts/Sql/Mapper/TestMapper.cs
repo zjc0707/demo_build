@@ -1,5 +1,5 @@
 using Jc.SqlTool.Core.Mapper;
-public class TestMapper : BaseMapper<Test>
+public class TestMapper : AbstractMapper<Test>
 {
 
 }
