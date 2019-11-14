@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class BuildingUtil
 {
+    private static Dictionary<Transform, Building> buildingCache = new Dictionary<Transform, Building>();
     /// <summary>
     /// 根据centerAndSize添加包围盒
     /// </summary>
@@ -28,11 +29,16 @@ public static class BuildingUtil
     /// <returns></returns>
     public static Building FindBuilding(Transform target)
     {
+        if (buildingCache.ContainsKey(target))
+        {
+            return buildingCache[target];
+        }
         while (target.parent != null)
         {
             Building building = GetComponentBuilding(target);
             if (building != null && target.parent == BuildingRoom.current.transform)
             {
+                buildingCache.Add(target, building);
                 return building;
             }
             target = target.parent;

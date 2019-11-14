@@ -5,8 +5,14 @@ using UnityEngine.EventSystems;
 public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
 {
     new Camera camera;
+    /// <summary>
+    /// 约等于手，生成的或点击的物体都置于其中
+    /// </summary>
     public Transform catchParent;
     private Building catchBuilding;
+    /// <summary>
+    /// 上一次点击对象
+    /// </summary>
     private Building clickBuilding;
     private Vector3 localPosition;
     private readonly double DOUBLE_CLICK_TIME_MILLISECOND = 500;
@@ -27,7 +33,7 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             {
                 return;
             }
-            Building.LastRecovery();
+            BuildingHelper.LastRecovery();
         }
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -71,11 +77,11 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         //点击到其他地方
         if (building == null)
         {
+            PanelControl.current.Close();
             return;
         }
-        //对buildind单击，并记录点击物体
-        clickBuilding = building;
         this.SetPanelControlData(building);
+        // Debug.Log(building.Equals(clickBuilding) + "_" + (building == clickBuilding));
         //双击时间检测，并检测两次点击是否为一个物体
         if (this.IsMouseLeftDoubleClick() && building.Equals(clickBuilding))
         {
@@ -83,6 +89,8 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             this.Catch(building);
             return;
         }
+        //对buildind单击，并记录点击物体
+        clickBuilding = building;
     }
     /// <summary>
     /// 更新面板显示数据，并标记该building为选中
@@ -112,7 +120,7 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
             lastClickDateTime = DateTime.Now;
         }
         TimeSpan ts = DateTime.Now - lastClickDateTime;
-        Debug.Log(ts.TotalMilliseconds);
+        // Debug.Log(ts.TotalMilliseconds);
         lastClickDateTime = DateTime.Now;
         return ts.TotalMilliseconds < DOUBLE_CLICK_TIME_MILLISECOND;
     }

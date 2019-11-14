@@ -1,4 +1,7 @@
-﻿public class PanelControllerItemData : BaseItemData
+﻿/// <summary>
+/// 资源模型的数据类
+/// </summary>
+public class PanelControllerItemData : BaseItemData
 {
     public override string UrlFolder { get { return "Prefabs/"; } }
     /// <summary>

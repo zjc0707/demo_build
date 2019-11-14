@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class PanelMaterial : BasePanel<PanelMaterial>
 {
+    protected override int StackType { get { return UIStackType.LEFT; } }
     public Transform baseItem;
     protected override void _Start()
     {
@@ -20,7 +21,6 @@ public class PanelMaterial : BasePanel<PanelMaterial>
                 Material material = Resources.Load(t.Url) as Material;
                 PanelControl.current.SetTargetMaterial(material);
             });
-            // StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
             clone.Find("Image").GetComponent<Image>().sprite = t.sprite;
             clone.SetParent(baseItem.parent);
         }

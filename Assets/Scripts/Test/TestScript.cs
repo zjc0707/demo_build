@@ -9,7 +9,7 @@ public class TestScript : BaseUniqueObject<TestScript>
 {
     private void Start()
     {
-        SqlTest();
+        // SqlTest();
         // ToStringTest();
     }
 

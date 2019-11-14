@@ -7,10 +7,10 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     public Canvas canvasInit;
     public Canvas canvasOperate;
     public Canvas canvasStatic;
-    private List<GameObject> leftUIList;
 
     private void Awake()
     {
+        //统一关闭按钮样式
         foreach (Image image in this.transform.GetComponentsInChildren<Image>())
         {
             if (image.name == "ButtonClose")
@@ -18,6 +18,7 @@ public class UGUITree : BaseUniqueObject<UGUITree>
                 image.color = new Color(253 / 255f, 97 / 255f, 97 / 255f, 255 / 255f);
             }
         }
+        //统一设置字体
         foreach (Text text in this.transform.GetComponentsInChildren<Text>())
         {
             text.font = ResourceStatic.FONT;
@@ -31,22 +32,5 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         {
             Sport.current.TurnToInit();
         });
-
-        leftUIList = new List<GameObject>{
-            PanelModel.current.gameObject,
-            PanelMaterial.current.gameObject
-        };
     }
-    public void Open(GameObject obj)
-    {
-        if (leftUIList.Contains(obj))
-        {
-            foreach (GameObject o in leftUIList)
-            {
-                o.SetActive(false);
-            }
-        }
-        obj.SetActive(true);
-    }
-
 }

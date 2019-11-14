@@ -6,13 +6,14 @@ using UnityEditor;
 
 public class PanelModel : BasePanel<PanelModel>
 {
+    protected override int StackType { get { return UIStackType.LEFT; } }
     public Transform baseItem;
 
     protected override void _Start()
     {
         Load();
+        base.Open();
     }
-
     private void Load()
     {
         List<PanelControllerItemData> items = PanelControllerItemTest.List;

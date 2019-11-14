@@ -7,8 +7,14 @@ public class Building : BaseObject
 {
     public PanelControllerItemData data;
     public BoxCollider boxCollider;
+    /// <summary>
+    /// 物体对象是否锁定，用于移动或修改数据面板时是否自动定位
+    /// </summary>
+    public bool isLock = true;
+    /// <summary>
+    /// 高亮射线的集合
+    /// </summary>
     private List<Outline> outlineList;
-    // public new Rigidbody rigidbody;
     /// <summary>
     /// 基于世界坐标
     /// </summary>
@@ -34,41 +40,25 @@ public class Building : BaseObject
     /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
     /// </summary>
     private Vector3 posToLeftBackBottom;
-    /// <summary>
-    /// 记录上一个被选中的物体
-    /// </summary>
-    public static Building LastTarget { get; private set; }
-    /// <summary>
-    /// 复原上一个被选中的物体，不存在则直接return
-    /// </summary>
-    public static void LastRecovery()
-    {
-        if (LastTarget == null)
-        {
-            return;
-        }
-        LastTarget.Recovery();
-        LastTarget = null;
-    }
+
+
 
     /// <summary>
     /// 选中物体，恢复上一个被选中的物体，替换选中物体的材质
     /// </summary>
     public void Choose()
     {
-        LastRecovery();
+        BuildingHelper.LastRecovery();
         ShowHighLight();
-        // this.boxCollider.enabled = false;
 
-        LastTarget = this;
+        BuildingHelper.LastTarget = this;
     }
     /// <summary>
     /// 复原物体材质
     /// </summary>
-    private void Recovery()
+    public void Recovery()
     {
         HideHighLight();
-        // this.boxCollider.enabled = true;
     }
     /// <summary>
     /// 放置该物体
@@ -80,12 +70,13 @@ public class Building : BaseObject
         // this.AdjustPosition();
     }
     /// <summary>
-    /// 通过工具类调整物体坐标
+    /// 通过工具类调整物体坐标,未锁定则自由移动
     /// </summary>
     public void AdjustPosition()
     {
+        if (!isLock) return;
         BuildingUtil.AdjustPosition(this);
-        base.DownToFloor();
+        // base.DownToFloor();
     }
     public void Rotate90()
     {

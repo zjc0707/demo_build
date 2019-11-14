@@ -9,6 +9,7 @@ public class PanelControl : BasePanel<PanelControl>
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
     private Button buttonOperate, buttonClear, buttonMaterialRecovery;
+    private Toggle toggleLock;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
@@ -17,16 +18,16 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void _Start()
     {
         Load();
-        this.gameObject.SetActive(false);
+        base.Close();
     }
-    protected override void OnButtonCloseClickSupply()
+    public override void Close()
     {
-        Building.LastRecovery();
+        base.Close();
+        BuildingHelper.LastRecovery();
     }
     public void SetData(Building building)
     {
-        // Debug.Log("更新面板信息：" + building.name);
-        this.gameObject.SetActive(true);
+        base.Open();
 
         targetBuilding = building;
         target = targetBuilding.transform;
@@ -35,6 +36,7 @@ public class PanelControl : BasePanel<PanelControl>
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
         buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
+        toggleLock.isOn = building.isLock;
 
         AddListener();
     }
@@ -77,7 +79,7 @@ public class PanelControl : BasePanel<PanelControl>
         {
             this.rotation.Set(target.localEulerAngles);
         });
-        //按钮点击事件
+        //进入操作模式
         this.buttonOperate.onClick.AddListener(delegate
         {
             Sport.current.TurnToOperate(targetBuilding);
@@ -94,6 +96,15 @@ public class PanelControl : BasePanel<PanelControl>
         this.buttonMaterialRecovery.onClick.AddListener(delegate
         {
             targetBuilding.RecovercyMaterial();
+        });
+        this.toggleLock.onValueChanged.AddListener(delegate
+        {
+            if (target == null)
+            {
+                return;
+            }
+            targetBuilding.isLock = this.toggleLock.isOn;
+            targetBuilding.AdjustPosition();
         });
     }
 
@@ -120,14 +131,6 @@ public class PanelControl : BasePanel<PanelControl>
         buttonOperate = content.Find("ButtonOperate").GetComponent<Button>();
         buttonClear = content.Find("ButtonClear").GetComponent<Button>();
         buttonMaterialRecovery = content.Find("Material").Find("ButtonGroup").Find("ButtonRecovery").GetComponent<Button>();
+        toggleLock = content.Find("Name").Find("Lock").GetComponent<Toggle>();
     }
-
-    // private void DataTest()
-    // {
-    //     objectName.text = "zjc";
-    //     position.Set(1, 2, 3);
-    //     rotation.Set(4, 5, 6);
-    //     scale.Set(7, 8, 9);
-    // }
-
 }
