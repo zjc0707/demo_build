@@ -12,23 +12,31 @@ public static class StringUtil
     {
         try
         {
-            // if (!IsBulitinType(o.GetType())) return o == null;
             if (o == null)
             {
                 return true;
             }
-            if (!IsBulitinType(o.GetType()))
+            // if (!IsBulitinType(o.GetType()))
+            // {
+            //     //自己定义的!=null
+            //     return false;
+            // }
+            // bool flag = string.IsNullOrEmpty(Convert.ToString(o));
+            // if (flag)
+            // {
+            //     //空的字符串
+            //     return true;
+            // }
+            // return Convert.ToInt16(o) == INT_NULL;
+            if (o.GetType() == typeof(string))
             {
-                //自己定义的!=null
-                return false;
+                return string.IsNullOrEmpty(Convert.ToString(o));
             }
-            bool flag = string.IsNullOrEmpty(Convert.ToString(o));
-            if (flag)
+            if (o.GetType() == typeof(int))
             {
-                //空的字符串
-                return true;
+                return Convert.ToInt16(o) == INT_NULL;
             }
-            return Convert.ToInt16(o) == INT_NULL;
+            return false;
         }
         catch
         {
@@ -38,7 +46,7 @@ public static class StringUtil
     }
     public static bool IsBulitinType(Type t)
     {
-        return t == typeof(object) || Type.GetTypeCode(t) != TypeCode.Object;
+        return t == typeof(object) || Type.GetTypeCode(t) != TypeCode.Object || t.Namespace == "UnityEngine";
     }
     /// <summary>
     /// 对象名首字母小写

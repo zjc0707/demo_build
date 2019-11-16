@@ -16,32 +16,19 @@ public class PanelModel : BasePanel<PanelModel>
     }
     private void Load()
     {
-        List<PanelControllerItemData> items = PanelControllerItemTest.List;
-        foreach (PanelControllerItemData t in items)
+        List<ModelData> items = ModelDataTest.List;
+        foreach (ModelData t in items)
         {
             Transform clone = Instantiate(baseItem.gameObject).transform;
             clone.GetComponentInChildren<Text>().text = t.Name;
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
                 Debug.Log(t.Url);
-                GameObject targetObj = Instantiate(Resources.Load(t.Url)) as GameObject;
-                targetObj.name = t.Name;
-                Building building = BuildingUtil.GetComponentBuilding(targetObj.transform);
-                if (building == null)
-                {
-                    building = targetObj.AddComponent<Building>();
-                }
-                building.data = t;
+                Building building = BuildingHelper.Create(t);
                 building.Choose();
-                // Person.current.Catch(cube.transform);
                 MouseBehaviour.current.Catch(building);
             });
-            // StartCoroutine(CoroutineUtil.LoadSprite(clone.Find("Image").GetComponent<Image>(), t));
-            if (t.sprite == null)
-            {
-                Debug.Log("null:" + t.ImgUrl);
-            }
-            clone.Find("Image").GetComponent<Image>().sprite = t.sprite;
+            clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
             clone.SetParent(baseItem.parent);
         }
 

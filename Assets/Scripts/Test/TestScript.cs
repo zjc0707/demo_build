@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using System.Net.Security;
 using System.Collections.Generic;
@@ -5,12 +6,63 @@ using System;
 using System.Reflection;
 using System.Data;
 using UnityEngine;
+using UnityEngine.UI;
 public class TestScript : BaseUniqueObject<TestScript>
 {
     private void Start()
     {
         // SqlTest();
-        // ToStringTest();
+        ToStringTest();
+        // FileTest();
+        // Debug.Log(SceneService.current.Test());
+        // Debug.Log(StringUtil.IsNullOrEmpty(null));
+    }
+    public void ToStringTest()
+    {
+        // SenceSaveData saveData = new SenceSaveData()
+        // {
+        //     CameraTransformGroup = TransformGroupUtil.ToSaveData(MyCamera.current.transformGroup),
+        //     BuildingRoomSaveData = new BuildingRoomSaveData(),
+        //     FloorSaveData = new FloorSaveData()
+        // };
+        // saveData.FloorSaveData.X = Floor.current.x;
+        // saveData.FloorSaveData.Z = Floor.current.z;
+        // List<BuildingSaveData> buildingSaveDatas = new List<BuildingSaveData>();
+        // buildingSaveDatas.Add(new BuildingSaveData()
+        // {
+        //     ModelDataId = 1,
+        //     IsLock = true,
+        //     TransformGroup = TransformGroupSaveData.Zero()
+        // });
+        // saveData.BuildingRoomSaveData.BuildingSaveDatas = buildingSaveDatas;
+        // // Debug.Log(new Vector3SaveData(1, 1, 1));
+        // Debug.Log(saveData.CameraTransformGroup);
+        // Debug.Log(saveData);
+        TestData test = new TestData()
+        {
+            Str = "test",
+            array = new int[] { 1, 2, 3, 4 }
+        };
+        // object array = test.array;
+        // Type t = array.GetType();
+        // Debug.Log(t.IsArray);
+        // int length = Convert.ToInt32(t.GetProperty("Length").GetValue(array));
+        // Debug.Log(length);
+        // Array rs = (Array)array;
+        // Debug.Log(rs.Length);
+        // for (int i = 0; i < rs.Length; i++)
+        // {
+        //     Debug.Log(rs.GetValue(i));
+        // }
+        Debug.Log(test);
+    }
+    public void FileTest()
+    {
+        // GameObject.Find("ButtonModel").GetComponent<Button>().onClick.AddListener(delegate
+        // {
+
+        // });
+        FileUtil.Save("123", "content");
     }
 
     public void SqlTest()
@@ -24,13 +76,12 @@ public class TestScript : BaseUniqueObject<TestScript>
         {
             Id = 1
         };
-        TestMapper testMapper = new TestMapper();
-        List<Test> rs = testMapper.Select(test);
+        List<Test> rs = TestService.current.Select();
         foreach (Test t in rs)
         {
             Debug.Log(t);
         }
-        Test selectByIdRS = testMapper.SelectById(1);
+        Test selectByIdRS = TestService.current.SelectById(1);
         Debug.Log(selectByIdRS);
         // rs = testMapper.Select(new Test());
         // foreach (Test t in rs)
@@ -49,53 +100,5 @@ public class TestScript : BaseUniqueObject<TestScript>
         //     Debug.Log(t);
         // }
     }
-
-    // public void ToStringTest()
-    // {
-    //     // Test test = new Test();
-    //     // Debug.Log(test.ToString());
-    //     // test.Id = 1;
-    //     // Debug.Log(test.ToString());
-    //     // test.Content = "jcjcj";
-    //     // Debug.Log(test.ToString());
-
-    //     // Debug.Log(test.GetType().Name);
-    //     // Debug.Log(test.GetType().GUID);
-    //     // BaseModel baseModel = new BaseModel();
-    //     // Debug.Log(baseModel.GetType().Name);
-    //     // Debug.Log(baseModel.GetType().GUID);
-
-    //     // List<WhereInfo> whereList = new List<WhereInfo>();
-    //     // whereList.Add(WhereInfoHelper.Eq("int", 123));
-    //     // whereList.Add(WhereInfoHelper.Ge("string", "string"));
-    //     // Debug.Log(string.Join(" AND ", whereList));
-    //     Parameter parameter = new Parameter()
-    //     {
-    //         Param = "param0",
-    //         Value = "value0"
-    //     };
-    //     List<Parameter> parameters = new List<Parameter>();
-    //     parameters.Add(new Parameter()
-    //     {
-    //         Param = "param1",
-    //         Value = "value1"
-    //     });
-    //     parameters.Add(new Parameter()
-    //     {
-    //         Param = "param2",
-    //         Value = "value2"
-    //     });
-    //     List<String> ss = new List<string>();
-    //     ss.Add("hah");
-    //     MyCommand myCommand = new MyCommand()
-    //     {
-    //         CommandText = "123",
-    //         Parameters = parameters
-    //     };
-    //     // Debug.Log(parameter.ToString());
-    //     // Debug.Log(parameters.ToString());
-    //     // Debug.Log(myCommand.GetType().Name);
-    //     Debug.Log(myCommand);
-    // }
 
 }

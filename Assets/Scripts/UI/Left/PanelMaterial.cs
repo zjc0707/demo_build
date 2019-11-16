@@ -11,8 +11,8 @@ public class PanelMaterial : BasePanel<PanelMaterial>
     }
     private void Load()
     {
-        List<PanelMaterialItemData> items = PanelMaterialItemDataTest.List;
-        foreach (PanelMaterialItemData t in items)
+        List<MaterialData> items = MaterialDataTest.List;
+        foreach (MaterialData t in items)
         {
             Transform clone = Instantiate(baseItem.gameObject).transform;
             clone.GetComponentInChildren<Text>().text = t.Name;
@@ -21,7 +21,7 @@ public class PanelMaterial : BasePanel<PanelMaterial>
                 Material material = Resources.Load(t.Url) as Material;
                 PanelControl.current.SetTargetMaterial(material);
             });
-            clone.Find("Image").GetComponent<Image>().sprite = t.sprite;
+            clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
             clone.SetParent(baseItem.parent);
         }
 

@@ -17,9 +17,29 @@ public abstract class BaseUniqueObject<T> : BaseObject where T : MonoBehaviour
             }
             if (_instance == null)
             {
+                GameObject obj = new GameObject(typeof(T).Name);
+                obj.transform.position = Vector3.zero;
+                obj.transform.SetParent(Unique.transform);
+                _instance = obj.AddComponent<T>();
+            }
+            if (_instance == null)
+            {
                 throw new System.NullReferenceException("not found");
             }
             return _instance;
+        }
+    }
+    private static GameObject unique;
+    private static GameObject Unique
+    {
+        get
+        {
+            if (unique == null)
+            {
+                unique = new GameObject("Unique");
+                unique.transform.position = Vector3.zero;
+            }
+            return unique;
         }
     }
 

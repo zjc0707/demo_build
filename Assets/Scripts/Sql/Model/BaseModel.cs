@@ -1,6 +1,6 @@
 using Jc.SqlTool.Core.Attribute;
-using Jc.SqlTool.Core.Base;
-public class BaseModel : AbstractObject
+using Jc.ToStringTool;
+public class BaseModel : AbstractToStringObject
 {
     private int id = StringUtil.INT_NULL;
 
@@ -15,5 +15,9 @@ public class BaseModel : AbstractObject
         {
             id = value;
         }
+    }
+    public BaseModel()
+    {
+
     }
 }

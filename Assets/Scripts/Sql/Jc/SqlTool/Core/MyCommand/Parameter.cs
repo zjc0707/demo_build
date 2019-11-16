@@ -1,7 +1,7 @@
 namespace Jc.SqlTool.Core.MyCommand
 {
-    using Core.Base;
-    public class Parameter : AbstractObject
+    using ToStringTool;
+    public class Parameter : AbstractToStringObject
     {
         public string Param { get; set; }
         public object Value { get; set; }

@@ -1,33 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEditor;
-public abstract class BaseItemData
+using Jc.SqlTool.Core.Attribute;
+public abstract class BaseItemData : BaseModel
 {
-    public string Name { get; private set; }
-    public string Url
-    {
-        get; private set;
-    }
+    public string Name { get; set; }
+    private string url;
+    public string Url { get { return UrlFolder + url; } set { this.url = value; } }
+    [Assistant]
     public abstract string UrlFolder { get; }
-    public readonly string ImgFolder = "Image/";
-    public string ImgUrl { get { return ImgFolder + Url; } }
-    private Sprite _sprite;
-    public Sprite sprite
+    public BaseItemData(int id, string name, string url)
     {
-        get
-        {
-            if (_sprite == null)
-            {
-                // _sprite = Resources.Load(ImgUrl) as Sprite;
-                _sprite = Resources.Load<Sprite>(ImgUrl);
-            }
-            return _sprite;
-        }
-    }
-    public BaseItemData(string name, string url)
-    {
+        base.Id = id;
         this.Name = name;
-        this.Url = this.UrlFolder + url;
+        this.Url = url;
+    }
+    public BaseItemData()
+    {
+
     }
 }

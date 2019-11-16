@@ -1,10 +1,10 @@
 namespace Jc.SqlTool.Core.MyCommand
 {
-    using Core.Base;
+    using ToStringTool;
     using Core.Metadata.SqlInfo;
     using System.Collections.Generic;
     using Helper;
-    public class MyCommand : AbstractObject
+    public class MyCommand : AbstractToStringObject
     {
         public string CommandText { get; set; }
         public List<Parameter> Parameters { get; set; }

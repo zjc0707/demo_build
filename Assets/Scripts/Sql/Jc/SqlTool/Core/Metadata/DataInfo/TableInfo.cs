@@ -18,6 +18,10 @@ namespace Jc.SqlTool.Core.Metadata.DataInfo
             bool existId = false;
             foreach (PropertyInfo info in type.GetProperties())
             {
+                if (info.GetCustomAttribute<Assistant>(true) != null)
+                {
+                    continue;
+                }
                 string column = StringUtil.CamelToUnderline(info.Name);
                 Id id = info.GetCustomAttribute<Id>(true);
                 if (id != null)

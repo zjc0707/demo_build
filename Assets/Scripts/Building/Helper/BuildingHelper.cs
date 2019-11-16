@@ -1,10 +1,10 @@
+using UnityEngine;
 public static class BuildingHelper
 {
     /// <summary>
     /// 记录上一个被选中的物体
     /// </summary>
     public static Building LastTarget { get; set; }
-
     /// <summary>
     /// 复原上一个被选中的物体，不存在则直接return
     /// </summary>
@@ -16,5 +16,36 @@ public static class BuildingHelper
         }
         LastTarget.Recovery();
         LastTarget = null;
+    }
+    public static Building Create(ModelData data)
+    {
+        GameObject obj = CreateGameObjcet(data);
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform);
+        if (building == null)
+        {
+            building = obj.AddComponent<Building>();
+        }
+        building.data = data;
+        return building;
+    }
+    public static Building Create(BuildingSaveData data)
+    {
+        ModelData modelData = ModelDataTest.Find(data.ModelDataId);
+        GameObject obj = CreateGameObjcet(modelData);
+        TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform);
+        if (building == null)
+        {
+            building = obj.AddComponent<Building>();
+        }
+        building.data = modelData;
+        building.isLock = data.IsLock;
+        return building;
+    }
+    private static GameObject CreateGameObjcet(ModelData data)
+    {
+        GameObject obj = GameObject.Instantiate(Resources.Load(data.Url)) as GameObject;
+        obj.name = data.Name;
+        return obj;
     }
 }

@@ -17,7 +17,6 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     {
         if (StackType != UIStackType.NULL)
         {
-            Debug.Log("close:type:" + StackType);
             UIStackDic.Close(StackType);
         }
         else
@@ -29,7 +28,6 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     {
         if (StackType != UIStackType.NULL)
         {
-            Debug.Log("open:type:" + StackType);
             UIStackDic.Open(StackType, this.gameObject);
         }
         else

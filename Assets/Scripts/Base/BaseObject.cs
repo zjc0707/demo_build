@@ -38,7 +38,8 @@ public abstract class BaseObject : MonoBehaviour
     {
         get
         {
-            return new TransformGroup(this.transform.position, this.transform.eulerAngles);
+            // return new TransformGroup(this.transform.position, this.transform.eulerAngles);
+            return new TransformGroup(this.transform);
         }
     }
     /// <summary>

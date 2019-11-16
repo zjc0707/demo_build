@@ -32,9 +32,7 @@ public class PanelEditFloor : BasePanel<PanelEditFloor>
 
     private void Edit(int x, int z)
     {
-        Floor.current.x = x;
-        Floor.current.z = z;
-        Floor.current.Load();
+        Floor.current.Load(x, z);
         base.Close();
     }
 }

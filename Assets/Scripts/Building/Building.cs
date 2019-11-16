@@ -5,7 +5,7 @@ using cakeslice;
 
 public class Building : BaseObject
 {
-    public PanelControllerItemData data;
+    public ModelData data;
     public BoxCollider boxCollider;
     /// <summary>
     /// 物体对象是否锁定，用于移动或修改数据面板时是否自动定位
@@ -155,7 +155,6 @@ public class Building : BaseObject
         LoadSizeAndPosToLeftFront();
         boxCollider = BuildingUtil.AddBoxCollider(this);
         outlineList = new List<Outline>();
-        //outline = this.transform.gameObject.AddComponent<Outline>();
         foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
         {
             outlineList.Add(mesh.gameObject.AddComponent<Outline>());

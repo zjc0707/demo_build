@@ -1,13 +1,17 @@
+using System;
 namespace Jc.SqlTool.Core.Mapper
 {
     using System.Collections.Generic;
     using Toolkit;
-    using Base;
     using Query;
     using Helper;
 
     public class BaseMapper<T> where T : class
     {
+        public string Test()
+        {
+            return "mapper";
+        }
         public T SelectOne(T entity)
         {
             return SelectOne(Wrappers.Query(entity));

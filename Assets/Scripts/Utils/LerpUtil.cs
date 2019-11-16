@@ -6,8 +6,8 @@ public class LerpUtil
     {
         timeGroup.Add(deltaTime);
         float rate = timeGroup.rate;
-        target.position = Vector3.Lerp(start.position, end.position, rate);
-        target.eulerAngles = Vector3.Lerp(start.eulerAngles, end.eulerAngles, rate);
+        target.position = Vector3.Lerp(start.Position, end.Position, rate);
+        target.eulerAngles = Vector3.Lerp(start.EulerAngles, end.EulerAngles, rate);
         if (endCall != null)
         {
             endCall();

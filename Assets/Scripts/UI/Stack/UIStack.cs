@@ -6,7 +6,7 @@ public class UIStack : Stack<GameObject>
     {
         if (base.Count == 0) return;
         base.Peek().SetActive(isActive);
-        Debug.Log(base.Peek().name + ".setActive:" + isActive);
+        // Debug.Log(base.Peek().name + ".setActive:" + isActive);
     }
     public new void Push(GameObject obj)
     {

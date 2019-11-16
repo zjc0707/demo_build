@@ -1,4 +1,4 @@
-namespace Jc.SqlTool.Core.Base
+namespace Jc.ToStringTool
 {
     using System;
     using System.Text;
@@ -6,7 +6,7 @@ namespace Jc.SqlTool.Core.Base
     /// <summary>
     /// 通过反射自动实现ToString()
     /// </summary>
-    public abstract class AbstractObject
+    public abstract class AbstractToStringObject
     {
         public override string ToString()
         {
@@ -17,7 +17,7 @@ namespace Jc.SqlTool.Core.Base
         }
         private void Deep(StringBuilder sb, object value, PropertyInfo propertyInfo, bool endWithComma)
         {
-            if (StringUtil.IsNullOrEmpty(value))
+            if (value == null || StringUtil.IsNullOrEmpty(value))
             {
                 if (!endWithComma && sb.Length >= 2)
                 {
@@ -28,7 +28,7 @@ namespace Jc.SqlTool.Core.Base
             Type type = value.GetType();
             if (propertyInfo != null)
             {
-                sb.AppendFormat("{0}({1})=", propertyInfo.Name, propertyInfo.PropertyType.Name);
+                sb.AppendFormat("\"{0}({1})\"=", propertyInfo.Name, propertyInfo.PropertyType.Name);
             }
             if (type.IsGenericType)
             {
@@ -38,6 +38,16 @@ namespace Jc.SqlTool.Core.Base
                 {
                     object item = type.GetProperty("Item").GetValue(value, new object[] { i });
                     Deep(sb, item, null, i < count - 1);
+                }
+                sb.Append("]");
+            }
+            else if (type.IsArray)
+            {
+                sb.Append("[");
+                Array array = (Array)value;
+                for (int i = 0; i < array.Length; ++i)
+                {
+                    Deep(sb, array.GetValue(i), null, i < array.Length - 1);
                 }
                 sb.Append("]");
             }
