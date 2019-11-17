@@ -15,9 +15,12 @@ namespace Jc.SqlTool.Core.MyCommand.Helper
         public static List<Parameter> Parse(List<WhereInfo> whereInfos)
         {
             List<Parameter> rs = new List<Parameter>();
-            foreach (WhereInfo wi in whereInfos)
+            if (whereInfos != null)
             {
-                rs.Add(Parse(wi));
+                foreach (WhereInfo wi in whereInfos)
+                {
+                    rs.Add(Parse(wi));
+                }
             }
             return rs;
         }

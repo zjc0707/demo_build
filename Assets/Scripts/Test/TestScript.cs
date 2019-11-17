@@ -6,13 +6,14 @@ using System;
 using System.Reflection;
 using System.Data;
 using UnityEngine;
+using Jc.SqlTool.Core.Page;
 using UnityEngine.UI;
 public class TestScript : BaseUniqueObject<TestScript>
 {
     private void Start()
     {
-        // SqlTest();
-        ToStringTest();
+        SqlTest();
+        // ToStringTest();
         // FileTest();
         // Debug.Log(SceneService.current.Test());
         // Debug.Log(StringUtil.IsNullOrEmpty(null));
@@ -62,43 +63,29 @@ public class TestScript : BaseUniqueObject<TestScript>
         // {
 
         // });
-        FileUtil.Save("123", "content");
+        // FileUtil.Save("123", "content");
     }
 
     public void SqlTest()
     {
-        // SqlAccess sqlAccess = new SqlAccess();
-        // DataTable table = sqlAccess.ExecuteQuery("select * from test");
-        // Debug.Log(table.Rows[0][1].ToString());
-        // Debug.Log(table.ToString());
-
-        Test test = new Test()
-        {
-            Id = 1
-        };
-        List<Test> rs = TestService.current.Select();
-        foreach (Test t in rs)
-        {
-            Debug.Log(t);
-        }
-        Test selectByIdRS = TestService.current.SelectById(1);
-        Debug.Log(selectByIdRS);
-        // rs = testMapper.Select(new Test());
-        // foreach (Test t in rs)
+        // List<Test> list = new List<Test>();
+        // Debug.Log(list.GetType().Namespace);
+        // Debug.Log(StringUtil.IsBulitinType(list.GetType()));
+        // Test test = new Test()
         // {
-        //     Debug.Log(t);
-        // }
-        // Test insert = new Test()
-        // {
-        //     Content = "insertWithNull",
-        //     // OtherContent = "other"
+        //     Id = 1
         // };
-        // testMapper.Insert(insert);
-        // rs = testMapper.Select(new Test());
+        // List<Test> rs = TestService.current.Select();
         // foreach (Test t in rs)
         // {
         //     Debug.Log(t);
         // }
+        // Test selectByIdRS = TestService.current.SelectById(1);
+        // Debug.Log(selectByIdRS);
+        // Debug.Log(TestService.current.Count());
+        Page<Test> page = new Page<Test>(0, 10);
+        Debug.Log(TestService.current.Select(page));
+        // Debug.Log(page);
     }
 
 }

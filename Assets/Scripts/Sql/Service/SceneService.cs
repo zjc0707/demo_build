@@ -1,8 +1,26 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Jc.SqlTool.Core.Toolkit;
 public class SceneService : BaseService<Scene, SceneMapper, SceneService>
 {
+    public void Load(int id)
+    {
+        Scene scene = this.SelectContentById(id);
+        string json = System.Text.Encoding.UTF8.GetString(scene.Content);
+        Debug.Log(json);
+        SenceSaveData saveData = Json.Parse<SenceSaveData>(json);
+        //--floor
+        Floor.current.Load(saveData.FloorSaveData.X, saveData.FloorSaveData.Z);
+        //--building
+        BuildingRoom.current.buildingList.Clear();
+        foreach (BuildingSaveData data in saveData.BuildingRoomSaveData.BuildingSaveDatas)
+        {
+            BuildingRoom.current.Add(BuildingHelper.Create(data));
+        }
+        //--camera
+        MyCamera.current.MoveAnim(TransformGroupUtil.Parse(saveData.CameraTransformGroup));
+    }
     public void Save(string name)
     {
         SenceSaveData saveData = new SenceSaveData()
@@ -35,5 +53,17 @@ public class SceneService : BaseService<Scene, SceneMapper, SceneService>
         };
         Debug.Log(scene);
         base.Insert(scene);
+    }
+    public List<Scene> SelectList()
+    {
+        return base.Mapper.Select(Wrappers.Query(new Scene()).Select("id", "name", "deploy_time"));
+    }
+    public Scene SelectContentById(int id)
+    {
+        Scene scene = new Scene()
+        {
+            Id = id
+        };
+        return base.Mapper.SelectOne(Wrappers.Query(scene).Select("content"));
     }
 }

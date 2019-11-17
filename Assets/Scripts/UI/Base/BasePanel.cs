@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
 {
-    private Button buttonClose;
+    public Button buttonClose;
     public Button buttonLink;
     protected virtual int StackType { get { return UIStackType.NULL; } }
     /// <summary>
@@ -24,6 +24,13 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    public void Clear()
+    {
+        if (StackType != UIStackType.NULL)
+        {
+            UIStackDic.Clear(StackType);
+        }
+    }
     public virtual void Open()
     {
         if (StackType != UIStackType.NULL)
@@ -39,14 +46,17 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     void Start()
     {
         this.gameObject.SetActive(false);
-        if (buttonClose == null)
+        if (buttonClose == null && this.transform.Find("Top") != null)
         {
             buttonClose = this.transform.Find("Top").Find("ButtonClose").GetComponent<Button>();
         }
-        buttonClose.onClick.AddListener(delegate
+        if (buttonClose != null)
         {
-            this.Close();
-        });
+            buttonClose.onClick.AddListener(delegate
+            {
+                this.Close();
+            });
+        }
 
         if (buttonLink != null)
         {

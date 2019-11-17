@@ -19,6 +19,10 @@ public class Floor : BaseUniqueObject<Floor>
     }
     public void Load(int x, int z)
     {
+        if (x == this.x && z == this.z)
+        {
+            return;
+        }
         this.x = x;
         this.z = z;
         this.Load();

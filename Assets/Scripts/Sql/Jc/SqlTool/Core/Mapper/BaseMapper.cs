@@ -5,6 +5,7 @@ namespace Jc.SqlTool.Core.Mapper
     using Toolkit;
     using Query;
     using Helper;
+    using Page;
 
     public class BaseMapper<T> where T : class
     {
@@ -32,6 +33,18 @@ namespace Jc.SqlTool.Core.Mapper
         public List<T> Select(QueryWrapper<T> queryWrapper)
         {
             return SqlHelper.GetResult<T>(queryWrapper.ToSelect());
+        }
+        public Page<T> Select(Page<T> page)
+        {
+            return Select(Wrappers.Query(System.Activator.CreateInstance<T>()), page);
+        }
+        public Page<T> Select(T entity, Page<T> page)
+        {
+            return Select(Wrappers.Query(entity), page);
+        }
+        public Page<T> Select(QueryWrapper<T> queryWrapper, Page<T> page)
+        {
+            return SqlHelper.GetResult<T>(queryWrapper.ToSelect(), page);
         }
         public bool Insert(T entity)
         {
@@ -64,6 +77,10 @@ namespace Jc.SqlTool.Core.Mapper
         public bool Delete(QueryWrapper<T> queryWrapper)
         {
             return SqlHelper.GetNonQueryResult(queryWrapper.ToDelete());
+        }
+        public int Count()
+        {
+            return SqlHelper.Count<T>();
         }
     }
 }

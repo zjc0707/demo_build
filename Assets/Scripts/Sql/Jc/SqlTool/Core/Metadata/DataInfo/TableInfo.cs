@@ -10,6 +10,7 @@ namespace Jc.SqlTool.Core.Metadata.DataInfo
         public string TableName { get; set; }
         public List<TableFieldInfo> TableFieldInfoList { get; set; }
         public string AllSqlSelect { get; set; }
+        public TableFieldInfo Key { get; private set; }
         public TableInfo(Type type)
         {
             this.TableName = StringUtil.CamelToUnderline(type.Name);
@@ -28,7 +29,8 @@ namespace Jc.SqlTool.Core.Metadata.DataInfo
                 {
                     //找到Id并置顶
                     existId = true;
-                    this.TableFieldInfoList.Insert(0, new TableFieldInfo(column, info.Name));
+                    Key = new TableFieldInfo(column, info.Name, true);
+                    this.TableFieldInfoList.Insert(0, Key);
                     sb.Insert(0, string.Format("{0},", string.IsNullOrEmpty(id.Value) ? column : id.Value));
                 }
                 else

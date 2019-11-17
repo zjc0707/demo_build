@@ -10,6 +10,14 @@ public static class UIStackDic
     {
         stackDic[key].Pop();
     }
+    /// <summary>
+    /// 关闭当前并清除整个栈
+    /// </summary>
+    /// <param name="key"></param>
+    public static void Clear(int key)
+    {
+        stackDic[key].Clear();
+    }
     public static void Open(int key, GameObject obj)
     {
         if (!stackDic.ContainsKey(key))

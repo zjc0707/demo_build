@@ -31,6 +31,11 @@ namespace Jc.SqlTool.Core.Access
         public DataTable ExecuteQuery(MyCommand myCmd)
         {
             DataTable rs = null;
+            //可能上次操作关闭失败，先关闭再打开避免后面操作卡住
+            if (mySqlConnection.State == ConnectionState.Open)
+            {
+                mySqlConnection.Close();
+            }
             try
             {
                 mySqlConnection.Open();

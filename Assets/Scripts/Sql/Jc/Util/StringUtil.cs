@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Text;
 using System;
 public static class StringUtil
 {
-    public const int INT_NULL = Int16.MinValue;
+    // public const int INT_NULL = Int16.MinValue;
+    public const int INT_NULL = 0;
     /// <summary>
     /// 通过将类型转为string判断是否为空
     /// </summary>
@@ -36,6 +38,19 @@ public static class StringUtil
             {
                 return Convert.ToInt16(o) == INT_NULL;
             }
+            if (o.GetType() == typeof(long))
+            {
+                return Convert.ToInt64(o) == INT_NULL;
+            }
+            if (o.GetType() == typeof(float))
+            {
+                return (int)Convert.ToSingle(o) == INT_NULL;
+            }
+            if (o.GetType() == typeof(double))
+            {
+                return (int)Convert.ToDouble(o) == INT_NULL;
+            }
+
             return false;
         }
         catch
@@ -46,7 +61,9 @@ public static class StringUtil
     }
     public static bool IsBulitinType(Type t)
     {
-        return t == typeof(object) || Type.GetTypeCode(t) != TypeCode.Object || t.Namespace == "UnityEngine";
+        return t == typeof(object)
+        || Type.GetTypeCode(t) != TypeCode.Object
+        || (t.Namespace != null && (t.Namespace.Contains("System.") || t.Namespace == "UnityEngine"));
     }
     /// <summary>
     /// 对象名首字母小写

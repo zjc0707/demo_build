@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Jc.SqlTool.Core.Page;
 //三个泛型参数最后一个S用于生成S脚本挂在unique gameObject上
 //若直接用BaseService<T, M>，则子类定义的方法无法被使用
 //也可以用IOC的方法实现该功能，目前这样用起来更方便
@@ -35,9 +36,17 @@ public abstract class BaseService<T, M, S> : BaseUniqueObject<S>
     {
         return Mapper.Select();
     }
+    public Page<T> Select(Page<T> page)
+    {
+        return Mapper.Select(page);
+    }
     public List<T> Select(T entity)
     {
         return Mapper.Select(entity);
+    }
+    public Page<T> Select(T entity, Page<T> page)
+    {
+        return Mapper.Select(entity, page);
     }
     public bool Insert(T entity)
     {
@@ -59,5 +68,9 @@ public abstract class BaseService<T, M, S> : BaseUniqueObject<S>
     public bool Delete(T entity)
     {
         return Mapper.Delete(entity);
+    }
+    public int Count()
+    {
+        return Mapper.Count();
     }
 }

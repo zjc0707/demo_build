@@ -1,6 +1,7 @@
 namespace Jc.SqlTool.Core.Query
 {
     using Helper;
+    using Page;
     public class QueryWrapper<T> : AbstractWrapper<T>
     {
         public QueryWrapper(T entity)
@@ -8,6 +9,10 @@ namespace Jc.SqlTool.Core.Query
             base.entity = entity;
             base.entityType = entity.GetType();
             base.tableInfo = TableInfoHelper.GetTableInfo(base.entityType);
+        }
+        public QueryWrapper<T> Page(Page<T> page)
+        {
+            return this.Limit(page.StartIndex * page.PageSize, page.PageSize);
         }
         public QueryWrapper<T> Select(params string[] columns)
         {
