@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 唯一对象，存放所有放置建筑的父类
+/// 存放所有放置建筑的父类
 /// </summary>
 public class BuildingRoom : BaseUniqueObject<BuildingRoom>
 {
-    public List<Building> buildingList;
+    public List<Building> buildingList = new List<Building>();
     // Use this for initialization
     void Start()
     {
@@ -28,6 +28,14 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
     {
         buildingList.Remove(building);
         GameObject.DestroyImmediate(building.gameObject);
+    }
+    public new void Reset()
+    {
+        foreach (Building building in buildingList)
+        {
+            GameObject.DestroyImmediate(building.gameObject);
+        }
+        buildingList.Clear();
     }
     /// <summary>
     /// 统一修改building对象的boxcollider.enable,使放置时不会被挡住位置

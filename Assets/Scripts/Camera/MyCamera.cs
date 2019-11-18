@@ -11,9 +11,9 @@ public class MyCamera : BaseUniqueObject<MyCamera>
     private bool isAnim = false;
     private TimeGroup timeGroup = new TimeGroup(0.5f);
     // Use this for initialization
-    void Start()
+    void Awake()
     {
-
+        this.Reset();
     }
 
     // Update is called once per frame

@@ -10,6 +10,9 @@ public class PanelStart : BasePanel<PanelStart>
         buttonCreate.onClick.AddListener(delegate
         {
             UGUITree.current.CloseStart();
+            Floor.current.Reset();
+            MyCamera.current.Reset();
+            BuildingRoom.current.Reset();
         });
         buttonLoad.onClick.AddListener(delegate
         {

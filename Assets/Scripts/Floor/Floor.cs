@@ -15,7 +15,6 @@ public class Floor : BaseUniqueObject<Floor>
         this.transform.localScale = new Vector3(x, z, 1);
         this.transform.localPosition = new Vector3(x / 2f, 0, z / 2f);
         FloorTile.current.Load();
-        MyCamera.current.Reset();
     }
     public void Load(int x, int z)
     {
@@ -27,6 +26,9 @@ public class Floor : BaseUniqueObject<Floor>
         this.z = z;
         this.Load();
     }
-
+    public new void Reset()
+    {
+        Load(10, 11);
+    }
 
 }
