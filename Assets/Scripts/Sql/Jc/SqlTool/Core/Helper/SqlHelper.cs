@@ -45,9 +45,10 @@ namespace Jc.SqlTool.Core.Helper
                     {
                         value = row[fieldInfo.Column];
                     }
-                    catch (ArgumentException e)
+                    // catch (ArgumentException e)
+                    catch
                     {
-                        Debug.Log(e.ToString());
+                        // Debug.Log(e.ToString());
                         continue;
                     }
 

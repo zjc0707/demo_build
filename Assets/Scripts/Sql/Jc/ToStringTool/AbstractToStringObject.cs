@@ -27,7 +27,7 @@ namespace Jc.ToStringTool
                 return;
             }
             Type type = value.GetType();
-            Debug.Log(type.Name);
+            // Debug.Log(type.Name);
             if (propertyInfo != null)
             {
                 sb.AppendFormat("\"{0}({1})\"=", propertyInfo.Name, propertyInfo.PropertyType.Name);

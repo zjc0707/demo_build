@@ -43,9 +43,14 @@ namespace Jc.SqlTool.Core.Query
             base.limitInfo.Count = count;
             return this;
         }
-        public QueryWrapper<T> OrderBy(string param)
+        public QueryWrapper<T> OrderBy(string column)
         {
-            base.orderByInfo.Param = param;
+            base.orderByInfo.OrderBy(column);
+            return this;
+        }
+        public QueryWrapper<T> OrderByDesc(string column)
+        {
+            base.orderByInfo.OrderByDesc(column);
             return this;
         }
     }

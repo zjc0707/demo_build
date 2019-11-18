@@ -6,6 +6,7 @@ namespace Jc.SqlTool.Core.Condition
         public const string WHERE_EQ = "{0} = @{0}";
         public const string LIMIT = "LIMIT {0},{1} ";
         public const string ORDERBY = "ORDER BY {0} ";
+        public const string ORDERBY_DESC = "ORDER BY {0} DESC ";
         public const string SELECT = "SELECT {0} FROM {1} WHERE {2} ";
         public const string INSERT = "INSERT INTO {0}({1}) VALUES({2}) ";
         public const string UPDATE = "UPDATE {0} SET ({1}) WHERE {2} ";

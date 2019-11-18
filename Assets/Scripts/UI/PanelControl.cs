@@ -90,7 +90,7 @@ public class PanelControl : BasePanel<PanelControl>
             {
                 return;
             }
-            DestroyImmediate(target.gameObject);
+            BuildingRoom.current.Remove(targetBuilding);
             base.Close();
         });
         this.buttonMaterialRecovery.onClick.AddListener(delegate

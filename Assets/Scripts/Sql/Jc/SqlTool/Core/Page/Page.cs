@@ -28,7 +28,16 @@ namespace Jc.SqlTool.Core.Page
         /// 总页数
         /// </summary>
         /// <returns></returns>
-        public int PageCount { get { return (int)(Count * 1.0f / PageSize + 0.5f); } }
+        public int PageCount
+        {
+            get
+            {
+                float f = Count * 1.0f / PageSize;
+                int i = (int)f;
+
+                return f > (float)i ? i + 1 : i;
+            }
+        }
         /// <summary>
         /// 是否为最后一页
         /// 由于startIndex从0开始计数，PageCount最小为1，需要+1

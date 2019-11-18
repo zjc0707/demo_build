@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using Jc.SqlTool.Core.Toolkit;
+using Jc.SqlTool.Core.Page;
 public class SceneService : BaseService<Scene, SceneMapper, SceneService>
 {
     public void Load(int id)
@@ -54,9 +55,9 @@ public class SceneService : BaseService<Scene, SceneMapper, SceneService>
         Debug.Log(scene);
         base.Insert(scene);
     }
-    public List<Scene> SelectList()
+    public Page<Scene> Page(Page<Scene> page)
     {
-        return base.Mapper.Select(Wrappers.Query(new Scene()).Select("id", "name", "deploy_time"));
+        return base.Mapper.Select(Wrappers.Query(new Scene()).Select("id", "name", "deploy_time").OrderByDesc("deploy_time"), page);
     }
     public Scene SelectContentById(int id)
     {

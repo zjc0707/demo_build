@@ -24,7 +24,7 @@ namespace Jc.SqlTool.Core.Mapper
         }
         public List<T> Select()
         {
-            return Select(Wrappers.Query(System.Activator.CreateInstance<T>()));
+            return Select(System.Activator.CreateInstance<T>());
         }
         public List<T> Select(T entity)
         {
@@ -36,7 +36,7 @@ namespace Jc.SqlTool.Core.Mapper
         }
         public Page<T> Select(Page<T> page)
         {
-            return Select(Wrappers.Query(System.Activator.CreateInstance<T>()), page);
+            return Select(System.Activator.CreateInstance<T>(), page);
         }
         public Page<T> Select(T entity, Page<T> page)
         {
@@ -44,7 +44,7 @@ namespace Jc.SqlTool.Core.Mapper
         }
         public Page<T> Select(QueryWrapper<T> queryWrapper, Page<T> page)
         {
-            return SqlHelper.GetResult<T>(queryWrapper.ToSelect(), page);
+            return SqlHelper.GetResult<T>(queryWrapper.Page(page).ToSelect(), page);
         }
         public bool Insert(T entity)
         {
