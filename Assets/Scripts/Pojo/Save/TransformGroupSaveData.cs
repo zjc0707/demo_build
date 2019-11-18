@@ -1,4 +1,3 @@
-using Jc.ToStringTool;
 public class TransformGroupSaveData : AbstractToStringObject
 {
     public Vector3SaveData Position { get; set; }

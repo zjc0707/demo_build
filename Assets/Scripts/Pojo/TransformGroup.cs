@@ -1,5 +1,4 @@
 using UnityEngine;
-using Jc.ToStringTool;
 public class TransformGroup : AbstractToStringObject
 {
     public Vector3 Position { get; set; }

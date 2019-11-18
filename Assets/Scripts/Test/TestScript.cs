@@ -1,22 +1,56 @@
 using System.Linq;
 using System.Text;
 using System.Net.Security;
-using System.Collections.Generic;
+using System.Collections;
 using System;
 using System.Reflection;
 using System.Data;
 using UnityEngine;
-using Jc.SqlTool.Core.Page;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 public class TestScript : BaseUniqueObject<TestScript>
 {
     private void Start()
     {
-        SqlTest();
+        // SqlTest();
         // ToStringTest();
         // FileTest();
         // Debug.Log(SceneService.current.Test());
         // Debug.Log(StringUtil.IsNullOrEmpty(null));
+        // WWWTest();
+    }
+    public void WWWTest()
+    {
+        StartCoroutine(Page());
+    }
+
+    IEnumerator Page()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("startIndex", 0);
+        form.AddField("pageSize", 5);
+        UnityWebRequest webRequest = UnityWebRequest.Post("http://127.0.0.1:4567/unity/scene/page", form);
+        webRequest.timeout = 10;
+        webRequest.SendWebRequest();
+        while (!webRequest.isDone)
+        {
+            // Debug.Log(webRequest.downloadProgress);
+            PanelLoading.current.Open();
+            yield return 1;
+        }
+        PanelLoading.current.Close();
+        if (webRequest.isHttpError || webRequest.isNetworkError)
+        {
+            Debug.Log(webRequest.error);
+        }
+        else
+        {
+            Debug.Log(webRequest.downloadHandler.text);
+            Page<Scene> page = Json.Parse<Page<Scene>>(webRequest.downloadHandler.text);
+            Debug.Log(page);
+            string str = System.Text.Encoding.UTF8.GetString(page.Records[0].Content);
+            Debug.Log(str);
+        }
     }
     public void ToStringTest()
     {
@@ -83,8 +117,6 @@ public class TestScript : BaseUniqueObject<TestScript>
         // Test selectByIdRS = TestService.current.SelectById(1);
         // Debug.Log(selectByIdRS);
         // Debug.Log(TestService.current.Count());
-        Page<Test> page = new Page<Test>(0, 10);
-        Debug.Log(TestService.current.Select(page));
         // Debug.Log(page);
     }
 

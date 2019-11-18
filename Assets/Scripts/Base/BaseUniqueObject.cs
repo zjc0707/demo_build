@@ -36,6 +36,10 @@ public abstract class BaseUniqueObject<T> : BaseObject where T : MonoBehaviour
         {
             if (unique == null)
             {
+                unique = GameObject.Find("Unique");
+            }
+            if (unique == null)
+            {
                 unique = new GameObject("Unique");
                 unique.transform.position = Vector3.zero;
             }

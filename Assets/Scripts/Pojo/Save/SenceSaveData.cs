@@ -1,5 +1,4 @@
 using UnityEngine;
-using Jc.ToStringTool;
 public class SenceSaveData : AbstractToStringObject
 {
     public TransformGroupSaveData CameraTransformGroup { get; set; }

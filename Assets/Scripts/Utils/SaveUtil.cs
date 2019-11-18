@@ -22,18 +22,39 @@ public static class SaveUtil
         saveData.BuildingRoomSaveData.BuildingSaveDatas = buildingSaveDatas;
         //--toJson
         string json = Json.Serialize(saveData);
-        Debug.Log(saveData);
         Debug.Log(json);
-        SenceSaveData fromJson = Json.Parse<SenceSaveData>(json);
-        Debug.Log(fromJson);
         //--to bytes
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
-        string fromBytes = System.Text.Encoding.UTF8.GetString(bytes);
-        Debug.Log(fromBytes);
+
+        Scene scene = new Scene()
+        {
+            Name = name,
+            Content = bytes,
+            DeployTime = TimeUtil.UnixTimeSpan
+        };
+        Debug.Log(scene);
         //--save to sql
     }
     public static void Load(int id)
     {
-
+        WebUtil.DetailSence(id, rs =>
+        {
+            PanelLoading.current.SceneLoading();
+            Scene scene = Json.Parse<Scene>(rs);
+            string json = System.Text.Encoding.UTF8.GetString(scene.Content);
+            Debug.Log(json);
+            SenceSaveData saveData = Json.Parse<SenceSaveData>(json);
+            //--floor
+            Floor.current.Load(saveData.FloorSaveData.X, saveData.FloorSaveData.Z);
+            //--building
+            BuildingRoom.current.buildingList.Clear();
+            foreach (BuildingSaveData data in saveData.BuildingRoomSaveData.BuildingSaveDatas)
+            {
+                BuildingRoom.current.Add(BuildingHelper.Create(data));
+            }
+            //--camera
+            MyCamera.current.MoveAnim(TransformGroupUtil.Parse(saveData.CameraTransformGroup));
+            PanelLoading.current.Close();
+        });
     }
 }

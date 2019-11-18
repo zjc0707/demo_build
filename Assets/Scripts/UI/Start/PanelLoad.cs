@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Jc.SqlTool.Core.Page;
 public class PanelLoad : BasePanel<PanelLoad>
 {
     protected override int StackType { get { return UIStackType.START; } }
@@ -12,8 +11,11 @@ public class PanelLoad : BasePanel<PanelLoad>
     public Transform navigation;
     public Button buttonPre, buttonNext;
     public Text pageIndex;
-    private Page<Scene> page;
     private int nowIndex = int.MinValue;
+    /// <summary>
+    /// 总页数
+    /// </summary>
+    private int pages = 0;
     private Transform content;
     private Dictionary<int, List<GameObject>> pageCache = new Dictionary<int, List<GameObject>>();
     protected override void _Start()
@@ -25,28 +27,26 @@ public class PanelLoad : BasePanel<PanelLoad>
         buttonNext = navigation.Find("ButtonNext").GetComponent<Button>();
         pageIndex = navigation.Find("PageIndex").Find("Text").GetComponent<Text>();
 
-        page = new Page<Scene>(0, 5);
         buttonPre.onClick.AddListener(delegate
         {
-            page.StartIndex--;
-            Load(page);
+            Load(nowIndex - 1);
         });
         buttonNext.onClick.AddListener(delegate
         {
-            page.StartIndex++;
-            Load(page);
+            Load(nowIndex + 1);
         });
     }
     public override void Open()
     {
         base.Open();
-        Load(page);
+        if (nowIndex == int.MinValue)
+            Load(1);
     }
 
-    private void Load(Page<Scene> page)
+    private void Load(int pageIndex)
     {
-        if (page.StartIndex == nowIndex) return;
-        nowIndex = page.StartIndex;
+        if (pageIndex == nowIndex) return;
+        nowIndex = pageIndex;
 
         foreach (Transform t in content)
         {
@@ -58,35 +58,45 @@ public class PanelLoad : BasePanel<PanelLoad>
             {
                 obj.SetActive(true);
             }
+            LoadNavigation();
         }
         else
         {
-            page = SceneService.current.Page(page);
-            List<GameObject> list = new List<GameObject>();
-            item.SetActive(true);
-            foreach (Scene scene in page.Data)
+            Debug.Log(nowIndex);
+            WebUtil.PageSence(nowIndex, rs =>
             {
-                Transform clone = Instantiate(item, content).transform;
-                clone.Find("Name").GetComponentInChildren<Text>().text = scene.Name;
-                clone.Find("DeployTime").GetComponentInChildren<Text>().text = TimeUtil.Format(scene.DeployTime);
-                Transform operate = clone.Find("Operate");
-                operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
+                Page<Scene> page = Json.Parse<Page<Scene>>(rs);
+                List<GameObject> list = new List<GameObject>();
+                item.SetActive(true);
+                foreach (Scene scene in page.Records)
                 {
-                    SceneService.current.Load(scene.Id);
-                    UGUITree.current.CloseStart();
-                });
-                operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate
-                {
+                    Transform clone = Instantiate(item, content).transform;
+                    clone.Find("Name").GetComponentInChildren<Text>().text = scene.Name;
+                    clone.Find("DeployTime").GetComponentInChildren<Text>().text = TimeUtil.Format(scene.DeployTime);
+                    Transform operate = clone.Find("Operate");
+                    operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
+                    {
+                        SaveUtil.Load(scene.Id);
+                        UGUITree.current.CloseStart();
+                    });
+                    operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate
+                    {
 
-                });
-                list.Add(clone.gameObject);
-            }
-            item.SetActive(false);
-            pageCache.Add(nowIndex, list);
+                    });
+                    list.Add(clone.gameObject);
+                }
+                item.SetActive(false);
+                pageCache.Add(nowIndex, list);
+                pages = page.Pages;
+                LoadNavigation();
+            });
+
         }
-        buttonPre.interactable = !page.IsFirst;
-        buttonNext.interactable = !page.IsEnd;
-        pageIndex.text = string.Format("{0}/{1}", nowIndex + 1, page.PageCount);
-
+    }
+    private void LoadNavigation()
+    {
+        buttonPre.interactable = nowIndex > 1;
+        buttonNext.interactable = nowIndex < pages;
+        pageIndex.text = string.Format("{0}/{1}", nowIndex, pages);
     }
 }

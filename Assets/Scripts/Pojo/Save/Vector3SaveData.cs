@@ -1,4 +1,3 @@
-using Jc.ToStringTool;
 public class Vector3SaveData : AbstractToStringObject
 {
     public float X { get; set; }
