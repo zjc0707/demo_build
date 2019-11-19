@@ -39,32 +39,5 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             }
         }
     }
-    IEnumerator Page()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("startIndex", 0);
-        form.AddField("pageSize", 5);
-        UnityWebRequest webRequest = UnityWebRequest.Post("http://127.0.0.1:4567/unity/scene/page", form);
-        webRequest.timeout = 10;
-        webRequest.SendWebRequest();
-        while (!webRequest.isDone)
-        {
-            // Debug.Log(webRequest.downloadProgress);
-            PanelLoading.current.Open();
-            yield return 1;
-        }
-        PanelLoading.current.Close();
-        if (webRequest.isHttpError || webRequest.isNetworkError)
-        {
-            Debug.Log(webRequest.error);
-        }
-        else
-        {
-            Debug.Log(webRequest.downloadHandler.text);
-            Page<Scene> page = Json.Parse<Page<Scene>>(webRequest.downloadHandler.text);
-            Debug.Log(page);
-            string str = System.Text.Encoding.UTF8.GetString(page.Records[0].Content);
-            Debug.Log(str);
-        }
-    }
+
 }

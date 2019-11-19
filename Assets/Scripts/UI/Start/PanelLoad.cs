@@ -39,8 +39,16 @@ public class PanelLoad : BasePanel<PanelLoad>
     public override void Open()
     {
         base.Open();
-        if (nowIndex == int.MinValue)
+        if (pageCache.Count == 0)
+        {
+            nowIndex = int.MinValue;
             Load(1);
+        }
+
+    }
+    public void Fresh()
+    {
+        pageCache.Clear();
     }
 
     private void Load(int pageIndex)

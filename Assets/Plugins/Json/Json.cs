@@ -32,7 +32,7 @@ public class Json : MonoBehaviour
     public static string Serialize(System.Object o)
     {
         return JsonConvert.SerializeObject(o,
-            Formatting.Indented,
+            Formatting.None,
             new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,

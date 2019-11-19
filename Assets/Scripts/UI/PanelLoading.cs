@@ -10,11 +10,15 @@ public class PanelLoading : BasePanel<PanelLoading>
     }
     public void WebLoading()
     {
-        Open("向后端请求数据中...");
+        Open("向后端发送数据中...");
     }
     public void SceneLoading()
     {
         Open("场景加载中...");
+    }
+    public void Success(string content = "提交成功")
+    {
+        Open(content, true);
     }
     public void Error(string content = "访问出错")
     {

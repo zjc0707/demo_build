@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 public static class SaveUtil
 {
-    public static void Save(string name)
+    public static void Save(string name, UnityAction action)
     {
         SenceSaveData saveData = new SenceSaveData()
         {
@@ -34,6 +35,12 @@ public static class SaveUtil
         };
         Debug.Log(scene);
         //--save to sql
+        WebUtil.Save(scene, rs =>
+        {
+            PanelLoading.current.Success(rs);
+            PanelLoad.current.Fresh();
+            action();
+        });
     }
     public static void Load(int id)
     {
@@ -47,7 +54,7 @@ public static class SaveUtil
             //--floor
             Floor.current.Load(saveData.FloorSaveData.X, saveData.FloorSaveData.Z);
             //--building
-            BuildingRoom.current.buildingList.Clear();
+            BuildingRoom.current.Reset();
             foreach (BuildingSaveData data in saveData.BuildingRoomSaveData.BuildingSaveDatas)
             {
                 BuildingRoom.current.Add(BuildingHelper.Create(data));

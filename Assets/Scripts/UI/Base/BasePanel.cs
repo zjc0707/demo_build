@@ -24,6 +24,9 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+    /// <summary>
+    /// 关闭并清除历史记录
+    /// </summary>
     public void Clear()
     {
         if (StackType != UIStackType.NULL)

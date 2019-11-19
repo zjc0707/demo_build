@@ -29,7 +29,9 @@ public class PanelSaveAs : BasePanel<PanelOperate>
     }
     private void Submit()
     {
-        // SceneService.current.Save(inputFieldName.text);
-        // SaveUtil.Save("jc");
+        SaveUtil.Save(inputFieldName.text, delegate
+        {
+            base.Clear();
+        });
     }
 }
