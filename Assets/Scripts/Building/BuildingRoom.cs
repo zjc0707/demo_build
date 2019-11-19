@@ -29,7 +29,7 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
         buildingList.Remove(building);
         GameObject.DestroyImmediate(building.gameObject);
     }
-    public new void Reset()
+    public void Reset()
     {
         foreach (Building building in buildingList)
         {

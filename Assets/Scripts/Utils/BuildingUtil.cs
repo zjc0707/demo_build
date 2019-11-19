@@ -11,12 +11,15 @@ public static class BuildingUtil
     public static BoxCollider AddBoxCollider(Building building)
     {
         GameObject obj = building.gameObject;
+        obj.transform.position = Vector3.zero;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
         if (boxCollider == null)
         {
             boxCollider = obj.AddComponent<BoxCollider>();
-            boxCollider.center = Vector3.zero;
+            // boxCollider.center = Vector3.zero;
+            boxCollider.center = building.centerAndSize.Center;
             boxCollider.size = building.centerAndSize.Size;
+            Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
         }
         //避免碰撞
         // boxCollider.isTrigger = true;
@@ -69,7 +72,7 @@ public static class BuildingUtil
             FixEuler(t.eulerAngles.y),
             FixEuler(t.eulerAngles.z));
         Vector3 afterFix = new Vector3(FixPos(building.LeftBackBottom.x),
-            FixPos(building.LeftBackBottom.y),
+            building.LeftBackBottom.y,
             FixPos(building.LeftBackBottom.z));
         //Debug.Log(building.LeftFrontBottom + "_after:" + afterFix + "_pos:" + t.localPosition);
         t.position += afterFix - building.LeftBackBottom;

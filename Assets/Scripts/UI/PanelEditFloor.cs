@@ -7,10 +7,14 @@ public class PanelEditFloor : BasePanel<PanelEditFloor>
     public Button submit, quit;
     protected override void _Start()
     {
-        length.text = "" + Floor.current.x;
-        width.text = "" + Floor.current.z;
         quit.onClick.AddListener(base.Close);
         submit.onClick.AddListener(EditFloor);
+    }
+    public override void Open()
+    {
+        length.text = "" + Floor.current.x;
+        width.text = "" + Floor.current.z;
+        base.Open();
     }
     private void EditFloor()
     {

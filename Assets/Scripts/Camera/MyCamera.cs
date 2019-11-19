@@ -30,7 +30,7 @@ public class MyCamera : BaseUniqueObject<MyCamera>
             });
         }
     }
-    public new void Reset()
+    public void Reset()
     {
         MoveAnim(initTransformGroup);
     }
@@ -39,5 +39,11 @@ public class MyCamera : BaseUniqueObject<MyCamera>
         aim = t;
         timeGroup.UseToZero();
         isAnim = true;
+    }
+    public void MoveAnim(Vector3 position)
+    {
+        TransformGroup t = base.transformGroup;
+        t.Position = position;
+        MoveAnim(t);
     }
 }

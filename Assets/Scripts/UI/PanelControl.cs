@@ -18,6 +18,7 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void _Start()
     {
         Load();
+        this.transform.Find("Content").Find("Scale").gameObject.SetActive(false);
         base.Close();
     }
     public override void Close()

@@ -26,7 +26,7 @@ public class Floor : BaseUniqueObject<Floor>
         this.z = z;
         this.Load();
     }
-    public new void Reset()
+    public void Reset()
     {
         Load(10, 11);
     }

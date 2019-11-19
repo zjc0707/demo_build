@@ -45,8 +45,8 @@ public abstract class BaseObject : MonoBehaviour
     /// <summary>
     /// floor的y值，用于落至地面计算
     /// </summary>
-    private readonly float floorY = 0f;
-    private float downToFloorY = float.MaxValue;
+    protected readonly float floorY = 0f;
+    protected float downToFloorY = float.MaxValue;
     /// <summary>
     /// 根据centerAndSize将物体落到地面上
     /// </summary>
@@ -56,7 +56,9 @@ public abstract class BaseObject : MonoBehaviour
         // this.transform.position -= Vector3.up * distance;
         if (downToFloorY == float.MaxValue)
         {
-            downToFloorY = centerAndSize.Size.y / 2 + floorY + FloorTile.current.thickness / 2;
+            // downToFloorY = centerAndSize.Size.y / 2 + floorY + FloorTile.current.thickness / 2;
+            // Debug.Log(this.gameObject.name + "-" + downToFloorY);
+            throw new System.Exception("未计算downToFloorY");
         }
         Vector3 pos = this.transform.position;
         this.transform.position = new Vector3(pos.x, downToFloorY, pos.z);
@@ -65,13 +67,5 @@ public abstract class BaseObject : MonoBehaviour
     {
         Vector3 pos = this.transform.position;
         return new Vector3(pos.x, downToFloorY, pos.z);
-    }
-    /// <summary>
-    /// 将物体落至地面并居于中心
-    /// </summary>
-    public void Reset()
-    {
-        this.transform.position = Floor.current.transform.position;
-        DownToFloor();
     }
 }

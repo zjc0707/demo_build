@@ -70,6 +70,10 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
         //放置物品
         if (catchBuilding != null)
         {
+            if (catchBuilding.gameObject.activeInHierarchy == false)
+            {
+                return;
+            }
             this.Build();
             return;
         }

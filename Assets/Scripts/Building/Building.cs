@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using cakeslice;
@@ -142,18 +143,36 @@ public class Building : BaseObject
         // Debug.Log(string.Format("center:{0},position:{1}", centerAndSize.Center, this.transform.localPosition));
         if (base.centerAndSize.Center != this.transform.position)
         {
-            Debug.LogWarning("中心与坐标不相等:" + this.transform.name);
+            // Debug.LogWarning("中心与坐标不相等:" + this.transform.name + "-" + transform.position + "-" + centerAndSize.Center);
+
             //throw new System.Exception("中心与坐标不相等:" + this.transform.name);
         }
         Vector3 dValue = this.transform.position - base.centerAndSize.Center;
         posToLeftBackBottom = base.centerAndSize.Size / 2 + dValue;
+
+        Debug.Log(LeftBackBottom.y);
+        float d = LeftBackBottom.y - (base.floorY + FloorTile.current.thickness / 2);
+        base.downToFloorY = this.transform.position.y - d;
+    }
+    /// <summary>
+    /// 判断是否超出floor范围
+    /// </summary>
+    /// <returns>模型的最大边或int.MinValue</returns>
+    public int IsTooBig()
+    {
+        Debug.Log(centerAndSize.Size);
+        float max = Math.Max(centerAndSize.Size.x, centerAndSize.Size.z);
+        int maxBuilding = (int)max + 1;
+        int minFloor = Math.Min(Floor.current.x, Floor.current.z);
+        Debug.Log(maxBuilding + "-" + minFloor);
+        return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
     }
 
     private void Awake()
     {
         LoadDicMaterial();
-        LoadSizeAndPosToLeftFront();
         boxCollider = BuildingUtil.AddBoxCollider(this);
+        LoadSizeAndPosToLeftFront();
         outlineList = new List<Outline>();
         foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
         {
