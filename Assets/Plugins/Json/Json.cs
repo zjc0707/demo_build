@@ -38,6 +38,7 @@ public class Json : MonoBehaviour
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore
             });
+
     }
 
 
