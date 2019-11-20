@@ -11,7 +11,7 @@ public static class BuildingUtil
     public static BoxCollider AddBoxCollider(Building building)
     {
         GameObject obj = building.gameObject;
-        // obj.transform.position = Vector3.zero;
+        obj.transform.position = Vector3.zero;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
         if (boxCollider == null)
         {

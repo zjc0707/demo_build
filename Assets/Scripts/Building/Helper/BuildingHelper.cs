@@ -32,7 +32,6 @@ public static class BuildingHelper
     {
         ModelData modelData = ModelDataTest.Find(data.ModelDataId);
         GameObject obj = CreateGameObjcet(modelData);
-        TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         Building building = BuildingUtil.GetComponentBuilding(obj.transform);
         if (building == null)
         {
@@ -40,6 +39,7 @@ public static class BuildingHelper
         }
         building.data = modelData;
         building.isLock = data.IsLock;
+        TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         return building;
     }
     private static GameObject CreateGameObjcet(ModelData data)

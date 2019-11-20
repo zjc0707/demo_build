@@ -33,7 +33,8 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
     {
         foreach (Building building in buildingList)
         {
-            GameObject.DestroyImmediate(building.gameObject);
+            if (building != null && building.gameObject != null)
+                GameObject.DestroyImmediate(building.gameObject);
         }
         buildingList.Clear();
     }
