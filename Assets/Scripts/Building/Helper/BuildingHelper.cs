@@ -20,24 +20,14 @@ public static class BuildingHelper
     public static Building Create(ModelData data)
     {
         GameObject obj = CreateGameObjcet(data);
-        Building building = BuildingUtil.GetComponentBuilding(obj.transform);
-        if (building == null)
-        {
-            building = obj.AddComponent<Building>();
-        }
-        building.data = data;
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform, data);
         return building;
     }
     public static Building Create(BuildingSaveData data)
     {
         ModelData modelData = ModelDataTest.Find(data.ModelDataId);
         GameObject obj = CreateGameObjcet(modelData);
-        Building building = BuildingUtil.GetComponentBuilding(obj.transform);
-        if (building == null)
-        {
-            building = obj.AddComponent<Building>();
-        }
-        building.data = modelData;
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform, modelData);
         building.isLock = data.IsLock;
         TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         return building;

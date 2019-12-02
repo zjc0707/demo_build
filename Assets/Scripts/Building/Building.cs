@@ -6,6 +6,7 @@ using cakeslice;
 
 public class Building : BaseObject
 {
+    public bool isInit = false;
     public ModelData data;
     public BoxCollider boxCollider;
     /// <summary>
@@ -45,7 +46,7 @@ public class Building : BaseObject
 
 
     /// <summary>
-    /// 选中物体，恢复上一个被选中的物体，替换选中物体的材质
+    /// 选中物体，恢复上一个被选中的物体高亮
     /// </summary>
     public void Choose()
     {
@@ -150,7 +151,7 @@ public class Building : BaseObject
         Vector3 dValue = this.transform.position - base.centerAndSize.Center;
         posToLeftBackBottom = base.centerAndSize.Size / 2 + dValue;
 
-        Debug.Log(LeftBackBottom.y);
+        // Debug.Log(LeftBackBottom.y);
         float d = LeftBackBottom.y - (base.floorY + FloorTile.current.thickness / 2);
         base.downToFloorY = this.transform.position.y - d;
     }
@@ -170,6 +171,12 @@ public class Building : BaseObject
 
     private void Awake()
     {
+        Init();
+    }
+
+    public void Init()
+    {
+        if (isInit) return;
         LoadDicMaterial();
         boxCollider = BuildingUtil.AddBoxCollider(this);
         LoadSizeAndPosToLeftFront();
@@ -179,6 +186,7 @@ public class Building : BaseObject
             outlineList.Add(mesh.gameObject.AddComponent<Outline>());
         }
         HideHighLight();
+        isInit = true;
     }
 
     /// <summary>

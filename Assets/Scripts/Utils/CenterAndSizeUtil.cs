@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class CenterAndSizeUtil
@@ -13,7 +14,7 @@ public static class CenterAndSizeUtil
         MeshRenderer[] meshRenderers = t.GetComponentsInChildren<MeshRenderer>();
         if (meshRenderers == null || meshRenderers.Length == 0)
         {
-            return new CenterAndSize() { Center = Vector3.zero, Size = Vector3.zero };
+            return new CenterAndSize() { Center = Vector3.zero, Size = Vector3.one };
         }
 
         List<float> listx = new List<float>(),
@@ -44,7 +45,11 @@ public static class CenterAndSizeUtil
         return new CenterAndSize()
         {
             Center = new Vector3(px, py, pz),
-            Size = new Vector3(lx, ly, lz)
+            // Size = new Vector3(lx, ly, lz),
+            //包围盒向上取整
+            Size = new Vector3((float)Math.Ceiling(lx),
+                                (float)Math.Ceiling(ly),
+                                (float)Math.Ceiling(lz)),
         };
     }
 }

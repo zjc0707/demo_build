@@ -72,3 +72,59 @@ crashlytics-build.properties
 # *.dll
 # *.asset
 # *.txt
+Assets/AB/AB
+Assets/AB/AB.manifest
+Assets/AB/AB.manifest.meta
+Assets/AB/AB.meta
+Assets/AB/capsule.zjc
+Assets/AB/capsule.zjc.manifest
+Assets/AB/capsule.zjc.manifest.meta
+Assets/AB/capsule.zjc.meta
+Assets/AB/car.zjc
+Assets/AB/car.zjc.manifest
+Assets/AB/car.zjc.manifest.meta
+Assets/AB/car.zjc.meta
+Assets/AB/crane.zjc
+Assets/AB/crane.zjc.manifest
+Assets/AB/crane.zjc.manifest.meta
+Assets/AB/crane.zjc.meta
+Assets/AB/cube.zjc
+Assets/AB/cube.zjc.manifest
+Assets/AB/cube.zjc.manifest.meta
+Assets/AB/cube.zjc.meta
+Assets/AB/cuboid.zjc
+Assets/AB/cuboid.zjc.manifest
+Assets/AB/cuboid.zjc.manifest.meta
+Assets/AB/cuboid.zjc.meta
+Assets/AB/cylinder.zjc
+Assets/AB/cylinder.zjc.manifest
+Assets/AB/cylinder.zjc.manifest.meta
+Assets/AB/cylinder.zjc.meta
+Assets/AB/door.zjc
+Assets/AB/door.zjc.manifest
+Assets/AB/door.zjc.manifest.meta
+Assets/AB/door.zjc.meta
+Assets/AB/grass.zjc
+Assets/AB/grass.zjc.manifest
+Assets/AB/grass.zjc.manifest.meta
+Assets/AB/grass.zjc.meta
+Assets/AB/guardrail.zjc
+Assets/AB/guardrail.zjc.manifest
+Assets/AB/guardrail.zjc.manifest.meta
+Assets/AB/guardrail.zjc.meta
+Assets/AB/house.zjc
+Assets/AB/house.zjc.manifest
+Assets/AB/house.zjc.manifest.meta
+Assets/AB/house.zjc.meta
+Assets/AB/police station.zjc
+Assets/AB/police station.zjc.manifest
+Assets/AB/police station.zjc.manifest.meta
+Assets/AB/police station.zjc.meta
+Assets/AB/sphere.zjc
+Assets/AB/sphere.zjc.manifest
+Assets/AB/sphere.zjc.manifest.meta
+Assets/AB/sphere.zjc.meta
+Assets/AB/tree.zjc
+Assets/AB/tree.zjc.manifest
+Assets/AB/tree.zjc.manifest.meta
+Assets/AB/tree.zjc.meta

@@ -36,15 +36,16 @@ public static class BuildingUtil
         {
             return buildingCache[target];
         }
-        while (target.parent != null)
+        Transform parent = target.parent;
+        while (parent != null)
         {
-            Building building = GetComponentBuilding(target);
-            if (building != null && target.parent == BuildingRoom.current.transform)
+            if (parent == BuildingRoom.current.transform)
             {
+                Building building = GetComponentBuilding(target);
                 buildingCache.Add(target, building);
                 return building;
             }
-            target = target.parent;
+            parent = parent.parent;
         }
         return null;
     }
@@ -56,8 +57,19 @@ public static class BuildingUtil
         Building result = target.GetComponent<Building>();
         if (result == null)
         {
-            result = target.GetComponent<Crane>();
+            result = target.gameObject.AddComponent<Building>();
         }
+        //目前忽视吊车相关脚本
+        // if (result == null)
+        // {
+        //     result = target.GetComponent<Crane>();
+        // }
+        return result;
+    }
+    public static Building GetComponentBuilding(Transform target, ModelData data)
+    {
+        Building result = GetComponentBuilding(target);
+        result.data = data;
         return result;
     }
     /// <summary>
