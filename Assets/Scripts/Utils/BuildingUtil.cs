@@ -8,17 +8,33 @@ public static class BuildingUtil
     /// 根据centerAndSize添加包围盒
     /// </summary>
     /// <param name="building"></param>
-    public static BoxCollider AddBoxCollider(Building building)
+    // public static BoxCollider AddBoxCollider(Building building)
+    // {
+    //     GameObject obj = building.gameObject;
+    //     obj.transform.position = Vector3.zero;
+    //     BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
+    //     if (boxCollider == null)
+    //     {
+    //         boxCollider = obj.AddComponent<BoxCollider>();
+    //         // boxCollider.center = Vector3.zero;
+    //         boxCollider.center = building.centerAndSize.Center;
+    //         boxCollider.size = building.centerAndSize.Size;
+    //         Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
+    //     }
+    //     //避免碰撞
+    //     // boxCollider.isTrigger = true;
+    //     return boxCollider;
+    // }
+    public static BoxCollider AddBoxCollider(GameObject obj)
     {
-        GameObject obj = building.gameObject;
         obj.transform.position = Vector3.zero;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
         if (boxCollider == null)
         {
             boxCollider = obj.AddComponent<BoxCollider>();
-            // boxCollider.center = Vector3.zero;
-            boxCollider.center = building.centerAndSize.Center;
-            boxCollider.size = building.centerAndSize.Size;
+            CenterAndSize cs = CenterAndSizeUtil.Get(obj.transform);
+            boxCollider.center = cs.Center;
+            boxCollider.size = cs.Size;
             Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
         }
         //避免碰撞
@@ -78,7 +94,6 @@ public static class BuildingUtil
     /// <param name="building"></param>
     public static void AdjustPosition(Building building)
     {
-        // Debug.Log("调整坐标:" + building.name);
         Transform t = building.transform;
         t.eulerAngles = new Vector3(FixEuler(t.eulerAngles.x),
             FixEuler(t.eulerAngles.y),
@@ -98,17 +113,16 @@ public static class BuildingUtil
         {
             t.position += new Vector3(0, 0, 0 - vector3.z);
         }
-        float x = vector3.x + building.centerAndSize.Size.x;
+        float x = vector3.x + building.Size.x;
         if (x > Floor.current.x)
         {
             t.position -= new Vector3(x - Floor.current.x, 0, 0);
         }
-        float z = vector3.z + building.centerAndSize.Size.z;
+        float z = vector3.z + building.Size.z;
         if (z > Floor.current.z)
         {
             t.position -= new Vector3(0, 0, z - Floor.current.z);
         }
-        // Debug.Log(building.centerAndSize + "_" + building.LeftBackBottom + "_" + building.transform.position);
     }
 
     private static int FixEuler(float f)

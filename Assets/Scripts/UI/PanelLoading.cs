@@ -3,10 +3,21 @@ using UnityEngine.UI;
 public class PanelLoading : BasePanel<PanelLoading>
 {
     public Text text;
+    public Image progress;
     protected override void _Start()
     {
+        Close();
+    }
+    public override void Close()
+    {
         base.Close();
-        base.buttonClose.gameObject.SetActive(false);
+        progress.gameObject.SetActive(false);
+    }
+    public void Progress(float load, float amount, string text)
+    {
+        progress.gameObject.SetActive(true);
+        progress.transform.localScale = new Vector3(load / amount, 1f, 1f);
+        Open(text);
     }
     public void WebLoading()
     {

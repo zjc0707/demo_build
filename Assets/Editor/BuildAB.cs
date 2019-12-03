@@ -17,20 +17,6 @@ public class BuildAB : Editor
         Object[] selects = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
         EditorCoroutineRunner.StartEditorCoroutine(CoroutineBuild(selects));
     }
-    // [MenuItem(menu + "/Build AB from window Project select (single)")]
-    // static void Build2()
-    // {
-    //     Object[] selects = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
-    //     Object obj = selects[0];
-    //     string assetPath = AssetDatabase.GetAssetPath(obj);
-    //     EditorCoroutineRunner.StartEditorCoroutine(CoroutineBuild(obj, assetPath));
-    //     // for (int i = 0; i < selects.Length; ++i)
-    //     // {
-    //     //     Object obj = selects[i];
-    //     //     string assetPath = AssetDatabase.GetAssetPath(obj);
-    //     //     EditorCoroutineRunner.StartEditorCoroutine(CoroutineBuild(obj, assetPath));
-    //     // }
-    // }
     private static IEnumerator CoroutineBuild(Object[] selects)
     {
         Debug.Log("Start");
@@ -42,7 +28,7 @@ public class BuildAB : Editor
             Object obj = selects[index];
             Debug.Log(index + "    " + obj.name);
             string path = AssetDatabase.GetAssetPath(obj);
-            string newPrefabPath = EditScript(obj, path);
+            string newPrefabPath = EditBoxCollider(obj, path);
             while (AssetPreview.GetAssetPreview(obj) == null)
             {
                 Debug.Log("Load texture2D_" + (wait++) + ":" + obj.name);
@@ -61,22 +47,6 @@ public class BuildAB : Editor
         }
         AssetDatabase.Refresh();
         ObjToAB(list.ToArray());
-    }
-    private static IEnumerator CoroutineBuild(Object obj, string path)
-    {
-        Debug.Log("Start");
-        string newPrefabPath = EditScript(obj, path);
-        Texture2D texture2D = AssetPreview.GetAssetPreview(obj);
-        int count = 0;
-        while (texture2D == null)
-        {
-            Debug.Log(count++);
-            yield return null;
-        }
-        string newImgPath = path.Split('.')[0] + "-sprite.png";
-        File.WriteAllBytes(newImgPath, texture2D.EncodeToPNG());
-        AssetDatabase.Refresh();
-        ObjToAB(obj.name, newPrefabPath, newImgPath);
     }
     private static void ObjToAB(AssetBundleBuild[] buildArray)
     {
@@ -97,32 +67,22 @@ public class BuildAB : Editor
         }
         AssetDatabase.Refresh();
     }
-    private static void ObjToAB(string name, string path, string imagePath)
-    {
-        AssetBundleBuild[] buildMap = new AssetBundleBuild[1];
-        buildMap[0].assetBundleName = name + suffix;
-        buildMap[0].assetNames = new string[] { path, imagePath };
-        if (BuildPipeline.BuildAssetBundles(abDirectory, buildMap, BuildAssetBundleOptions.None, BuildTarget.StandaloneOSX))
-        {
-            Debug.Log("build AB success:" + name);
-        }
-        else
-        {
-            Debug.Log("build AB failure:" + name);
-        }
-        File.Delete(path);
-        File.Delete(imagePath);
-        AssetDatabase.Refresh();
-    }
     /// <summary>
-    /// 加载prefab并添加building脚本进行init()，再另存为带-edit后缀的新prefab
+    /// 计算包围盒，再另存为带-edit后缀的新prefab
     /// </summary>
     /// <param name="obj"></param>
     /// <returns>新prefab的路径</returns>
-    private static string EditScript(Object obj, string assetPath)
+    private static string EditBoxCollider(Object obj, string assetPath)
     {
         GameObject gameObj = PrefabUtility.InstantiatePrefab(obj) as GameObject;
-        BuildingUtil.GetComponentBuilding(gameObj.transform).Init();
+        if (gameObj.transform.localScale != Vector3.one)
+        {
+            GameObject parent = new GameObject(gameObj.name);
+            parent.transform.position = gameObj.transform.position;
+            gameObj.transform.SetParent(parent.transform);
+            gameObj = parent;
+        }
+        BuildingUtil.AddBoxCollider(gameObj);
         string newPath = assetPath.Replace(".", "-edit.");
         bool success;
         PrefabUtility.SaveAsPrefabAsset(gameObj, newPath, out success);

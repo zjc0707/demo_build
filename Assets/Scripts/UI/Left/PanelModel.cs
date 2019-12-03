@@ -52,12 +52,15 @@ public class PanelModel : BasePanel<PanelModel>
 
         baseItem.gameObject.SetActive(false);
     }
-
+    /// <summary>
+    /// 当物体过大时进行相机的拉伸
+    /// </summary>
+    /// <param name="building"></param>
     private void WhenTooBig(Building building)
     {
-        int y = (int)building.centerAndSize.Size.y;
-        int x = (int)building.centerAndSize.Size.x;
-        int z = (int)building.centerAndSize.Size.z;
+        int y = (int)building.Size.y;
+        int x = (int)building.Size.x;
+        int z = (int)building.Size.z;
         int cameraY = (int)Math.Sqrt(x * x + y * y + z * z);
         Vector3 pos = MyCamera.current.transform.position;
         if (cameraY > pos.y)

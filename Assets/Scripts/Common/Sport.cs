@@ -81,7 +81,7 @@ public class Sport : BaseUniqueObject<Sport>
         Vector3 endEuler = t.eulerAngles;
         t.eulerAngles = euler;
 
-        Vector3 endPos = t.position + t.right * building.centerAndSize.Size.z;
+        Vector3 endPos = t.position + t.right * building.Size.z;
 
         cameraEnd = new TransformGroup(endPos, endEuler);
     }

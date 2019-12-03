@@ -8,7 +8,6 @@ public class Building : BaseObject
 {
     public bool isInit = false;
     public ModelData data;
-    public BoxCollider boxCollider;
     /// <summary>
     /// 物体对象是否锁定，用于移动或修改数据面板时是否自动定位
     /// </summary>
@@ -42,8 +41,6 @@ public class Building : BaseObject
     /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
     /// </summary>
     private Vector3 posToLeftBackBottom;
-
-
 
     /// <summary>
     /// 选中物体，恢复上一个被选中的物体高亮
@@ -141,15 +138,9 @@ public class Building : BaseObject
     /// </summary>
     private void LoadSizeAndPosToLeftFront()
     {
-        // Debug.Log(string.Format("center:{0},position:{1}", centerAndSize.Center, this.transform.localPosition));
-        if (base.centerAndSize.Center != this.transform.position)
-        {
-            // Debug.LogWarning("中心与坐标不相等:" + this.transform.name + "-" + transform.position + "-" + centerAndSize.Center);
-
-            //throw new System.Exception("中心与坐标不相等:" + this.transform.name);
-        }
-        Vector3 dValue = this.transform.position - base.centerAndSize.Center;
-        posToLeftBackBottom = base.centerAndSize.Size / 2 + dValue;
+        Vector3 dValue = this.transform.position - base.boxCollider.center;
+        Debug.Log(base.Size);
+        posToLeftBackBottom = base.Size / 2 + dValue;
 
         // Debug.Log(LeftBackBottom.y);
         float d = LeftBackBottom.y - (base.floorY + FloorTile.current.thickness / 2);
@@ -161,24 +152,22 @@ public class Building : BaseObject
     /// <returns>模型的最大边或int.MinValue</returns>
     public int IsTooBig()
     {
-        Debug.Log(centerAndSize.Size);
-        float max = Math.Max(centerAndSize.Size.x, centerAndSize.Size.z);
+        Debug.Log(Size);
+        float max = Math.Max(Size.x, Size.z);
         int maxBuilding = (int)max + 1;
         int minFloor = Math.Min(Floor.current.x, Floor.current.z);
         Debug.Log(maxBuilding + "-" + minFloor);
         return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
     }
-
     private void Awake()
     {
         Init();
     }
-
     public void Init()
     {
         if (isInit) return;
         LoadDicMaterial();
-        boxCollider = BuildingUtil.AddBoxCollider(this);
+        boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
         LoadSizeAndPosToLeftFront();
         outlineList = new List<Outline>();
         foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
@@ -188,7 +177,6 @@ public class Building : BaseObject
         HideHighLight();
         isInit = true;
     }
-
     /// <summary>
     /// 默认的操控移动方法
     /// </summary>

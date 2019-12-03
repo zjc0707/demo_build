@@ -1,27 +1,19 @@
 using UnityEngine;
 public abstract class BaseObject : MonoBehaviour
 {
-    private CenterAndSize _centerAndSize, _centerAndSizeChangeSizeXZ;
-    public CenterAndSize centerAndSize
+    public BoxCollider boxCollider;
+    public Vector3 Size
     {
         get
         {
-            if (_centerAndSize == null)
+            if (boxCollider == null)
             {
-                Vector3 euler = this.transform.eulerAngles;
-                this.transform.eulerAngles = Vector3.zero;
-                _centerAndSize = CenterAndSizeUtil.Get(this.transform);
-                _centerAndSizeChangeSizeXZ = _centerAndSize.ChangeSizeXZ();
-                this.transform.eulerAngles = euler;
+                Vector3 pos = this.transform.position;
+                boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
+                this.transform.position = pos;
             }
-            if (!isRotate)
-            {
-                return _centerAndSize;
-            }
-            else
-            {
-                return _centerAndSizeChangeSizeXZ;
-            }
+            Vector3 size = boxCollider.size;
+            return isRotate ? new Vector3(size.z, size.y, size.x) : size;
         }
     }
     /// <summary>
@@ -38,7 +30,6 @@ public abstract class BaseObject : MonoBehaviour
     {
         get
         {
-            // return new TransformGroup(this.transform.position, this.transform.eulerAngles);
             return new TransformGroup(this.transform);
         }
     }
@@ -52,12 +43,8 @@ public abstract class BaseObject : MonoBehaviour
     /// </summary>
     public void DownToFloor()
     {
-        // float distance = centerAndSize.Center.y - centerAndSize.Size.y / 2 - floorY;
-        // this.transform.position -= Vector3.up * distance;
         if (downToFloorY == float.MaxValue)
         {
-            // downToFloorY = centerAndSize.Size.y / 2 + floorY + FloorTile.current.thickness / 2;
-            // Debug.Log(this.gameObject.name + "-" + downToFloorY);
             throw new System.Exception("未计算downToFloorY");
         }
         Vector3 pos = this.transform.position;

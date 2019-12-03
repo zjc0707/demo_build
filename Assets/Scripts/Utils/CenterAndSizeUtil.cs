@@ -48,7 +48,8 @@ public static class CenterAndSizeUtil
             // Size = new Vector3(lx, ly, lz),
             //包围盒向上取整
             Size = new Vector3((float)Math.Ceiling(lx),
-                                (float)Math.Ceiling(ly),
+                                // (float)Math.Ceiling(ly),
+                                ly,
                                 (float)Math.Ceiling(lz)),
         };
     }
