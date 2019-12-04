@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 public static class BuildingHelper
 {
+    private static Dictionary<int, int> dicCount = new Dictionary<int, int>();
     /// <summary>
     /// 记录上一个被选中的物体
     /// </summary>
@@ -34,9 +36,18 @@ public static class BuildingHelper
     }
     private static GameObject CreateGameObjcet(ModelData data)
     {
-        // GameObject obj = GameObject.Instantiate(Resources.Load(data.Url)) as GameObject;
-        // obj.name = data.Name;
-        // return obj;
-        return PoolOfAsset.current.Create(data.Id);
+        GameObject rs = PoolOfAsset.current.Create(data.Id);
+        int count = 0;
+        if (dicCount.TryGetValue(data.Id, out count))
+        {
+            rs.name = string.Format("{0}({1})", data.Name, count);
+            dicCount[data.Id] = ++count;
+        }
+        else
+        {
+            dicCount.Add(data.Id, ++count);
+            rs.name = data.Name;
+        }
+        return rs;
     }
 }

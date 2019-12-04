@@ -74,14 +74,10 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     private List<AssetItem> GetList(int id)
     {
         List<AssetItem> list = null;
-        if (!dicGoPool.ContainsKey(id))
+        if (!dicGoPool.TryGetValue(id, out list))
         {
             list = new List<AssetItem>();
             dicGoPool.Add(id, list);
-        }
-        if (list == null)
-        {
-            list = dicGoPool[id];
         }
         return list;
     }
