@@ -34,8 +34,9 @@ public static class BuildingHelper
     }
     private static GameObject CreateGameObjcet(ModelData data)
     {
-        GameObject obj = GameObject.Instantiate(Resources.Load(data.Url)) as GameObject;
-        obj.name = data.Name;
-        return obj;
+        // GameObject obj = GameObject.Instantiate(Resources.Load(data.Url)) as GameObject;
+        // obj.name = data.Name;
+        // return obj;
+        return PoolOfAsset.current.Create(data.Id);
     }
 }

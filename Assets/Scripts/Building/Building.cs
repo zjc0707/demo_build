@@ -16,6 +16,21 @@ public class Building : BaseObject
     /// 高亮射线的集合
     /// </summary>
     private List<Outline> outlineList;
+    public BoxCollider boxCollider;
+    public Vector3 Size
+    {
+        get
+        {
+            if (boxCollider == null)
+            {
+                Vector3 pos = this.transform.position;
+                boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
+                this.transform.position = pos;
+            }
+            Vector3 size = boxCollider.size;
+            return isRotate ? new Vector3(size.z, size.y, size.x) : size;
+        }
+    }
     /// <summary>
     /// 基于世界坐标
     /// </summary>
@@ -138,9 +153,9 @@ public class Building : BaseObject
     /// </summary>
     private void LoadSizeAndPosToLeftFront()
     {
-        Vector3 dValue = this.transform.position - base.boxCollider.center;
-        Debug.Log(base.Size);
-        posToLeftBackBottom = base.Size / 2 + dValue;
+        Vector3 dValue = this.transform.position - boxCollider.center;
+        Debug.Log(Size);
+        posToLeftBackBottom = Size / 2 + dValue;
 
         // Debug.Log(LeftBackBottom.y);
         float d = LeftBackBottom.y - (base.floorY + FloorTile.current.thickness / 2);
@@ -152,11 +167,9 @@ public class Building : BaseObject
     /// <returns>模型的最大边或int.MinValue</returns>
     public int IsTooBig()
     {
-        Debug.Log(Size);
         float max = Math.Max(Size.x, Size.z);
         int maxBuilding = (int)max + 1;
         int minFloor = Math.Min(Floor.current.x, Floor.current.z);
-        Debug.Log(maxBuilding + "-" + minFloor);
         return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
     }
     private void Awake()

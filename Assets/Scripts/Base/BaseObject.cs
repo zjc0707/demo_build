@@ -1,21 +1,6 @@
 using UnityEngine;
 public abstract class BaseObject : MonoBehaviour
 {
-    public BoxCollider boxCollider;
-    public Vector3 Size
-    {
-        get
-        {
-            if (boxCollider == null)
-            {
-                Vector3 pos = this.transform.position;
-                boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
-                this.transform.position = pos;
-            }
-            Vector3 size = boxCollider.size;
-            return isRotate ? new Vector3(size.z, size.y, size.x) : size;
-        }
-    }
     /// <summary>
     /// 判断物体是否旋转影响长宽，false：0或180度，true：90或270
     /// </summary>

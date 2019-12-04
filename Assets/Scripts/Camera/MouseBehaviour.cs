@@ -102,7 +102,6 @@ public class MouseBehaviour : BaseUniqueObject<MouseBehaviour>
     /// <param name="building"></param>
     private void SetPanelControlData(Building building)
     {
-        Debug.Log("获取物体参数：" + building.name);
         PanelControl.current.SetData(building);
         building.Choose();
     }

@@ -24,7 +24,6 @@ public class PanelModel : BasePanel<PanelModel>
             clone.GetComponentInChildren<Text>().text = t.Name;
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
-                Debug.Log(t.Url);
                 Building building = BuildingHelper.Create(t);
                 building.Choose();
                 MouseBehaviour.current.Catch(building);
@@ -46,7 +45,9 @@ public class PanelModel : BasePanel<PanelModel>
                     WhenTooBig(building);
                 }
             });
-            clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
+            // clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
+            clone.Find("Image").GetComponent<Image>().sprite = AssetBundleUtil.DicSprite[t.Id];
+
             clone.SetParent(baseItem.parent);
         }
 

@@ -27,7 +27,8 @@ public class BuildingRoom : BaseUniqueObject<BuildingRoom>
     public void Remove(Building building)
     {
         buildingList.Remove(building);
-        GameObject.DestroyImmediate(building.gameObject);
+        // GameObject.DestroyImmediate(building.gameObject);
+        PoolOfAsset.current.Destroy(building);
     }
     public void Reset()
     {
