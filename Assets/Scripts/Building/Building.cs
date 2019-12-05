@@ -154,7 +154,7 @@ public class Building : BaseObject
     private void LoadSizeAndPosToLeftFront()
     {
         Vector3 dValue = this.transform.position - boxCollider.center;
-        Debug.Log(Size);
+        // Debug.Log(Size);
         posToLeftBackBottom = Size / 2 + dValue;
 
         // Debug.Log(LeftBackBottom.y);

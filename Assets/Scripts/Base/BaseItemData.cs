@@ -6,7 +6,7 @@ public abstract class BaseItemData
     public string Name { get; set; }
     private string url;
     public string Url { get { return UrlFolder + url; } set { this.url = value; } }
-    public string ABUrl { get { return string.Format("http://47.102.133.53/AB/{0}.zjc", url.ToLower()); } }
+    public string ABName { get { return url.ToLower() + ".zjc"; } }
     public abstract string UrlFolder { get; }
     public BaseItemData(int id, string name, string url)
     {

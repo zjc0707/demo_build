@@ -10,6 +10,7 @@ public class ModelData : BaseItemData
     /// </summary>
     public int Operate { get; set; }
     public AssetBundle AssetBundle { get; set; }
+    public string HashCode { get; set; }
     public ModelData(int id, string name, string url, int operate) : this(id, name, url)
     {
         this.Operate = operate;

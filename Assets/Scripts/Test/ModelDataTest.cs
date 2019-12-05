@@ -27,7 +27,7 @@ public static class ModelDataTest
                     new ModelData(4,"球", "Sphere"),
                     new ModelData(5,"胶囊", "Capsule"),
                     // new ModelData(6,"吊车","Crane", 1)
-                    
+
             };
             }
 

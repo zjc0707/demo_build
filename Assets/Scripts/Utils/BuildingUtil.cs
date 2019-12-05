@@ -52,16 +52,16 @@ public static class BuildingUtil
         {
             return buildingCache[target];
         }
-        Transform parent = target.parent;
-        while (parent != null)
+        Transform t = target;
+        while (t != null)
         {
-            if (parent == BuildingRoom.current.transform)
+            if (t.parent == BuildingRoom.current.transform)
             {
-                Building building = GetComponentBuilding(target);
+                Building building = GetComponentBuilding(t);
                 buildingCache.Add(target, building);
                 return building;
             }
-            parent = parent.parent;
+            t = t.parent;
         }
         return null;
     }
@@ -86,6 +86,7 @@ public static class BuildingUtil
     {
         Building result = GetComponentBuilding(target);
         result.data = data;
+        // Debug.Log(data == null);
         return result;
     }
     /// <summary>

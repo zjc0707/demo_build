@@ -81,4 +81,10 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
         }
         return list;
     }
+
+    class AssetItem
+    {
+        public GameObject gameObject { get; set; }
+        public long saveTime { get; set; }
+    }
 }

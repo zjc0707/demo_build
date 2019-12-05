@@ -8,9 +8,7 @@ public class PanelStart : BasePanel<PanelStart>
     protected override void _Start()
     {
         base.Open();
-        // AssetBundleUtil.Load();
-        List<ModelData> modelDatas = ModelDataTest.List;
-        MyWebRequest.current.DownAssetBundle(modelDatas);
+        AssetBundleUtil.Load();
         buttonCreate.onClick.AddListener(delegate
         {
             UGUITree.current.CloseStart();

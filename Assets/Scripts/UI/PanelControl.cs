@@ -36,6 +36,7 @@ public class PanelControl : BasePanel<PanelControl>
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
+        // Debug.Log(targetBuilding.name + "    " + (targetBuilding.data == null));
         buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
         toggleLock.isOn = building.isLock;
 

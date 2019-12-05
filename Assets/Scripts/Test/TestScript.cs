@@ -1,3 +1,5 @@
+using System.Net;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Net.Security;
@@ -18,6 +20,54 @@ public class TestScript : BaseUniqueObject<TestScript>
         // Debug.Log(SceneService.current.Test());
         // Debug.Log(StringUtil.IsNullOrEmpty(null));
         // WWWTest();
+        // LoadFileTest();
+    }
+    public void LoadFileTest()
+    {
+        StartCoroutine(LoadFile());
+    }
+    IEnumerator LoadFile()
+    {
+        // string url = @"file://Volumes/Transcend/workspace/unity_workspace/demo_build/Assets/cube.zjc";
+        // UnityWebRequest webRequest = UnityWebRequest.Get(url);
+        // yield return webRequest.SendWebRequest();
+        // if (webRequest.isHttpError || webRequest.isNetworkError)
+        // {
+        //     Debug.Log(webRequest.error);
+        //     PanelLoading.current.Error(webRequest.error);
+        // }
+        // else
+        // {
+        //     AssetBundle ab = AssetBundle.LoadFromMemory(webRequest.downloadHandler.data);
+        //     Debug.Log(ab.name);
+        // }
+        yield return 1;
+        // AssetBundle ab = AssetBundle.LoadFromFile(url);
+        // AssetBundle ab = AssetBundle.LoadFromMemory(File.ReadAllBytes(url));
+        // Debug.Log(ab.name);
+        string str = File.ReadAllText(Application.persistentDataPath + "/assets/manifest.jc");
+        Debug.Log(str);
+        string[] strs = Directory.GetFiles(Application.persistentDataPath + "/assets");
+        Debug.Log(strs.Length);
+        foreach (string s in strs)
+        {
+            Debug.Log(s);
+        }
+        // AssetBundle ab = AssetBundle.LoadFromMemory(File.ReadAllBytes(strs[0]));
+        // AssetBundle ab = AssetBundle.LoadFromFile(strs[0]);
+        // Debug.Log(ab.name);
+        UnityWebRequest webRequest = UnityWebRequest.Get(strs[0]);
+        yield return webRequest.SendWebRequest();
+        if (webRequest.isHttpError || webRequest.isNetworkError)
+        {
+            Debug.Log(webRequest.error);
+            PanelLoading.current.Error(webRequest.error);
+        }
+        else
+        {
+            AssetBundle ab = AssetBundle.LoadFromMemory(webRequest.downloadHandler.data);
+            Debug.Log(ab.name);
+        }
     }
     public void WWWTest()
     {
