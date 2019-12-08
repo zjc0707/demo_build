@@ -6,7 +6,6 @@ public class UGUITree : BaseUniqueObject<UGUITree>
 {
     public Canvas canvasInit;
     public Canvas canvasOperate;
-    public Canvas canvasStatic;
     public Canvas canvasStart;
 
     private void Awake()
@@ -27,24 +26,21 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     }
     private void Start()
     {
-        canvasInit.gameObject.SetActive(false);
-        canvasStatic.gameObject.SetActive(false);
-        canvasOperate.gameObject.SetActive(false);
-        canvasOperate.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(delegate
-        {
-            Sport.current.TurnToInit();
-        });
+        OpenStart();
+        // canvasOperate.gameObject.SetActive(false);
+        // canvasOperate.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(delegate
+        // {
+        //     Sport.current.TurnToInit();
+        // });
     }
     public void CloseStart()
     {
         canvasStart.gameObject.SetActive(false);
         canvasInit.gameObject.SetActive(true);
-        canvasStatic.gameObject.SetActive(true);
     }
     public void OpenStart()
     {
         canvasStart.gameObject.SetActive(true);
         canvasInit.gameObject.SetActive(false);
-        canvasStatic.gameObject.SetActive(false);
     }
 }

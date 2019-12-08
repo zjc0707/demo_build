@@ -2,11 +2,14 @@ using UnityEngine.UI;
 public class PanelOperate : BasePanel<PanelOperate>
 {
     protected override int StackType { get { return UIStackType.OPERATE; } }
-    public Button buttonBack;
-    public Button buttonEditFloorTile;
+    public Button buttonBack, buttonEditFloorTile, buttonCameraRecovery;
     private Text buttonEditFloorTileText;
     protected override void _Start()
     {
+        buttonCameraRecovery.onClick.AddListener(delegate
+        {
+            MyCamera.current.Reset();
+        });
         buttonBack.onClick.AddListener(delegate
         {
             UGUITree.current.OpenStart();
