@@ -6,8 +6,8 @@ public class TourCamera : MonoBehaviour
     //使用 鼠标右键 控制视角旋转。
     // 在场景中游览的相机（不要给相机加碰撞器！）
     public Transform tourCamera;
-    public float moveSpeed = 0.2f;
-    public float rotateSpeed = 120.0f;
+    public float moveSpeed = 0.6f;
+    public float rotateSpeed = 180.0f;
     public float scaleSpeed = 2f;
     public float shiftRate = 2.0f;// 按住Shift加速
     void Start()
@@ -17,7 +17,7 @@ public class TourCamera : MonoBehaviour
     void Update()
     {
         float y = transform.position.y / 10;
-        moveSpeed = y > 1 ? 0.2f * y : 0.2f;
+        moveSpeed = y > 1 ? 0.6f * y : 0.6f;
         if (Input.GetKeyDown(KeyCode.LeftShift)) moveSpeed *= shiftRate;
         if (Input.GetKeyUp(KeyCode.LeftShift)) moveSpeed /= shiftRate;
         if (Input.GetMouseButton(0))
