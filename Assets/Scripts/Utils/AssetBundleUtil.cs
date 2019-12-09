@@ -15,20 +15,20 @@ public static class AssetBundleUtil
         bool existCustom = false;
         foreach (ModelData data in modelDatas)
         {
-            existCustom = false;
-            foreach (AssetItem item in manifest)
-            {
-                if (item.Id == data.Id)
-                {
-                    // if (item.HashCode.Equals(data.HashCode))
-                    {
-                        //id和hash值都相同时加载本地资源
-                        loadLocal.Add(data);
-                        existCustom = true;
-                        break;
-                    }
-                }
-            }
+            // existCustom = false;
+            // foreach (AssetItem item in manifest)
+            // {
+            //     if (item.Id == data.Id)
+            //     {
+            //         // if (item.HashCode.Equals(data.HashCode))
+            //         {
+            //             //id和hash值都相同时加载本地资源
+            //             loadLocal.Add(data);
+            //             existCustom = true;
+            //             break;
+            //         }
+            //     }
+            // }
             if (!existCustom)
             {
                 //本地不存在，下载新资源
