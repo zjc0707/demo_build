@@ -10,6 +10,18 @@ public class MyCamera : BaseUniqueObject<MyCamera>
     private TransformGroup aim;
     private bool isAnim = false;
     private TimeGroup timeGroup = new TimeGroup(0.5f);
+    private Camera _camera;
+    public Camera Camera
+    {
+        get
+        {
+            if (_camera == null)
+            {
+                _camera = this.gameObject.GetComponent<Camera>();
+            }
+            return _camera;
+        }
+    }
     // Use this for initialization
     void Awake()
     {

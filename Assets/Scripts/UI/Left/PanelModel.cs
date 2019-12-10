@@ -26,7 +26,8 @@ public class PanelModel : BasePanel<PanelModel>
             {
                 Building building = BuildingHelper.Create(t);
                 building.Choose();
-                MouseBehaviour.current.Catch(building);
+                // MouseBehaviour.current.Catch(building);
+                PanelState.current.baseInputMouse.Catch(building);
                 int maxBuilding = building.IsTooBig();
                 if (maxBuilding != int.MinValue)
                 {

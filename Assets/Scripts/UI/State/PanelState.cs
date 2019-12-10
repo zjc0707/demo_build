@@ -8,14 +8,30 @@ using UnityEngine.UI;
 public class PanelState : BasePanel<PanelState>
 {
     private static List<Item> items;
+    public BaseInputMouse baseInputMouse;
+    private InputMouseHand inputMouseHand;
+    private InputMouseMove inputMouseMove;
     protected override void _Start()
     {
         base.Open();
         items = new List<Item>();
-        items.Add(new Item(this.transform.Find("HandTool"), null));
-        items.Add(new Item(this.transform.Find("MoveTool"), null));
+        items.Add(new Item(this.transform.Find("HandTool"), delegate
+        {
+            baseInputMouse = inputMouseHand;
+        }));
+        items.Add(new Item(this.transform.Find("MoveTool"), delegate
+        {
+            baseInputMouse = inputMouseMove;
+        }));
         items.Add(new Item(this.transform.Find("RotateTool"), null));
         // items[1].button.onClick.Invoke();
+        inputMouseMove = new InputMouseMove();
+        inputMouseHand = new InputMouseHand();
+        baseInputMouse = inputMouseHand;
+    }
+    private void Update()
+    {
+        baseInputMouse.MyUpdate();
     }
 
     private class Item

@@ -23,20 +23,20 @@ public class TourCamera : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             MoveCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), moveSpeed);
-            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
+            Coordinate.current.ChangeSizeByDistanceToCamera();
         }
         if (Input.GetMouseButton(1))
         {
             // 转相机朝向
             tourCamera.RotateAround(tourCamera.position, Vector3.up, Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime);
             tourCamera.RotateAround(tourCamera.position, tourCamera.right, -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime);
-            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
+            Coordinate.current.ChangeSizeByDistanceToCamera();
         }
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
             tourCamera.Translate(Vector3.forward * scroll * scaleSpeed, Space.Self);
-            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
+            Coordinate.current.ChangeSizeByDistanceToCamera();
         }
 
     }

@@ -14,9 +14,9 @@ public class Coordinate : BaseUniqueObject<Coordinate>
         y.SetHeadPosZ(posZ);
         z.SetHeadPosZ(posZ);
     }
-    public void ChangeSizeByDistanceToCamera(Transform c)
+    public void ChangeSizeByDistanceToCamera()
     {
-        float distance = Math.Abs(Vector3.Distance(c.position, this.transform.position)) / multiple;
+        float distance = Math.Abs(Vector3.Distance(MyCamera.current.transform.position, this.transform.position)) / multiple;
         x.SetScale(distance);
         y.SetScale(distance);
         z.SetScale(distance);
