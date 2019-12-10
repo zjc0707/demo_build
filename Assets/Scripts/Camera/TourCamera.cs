@@ -12,7 +12,7 @@ public class TourCamera : MonoBehaviour
     public float shiftRate = 2.0f;// 按住Shift加速
     void Start()
     {
-        if (tourCamera == null) tourCamera = gameObject.transform;
+        if (tourCamera == null) tourCamera = this.transform;
     }
     void Update()
     {
@@ -23,14 +23,22 @@ public class TourCamera : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             MoveCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), moveSpeed);
+            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
         }
         if (Input.GetMouseButton(1))
         {
             // 转相机朝向
             tourCamera.RotateAround(tourCamera.position, Vector3.up, Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime);
             tourCamera.RotateAround(tourCamera.position, tourCamera.right, -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime);
+            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
         }
-        tourCamera.Translate(Vector3.forward * Input.GetAxis("Mouse ScrollWheel") * scaleSpeed, Space.Self);
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0)
+        {
+            tourCamera.Translate(Vector3.forward * scroll * scaleSpeed, Space.Self);
+            Coordinate.current.ChangeSizeByDistanceToCamera(tourCamera);
+        }
+
     }
     private void MoveCamera(float _MouseX, float _MouseY, float _Speed)     //移动相机
     {
