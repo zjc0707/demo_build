@@ -35,7 +35,6 @@ public abstract class BaseInputMouse
                 //长按状态下鼠标跟随，拾取对象边移动边调整位置，避免超出边界等
                 CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
                 catchBuilding.transform.localPosition = localPosition;
-                catchBuilding.AdjustPosition();
             }
             if (Input.GetMouseButton(0))
             {

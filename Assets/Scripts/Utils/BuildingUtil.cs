@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,6 @@ public static class BuildingUtil
     /// <summary>
     /// 根据centerAndSize添加包围盒
     /// </summary>
-    /// <param name="building"></param>
     public static BoxCollider AddBoxCollider(GameObject obj)
     {
         obj.transform.position = Vector3.zero;
@@ -71,53 +71,5 @@ public static class BuildingUtil
         result.data = data;
         // Debug.Log(data == null);
         return result;
-    }
-    /// <summary>
-    /// 通过对齐左上角来使整体对齐
-    /// </summary>
-    /// <param name="building"></param>
-    public static void AdjustPosition(Building building)
-    {
-        Transform t = building.transform;
-        t.eulerAngles = new Vector3(FixEuler(t.eulerAngles.x),
-            FixEuler(t.eulerAngles.y),
-            FixEuler(t.eulerAngles.z));
-        Vector3 afterFix = new Vector3(FixPos(building.LeftBackBottom.x),
-            building.LeftBackBottom.y,
-            FixPos(building.LeftBackBottom.z));
-        //Debug.Log(building.LeftFrontBottom + "_after:" + afterFix + "_pos:" + t.localPosition);
-        t.position += afterFix - building.LeftBackBottom;
-
-        Vector3 vector3 = building.LeftBackBottom;
-        if (vector3.x < 0)
-        {
-            t.position += new Vector3(0 - vector3.x, 0, 0);
-        }
-        if (vector3.z < 0)
-        {
-            t.position += new Vector3(0, 0, 0 - vector3.z);
-        }
-        float x = vector3.x + building.Size.x;
-        if (x > Floor.current.x)
-        {
-            t.position -= new Vector3(x - Floor.current.x, 0, 0);
-        }
-        float z = vector3.z + building.Size.z;
-        if (z > Floor.current.z)
-        {
-            t.position -= new Vector3(0, 0, z - Floor.current.z);
-        }
-    }
-
-    private static int FixEuler(float f)
-    {
-        return ((int)(f + 45) / 90) * 90;
-    }
-    private static int FixPos(float f)
-    {
-        if (f > 0)
-            return (int)(f + 0.5);
-        else
-            return (int)(f - 0.5);
     }
 }

@@ -9,12 +9,10 @@ public class PanelControl : BasePanel<PanelControl>
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
     private Button buttonOperate, buttonClear, buttonMaterialRecovery;
-    private Toggle toggleLock;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
     private bool isFirst = true;
-
     protected override void _Start()
     {
         Load();
@@ -36,9 +34,7 @@ public class PanelControl : BasePanel<PanelControl>
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
-        // Debug.Log(targetBuilding.name + "    " + (targetBuilding.data == null));
         buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
-        toggleLock.isOn = building.isLock;
 
         AddListener();
     }
@@ -46,7 +42,6 @@ public class PanelControl : BasePanel<PanelControl>
     {
         targetBuilding.SetMaterial(material);
     }
-
     /// <summary>
     /// 绑定事件
     /// </summary>
@@ -59,13 +54,11 @@ public class PanelControl : BasePanel<PanelControl>
         {
             if (target == null) return;
             target.localPosition = this.position.ToVector3();
-            targetBuilding.AdjustPosition();
         });
         this.rotation.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localEulerAngles = this.rotation.ToVector3();
-            targetBuilding.AdjustPosition();
         });
         this.scale.AddValueChangedListener(delegate
         {
@@ -99,15 +92,6 @@ public class PanelControl : BasePanel<PanelControl>
         {
             targetBuilding.RecovercyMaterial();
         });
-        this.toggleLock.onValueChanged.AddListener(delegate
-        {
-            if (target == null)
-            {
-                return;
-            }
-            targetBuilding.isLock = this.toggleLock.isOn;
-            targetBuilding.AdjustPosition();
-        });
     }
 
     /// <summary>
@@ -133,6 +117,5 @@ public class PanelControl : BasePanel<PanelControl>
         buttonOperate = content.Find("ButtonOperate").GetComponent<Button>();
         buttonClear = content.Find("ButtonClear").GetComponent<Button>();
         buttonMaterialRecovery = content.Find("Material").Find("ButtonGroup").Find("ButtonRecovery").GetComponent<Button>();
-        toggleLock = content.Find("Name").Find("Lock").GetComponent<Toggle>();
     }
 }

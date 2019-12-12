@@ -30,7 +30,6 @@ public static class BuildingHelper
         ModelData modelData = ModelDataTest.Find(data.ModelDataId);
         GameObject obj = CreateGameObjcet(modelData);
         Building building = BuildingUtil.GetComponentBuilding(obj.transform, modelData);
-        building.isLock = data.IsLock;
         TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         return building;
     }

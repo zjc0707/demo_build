@@ -6,17 +6,13 @@ using cakeslice;
 
 public class Building : BaseObject
 {
-    public bool isInit = false;
     public ModelData data;
-    /// <summary>
-    /// 物体对象是否锁定，用于移动或修改数据面板时是否自动定位
-    /// </summary>
-    public bool isLock = true;
     /// <summary>
     /// 高亮射线的集合
     /// </summary>
     private List<Outline> outlineList;
     public BoxCollider boxCollider;
+    protected float downToFloorY = float.MaxValue;
     public Vector3 Size
     {
         get
@@ -28,35 +24,13 @@ public class Building : BaseObject
                 this.transform.position = pos;
             }
             Vector3 size = boxCollider.size;
-            return isRotate ? new Vector3(size.z, size.y, size.x) : size;
-        }
-    }
-    /// <summary>
-    /// 基于世界坐标
-    /// </summary>
-    public Vector3 LeftBackBottom
-    {
-        get
-        {
-            if (!base.isRotate)
-            {
-                return this.transform.position - posToLeftBackBottom;
-            }
-            else
-            {
-                return this.transform.position - new Vector3(posToLeftBackBottom.z, posToLeftBackBottom.y, posToLeftBackBottom.x);
-            }
+            return size;
         }
     }
     /// <summary>
     /// 记录该物体的全部材质，用于替换及复原
     /// </summary>
     private Dictionary<Renderer, Material[]> dicMaterial;
-    /// <summary>
-    /// 初始化时计算出物体中心到左上角到距离差，后续调整位置时直接使用，减少计算量
-    /// </summary>
-    private Vector3 posToLeftBackBottom;
-
     /// <summary>
     /// 选中物体，恢复上一个被选中的物体高亮
     /// </summary>
@@ -84,19 +58,6 @@ public class Building : BaseObject
         // this.AdjustPosition();
     }
     /// <summary>
-    /// 通过工具类调整物体坐标,未锁定则自由移动
-    /// </summary>
-    public void AdjustPosition()
-    {
-        if (!isLock) return;
-        BuildingUtil.AdjustPosition(this);
-        // base.DownToFloor();
-    }
-    public void Rotate90()
-    {
-        this.transform.Rotate(transform.up, 90f);
-    }
-    /// <summary>
     /// 设置在awake中记录的renderer的材质
     /// </summary>
     /// <param name="material"></param>
@@ -122,6 +83,29 @@ public class Building : BaseObject
         {
             t.Key.sharedMaterials = t.Value;
         }
+    }
+    /// <summary>
+    /// 根据centerAndSize将物体落到地面上
+    /// </summary>
+    public void DownToFloor()
+    {
+        if (downToFloorY == float.MaxValue)
+        {
+            throw new System.Exception("未计算downToFloorY");
+        }
+        Vector3 pos = this.transform.position;
+        this.transform.position = new Vector3(pos.x, downToFloorY, pos.z);
+    }
+    /// <summary>
+    /// 判断是否超出floor范围
+    /// </summary>
+    /// <returns>模型的最大边或int.MinValue</returns>
+    public int IsTooBig()
+    {
+        float max = Math.Max(Size.x, Size.z);
+        int maxBuilding = (int)max + 1;
+        int minFloor = Math.Min(Floor.current.x, Floor.current.z);
+        return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
     }
     private void ShowHighLight()
     {
@@ -151,44 +135,22 @@ public class Building : BaseObject
     /// <summary>
     /// 计算size，并算出坐标与左上角的差值。
     /// </summary>
-    private void LoadSizeAndPosToLeftFront()
+    private void LoadDownToFloorY()
     {
-        Vector3 dValue = this.transform.position - boxCollider.center;
-        // Debug.Log(Size);
-        posToLeftBackBottom = Size / 2 + dValue;
-
-        // Debug.Log(LeftBackBottom.y);
-        float d = LeftBackBottom.y - (base.floorY + FloorTile.current.thickness / 2);
-        base.downToFloorY = this.transform.position.y - d;
-    }
-    /// <summary>
-    /// 判断是否超出floor范围
-    /// </summary>
-    /// <returns>模型的最大边或int.MinValue</returns>
-    public int IsTooBig()
-    {
-        float max = Math.Max(Size.x, Size.z);
-        int maxBuilding = (int)max + 1;
-        int minFloor = Math.Min(Floor.current.x, Floor.current.z);
-        return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
+        float d = (boxCollider.center - Size / 2).y - (Floor.current.transform.position.y + FloorTile.current.thickness / 2);
+        downToFloorY = this.transform.position.y - d;
     }
     private void Awake()
     {
-        Init();
-    }
-    public void Init()
-    {
-        if (isInit) return;
         LoadDicMaterial();
         boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
-        LoadSizeAndPosToLeftFront();
+        LoadDownToFloorY();
         outlineList = new List<Outline>();
         foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
         {
             outlineList.Add(mesh.gameObject.AddComponent<Outline>());
         }
         HideHighLight();
-        isInit = true;
     }
     /// <summary>
     /// 默认的操控移动方法
