@@ -9,6 +9,7 @@ public class InputMouseHand : BaseInputMouse
     protected override void OnMouseLeftClick()
     {
         MoveCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), moveSpeed);
+        Coordinate.current.ChangeSizeByDistanceToCamera();
     }
     private void MoveCamera(float _MouseX, float _MouseY, float _Speed)     //移动相机
     {

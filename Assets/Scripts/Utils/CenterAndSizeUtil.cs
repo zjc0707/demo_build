@@ -22,15 +22,37 @@ public static class CenterAndSizeUtil
                     listz = new List<float>();
         foreach (var p in meshRenderers)
         {
-            var center1 = p.bounds.center;
+            var center = p.bounds.center;
             var size = p.bounds.size / 2;
-            listx.Add(center1.x + size.x);
-            listx.Add(center1.x - size.x);
-            listy.Add(center1.y + size.y);
-            listy.Add(center1.y - size.y);
-            listz.Add(center1.z + size.z);
-            listz.Add(center1.z - size.z);
+            listx.Add(center.x + size.x);
+            listx.Add(center.x - size.x);
+            listy.Add(center.y + size.y);
+            listy.Add(center.y - size.y);
+            listz.Add(center.z + size.z);
+            listz.Add(center.z - size.z);
         }
+        // foreach (Transform son in t.GetComponentsInChildren<Transform>())
+        // {
+        //     MeshRenderer p = son.GetComponent<MeshRenderer>();
+        //     Debug.Log(son.name);
+        //     if (p != null)
+        //     {
+        //         Debug.Log(p.bounds.center + "   " + p.bounds.size);
+        //         var center = Vector3.Cross(p.bounds.center, son.localScale);
+        //         var size = Vector3.Cross(p.bounds.size, son.localScale) / 2;
+        //         Debug.Log(size + "    " + center);
+        //         listx.Add(center.x + size.x);
+        //         listx.Add(center.x - size.x);
+        //         listy.Add(center.y + size.y);
+        //         listy.Add(center.y - size.y);
+        //         listz.Add(center.z + size.z);
+        //         listz.Add(center.z - size.z);
+        //     }
+        // }
+        // if (listx.Count == 0)
+        // {
+        //     return new CenterAndSize() { Center = Vector3.zero, Size = Vector3.one };
+        // }
         listx.Sort();
         listy.Sort();
         listz.Sort();

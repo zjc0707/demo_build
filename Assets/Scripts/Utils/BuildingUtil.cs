@@ -8,23 +8,6 @@ public static class BuildingUtil
     /// 根据centerAndSize添加包围盒
     /// </summary>
     /// <param name="building"></param>
-    // public static BoxCollider AddBoxCollider(Building building)
-    // {
-    //     GameObject obj = building.gameObject;
-    //     obj.transform.position = Vector3.zero;
-    //     BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
-    //     if (boxCollider == null)
-    //     {
-    //         boxCollider = obj.AddComponent<BoxCollider>();
-    //         // boxCollider.center = Vector3.zero;
-    //         boxCollider.center = building.centerAndSize.Center;
-    //         boxCollider.size = building.centerAndSize.Size;
-    //         Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
-    //     }
-    //     //避免碰撞
-    //     // boxCollider.isTrigger = true;
-    //     return boxCollider;
-    // }
     public static BoxCollider AddBoxCollider(GameObject obj)
     {
         obj.transform.position = Vector3.zero;

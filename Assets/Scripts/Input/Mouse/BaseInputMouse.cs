@@ -51,18 +51,17 @@ public abstract class BaseInputMouse
             //点到UGUI上不进行处理
             return;
         }
-
+        if (Input.GetMouseButtonDown(0))
+        {
+            OnMouseLeftClickDown();
+        }
         if (Input.GetMouseButton(0))
         {
-            RaycastHit hit;
-            Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
             OnMouseLeftClick();
-            if (Physics.Raycast(ray, out hit))
-            {
-                OnMouseLeftClick(hit.collider.transform);
-            }
-            Coordinate.current.ChangeSizeByDistanceToCamera();
-            // BuildingHelper.LastRecovery();
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            OnMouseLeftClickUp();
         }
         if (Input.GetMouseButton(1))
         {
@@ -80,9 +79,12 @@ public abstract class BaseInputMouse
     {
 
     }
-    protected virtual void OnMouseLeftClick(Transform hit)
+    protected virtual void OnMouseLeftClickDown()
     {
-        // Debug.Log(hit.name);
+
+    }
+    protected virtual void OnMouseLeftClickUp()
+    {
 
     }
     protected virtual void OnMouseRightClick()
@@ -92,7 +94,7 @@ public abstract class BaseInputMouse
         camera.RotateAround(camera.position, camera.right, -Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime);
     }
     /// <summary>
-    /// 拾取物体，在点击面板选项
+    /// 拾取物体，点击面板选项
     /// </summary>
     /// <param name="building"></param>
     public void Catch(Building building)
