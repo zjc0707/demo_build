@@ -14,21 +14,17 @@ public class Floor : BaseUniqueObject<Floor>
     {
         this.transform.localScale = new Vector3(x, z, 1);
         this.transform.localPosition = new Vector3(x / 2f, 0, z / 2f);
-        FloorTile.current.Load();
+        FloorTile.current.Load(x, z);
     }
     public void Load(int x, int z)
     {
-        if (x == this.x && z == this.z)
-        {
-            return;
-        }
         this.x = x;
         this.z = z;
         this.Load();
     }
     public void Reset()
     {
-        Load(10, 11);
+        Load(x, z);
     }
 
 }

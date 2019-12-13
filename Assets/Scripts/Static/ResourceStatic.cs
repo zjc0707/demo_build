@@ -23,6 +23,7 @@ public static class ResourceStatic
     public static Material GREEN { get { return GetTranslucentMaterial("Green"); } }
     public static Material CHOOSE { get { return GetTranslucentMaterial("Choose"); } }
     public static Material OTHER { get { return GetTranslucentMaterial("Other"); } }
+    public static Material GREY { get { return GetTranslucentMaterial("Grey"); } }
 
     private static Dictionary<string, Material> dicMaterial = new Dictionary<string, Material>();
     public static Material GetTranslucentMaterial(string color)

@@ -64,6 +64,7 @@ public class Coordinate : BaseUniqueObject<Coordinate>
         this.transform.position = t.position;
         this.transform.eulerAngles = t.eulerAngles;
         this.gameObject.SetActive(true);
+        ChangeSizeByDistanceToCamera();
     }
     public void ChangeSizeByDistanceToCamera()
     {

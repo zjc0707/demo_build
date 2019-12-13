@@ -45,6 +45,19 @@ public abstract class BaseInputMouse
                 return;
             }
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            OnMouseLeftClickUp();
+        }
+        if (Input.GetMouseButton(0))
+        {
+            OnMouseLeftClick();
+        }
+        if (Input.GetMouseButton(1))
+        {
+            OnMouseRightClick();
+            Coordinate.current.ChangeSizeByDistanceToCamera();
+        }
         if (EventSystem.current.IsPointerOverGameObject())
         {
             //点到UGUI上不进行处理
@@ -53,19 +66,6 @@ public abstract class BaseInputMouse
         if (Input.GetMouseButtonDown(0))
         {
             OnMouseLeftClickDown();
-        }
-        if (Input.GetMouseButton(0))
-        {
-            OnMouseLeftClick();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            OnMouseLeftClickUp();
-        }
-        if (Input.GetMouseButton(1))
-        {
-            OnMouseRightClick();
-            Coordinate.current.ChangeSizeByDistanceToCamera();
         }
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
