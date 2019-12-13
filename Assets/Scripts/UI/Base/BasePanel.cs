@@ -48,7 +48,6 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        this.gameObject.SetActive(false);
         if (buttonClose == null && this.transform.Find("Top") != null)
         {
             buttonClose = this.transform.Find("Top").Find("ButtonClose").GetComponent<Button>();
@@ -59,8 +58,11 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
             {
                 this.Close();
             });
+            // Debug.Log(buttonClose.transform.parent.name);
+            // Debug.Log(buttonClose.transform.parent.Find("Button").GetComponent<RectTransform>().sizeDelta);
+            // float height = buttonClose.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
+            // buttonClose.GetComponent<RectTransform>().sizeDelta = Vector2.one * height;
         }
-
         if (buttonLink != null)
         {
             GameObject panel = this.gameObject;
@@ -76,9 +78,23 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
                 }
             });
         }
-
-        _Start();
+        StartCoroutine(Wait());
     }
 
-
+    IEnumerator Wait()
+    {
+        if (buttonClose != null)
+        {
+            RectTransform rect = buttonClose.transform.parent.GetComponent<RectTransform>();
+            while (rect.sizeDelta.y == 0)
+            {
+                yield return 1;
+            }
+            Debug.Log(rect.sizeDelta);
+            buttonClose.GetComponent<RectTransform>().sizeDelta = Vector2.one * rect.sizeDelta.y;
+        }
+        this.gameObject.SetActive(false);
+        _Start();
+        yield return 1;
+    }
 }

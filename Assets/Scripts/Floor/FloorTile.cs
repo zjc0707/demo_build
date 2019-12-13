@@ -30,6 +30,7 @@ public class FloorTile : BaseUniqueObject<FloorTile>
                 objList.Add(target.gameObject);
             }
         }
+        Debug.Log("load FloorTile");
         isAnim = true;
     }
     private void Update()
