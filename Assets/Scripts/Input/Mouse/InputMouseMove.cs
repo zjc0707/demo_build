@@ -61,6 +61,7 @@ public class InputMouseMove : BaseInputMouse
         {
             Vector3 nowMouseClickToWorldPos = MyCamera.current.Camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, targetToScreenPos.z));
             Coordinate.current.Move(targetBeforeMovePos, nowMouseClickToWorldPos - mouseClickToWorldPos);
+            PanelControl.current.UpdatePosData();
         }
     }
     protected override void OnMouseLeftClickUp()

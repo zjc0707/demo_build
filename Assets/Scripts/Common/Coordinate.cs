@@ -18,6 +18,7 @@ public class Coordinate : BaseUniqueObject<Coordinate>
         items = new List<Item>() { FindItem("X"), FindItem("Y"), FindItem("Z") };
         float posZ = items[2].line.GetComponent<MeshRenderer>().bounds.size.z;
         items.ForEach(i => i.SetHeadPosZ(posZ));
+        this.gameObject.SetActive(false);
     }
     /// <summary>
     /// 判断是否点击到，若是则出现相应变化
@@ -60,9 +61,9 @@ public class Coordinate : BaseUniqueObject<Coordinate>
             this.gameObject.SetActive(false);
             return;
         }
-        this.gameObject.SetActive(true);
         this.transform.position = t.position;
         this.transform.eulerAngles = t.eulerAngles;
+        this.gameObject.SetActive(true);
     }
     public void ChangeSizeByDistanceToCamera()
     {
@@ -90,7 +91,7 @@ public class Coordinate : BaseUniqueObject<Coordinate>
         public Transform head { get; set; }
         private MeshRenderer mrLine, mrHead;
         private Material defaultMaterial;
-        private float defaultLineXY = 0.0005f;
+        private float defaultLineXY = 0.001f;
         private float defaultLineZ = 0.01f;
         public Item(Transform t)
         {

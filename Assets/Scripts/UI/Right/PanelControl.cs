@@ -16,7 +16,6 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void _Start()
     {
         Load();
-        this.transform.Find("Content").Find("Scale").gameObject.SetActive(false);
         base.Close();
     }
     public override void Close()
@@ -27,7 +26,6 @@ public class PanelControl : BasePanel<PanelControl>
     public void SetData(Building building)
     {
         base.Open();
-
         targetBuilding = building;
         target = targetBuilding.transform;
         objectName.text = target.name;
@@ -35,8 +33,11 @@ public class PanelControl : BasePanel<PanelControl>
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
         buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
-
         AddListener();
+    }
+    public void UpdatePosData()
+    {
+        position.Set(target.localPosition);
     }
     public void SetTargetMaterial(Material material)
     {
@@ -54,16 +55,19 @@ public class PanelControl : BasePanel<PanelControl>
         {
             if (target == null) return;
             target.localPosition = this.position.ToVector3();
+            Coordinate.current.SetTarget(target);
         });
         this.rotation.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localEulerAngles = this.rotation.ToVector3();
+            Coordinate.current.SetTarget(target);
         });
         this.scale.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localScale = this.scale.ToVector3();
+            Coordinate.current.SetTarget(target);
         });
         //输入框编辑完监听事件
         this.position.AddEndEditListener(delegate
@@ -75,10 +79,10 @@ public class PanelControl : BasePanel<PanelControl>
             this.rotation.Set(target.localEulerAngles);
         });
         //进入操作模式
-        this.buttonOperate.onClick.AddListener(delegate
-        {
-            Sport.current.TurnToOperate(targetBuilding);
-        });
+        // this.buttonOperate.onClick.AddListener(delegate
+        // {
+        //     Sport.current.TurnToOperate(targetBuilding);
+        // });
         this.buttonClear.onClick.AddListener(delegate
         {
             if (target == null)
