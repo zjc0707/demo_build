@@ -7,8 +7,6 @@ public class MyCamera : BaseUniqueObject<MyCamera>
 
     public readonly float y = 10;
     public readonly TransformGroup initTransformGroup = new TransformGroup(new Vector3(0, 5, 0), new Vector3(45, 45, 0));
-    private TransformGroup aim;
-    private bool isAnim = false;
     private TimeGroup timeGroup = new TimeGroup(0.5f);
     private Camera _camera;
     public Camera Camera
@@ -27,35 +25,23 @@ public class MyCamera : BaseUniqueObject<MyCamera>
     {
         this.Reset();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isAnim && aim != null)
-        {
-            LerpUtil.Anim(this.transform, base.transformGroup, aim, timeGroup, Time.deltaTime, delegate
-            {
-                if (timeGroup.rate == 1)
-                {
-                    isAnim = false;
-                }
-            });
-        }
-    }
     public void Reset()
     {
         MoveAnim(initTransformGroup);
-    }
-    public void MoveAnim(TransformGroup t)
-    {
-        aim = t;
-        timeGroup.UseToZero();
-        isAnim = true;
     }
     public void MoveAnim(Vector3 position)
     {
         TransformGroup t = base.transformGroup;
         t.Position = position;
         MoveAnim(t);
+    }
+    public void MoveAnim(TransformGroup end)
+    {
+        TransformGroup start = base.transformGroup;
+        PoolOfAnim.current.AddList(0.5f, f =>
+        {
+            this.transform.position = Vector3.Lerp(start.Position, end.Position, f);
+            this.transform.eulerAngles = Vector3.Lerp(start.EulerAngles, end.EulerAngles, f);
+        });
     }
 }

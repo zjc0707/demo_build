@@ -137,7 +137,7 @@ public class Building : BaseObject
     /// </summary>
     private void LoadDownToFloorY()
     {
-        float d = (boxCollider.center - Size / 2).y - (Floor.current.transform.position.y + FloorTile.current.thickness / 2);
+        float d = (boxCollider.center - Size / 2).y - (Floor.current.transform.position.y + FloorTile.thickness / 2);
         downToFloorY = this.transform.position.y - d;
     }
     private void Awake()
