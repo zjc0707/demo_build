@@ -9,7 +9,7 @@ public class FloorTile : BaseUniqueObject<FloorTile>
     private int index = 0;
     private bool isAnim = false;
     private float useTime = 0f;
-    private float amountTime = 2f;
+    private float amountTime = 5f;
     public void Load(int x, int z)
     {
         Clear();
@@ -28,43 +28,27 @@ public class FloorTile : BaseUniqueObject<FloorTile>
                 target.GetComponent<Renderer>().sharedMaterial = ResourceStatic.GREY;
                 target.gameObject.SetActive(false);
                 objList.Add(target.gameObject);
-            }
-        }
-        Debug.Log("load FloorTile");
-        isAnim = true;
-    }
-    private void Update()
-    {
-        if (isAnim)
-        {
-            if (index >= objList.Count)
-            {
-                isAnim = false;
-                return;
-            }
-            float onceTime = amountTime / objList.Count;
-            useTime += Time.deltaTime;
-            int a = (int)(useTime / onceTime);
-            if (a > 1)
-            {
-                useTime = 0;
-                while (a > 1)
+                PoolOfAnim.current.AddQueue(amountTime / (x * z), f =>
                 {
-                    objList[index].SetActive(true);
-                    index++;
-                    if (index >= objList.Count)
+                    if (f == 1)
                     {
-                        isAnim = false;
-                        return;
+                        target.gameObject.SetActive(true);
+                        PoolOfAnim.current.AddList(2f, ff =>
+                        {
+                            target.localPosition = Vector3.Lerp(vector3, vector3 + Vector3.up * 10, ff);
+                            if (ff == 1)
+                            {
+                                PoolOfAnim.current.AddList(2f, fff =>
+                                {
+                                    target.localPosition = Vector3.Lerp(vector3 + Vector3.up * 10, vector3, fff);
+                                });
+                            }
+                        });
                     }
-                    a--;
-                }
-            }
-            else
-            {
-
+                });
             }
         }
+        // isAnim = true;
     }
     private void Clear()
     {
