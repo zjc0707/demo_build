@@ -1,9 +1,30 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-public class Coordinate : BaseUniqueObject<Coordinate>
+public abstract class Coordinate : BaseUniqueObject<Coordinate>
 {
-    private List<Item> items;
+    private static Coordinate _target;
+    public static Coordinate Target
+    {
+        set
+        {
+            if (_target != null)
+            {
+                value.SetTarget(_target.targetTransform);
+                _target.SetTarget(null);
+            }
+            _target = value;
+        }
+        get
+        {
+            return _target;
+        }
+    }
+    protected List<Item> items;
+    /// <summary>
+    /// 目标物体修改前的pos/rot/scale数据
+    /// </summary>
+    protected Vector3 beforeData;
     /// <summary>
     /// 根据相机距离调整大小时的比例
     /// </summary>
@@ -11,15 +32,16 @@ public class Coordinate : BaseUniqueObject<Coordinate>
     /// <summary>
     /// 移动物体对象
     /// </summary>
-    private Transform target;
-    private Item hit;
+    public Transform targetTransform;
+    protected Item hit;
     private void Start()
     {
         items = new List<Item>() { FindItem("X"), FindItem("Y"), FindItem("Z") };
-        float posZ = items[2].line.GetComponent<MeshRenderer>().bounds.size.z;
-        items.ForEach(i => i.SetHeadPosZ(posZ));
         this.gameObject.SetActive(false);
     }
+    public abstract void Change(Vector3 add);
+    protected abstract Item FindItem(string name);
+    protected abstract void SetScale(float distance);
     /// <summary>
     /// 判断是否点击到，若是则出现相应变化
     /// </summary>
@@ -43,9 +65,11 @@ public class Coordinate : BaseUniqueObject<Coordinate>
                     i.SetMaterial(ResourceStatic.OTHER);
                 }
             }
+            SetBeforeData();
         }
         return flag;
     }
+    protected abstract void SetBeforeData();
     /// <summary>
     /// 恢复点击的变化
     /// </summary>
@@ -53,9 +77,9 @@ public class Coordinate : BaseUniqueObject<Coordinate>
     {
         items.ForEach(i => i.Recovery());
     }
-    public void SetTarget(Transform t)
+    public virtual void SetTarget(Transform t)
     {
-        target = t;
+        targetTransform = t;
         if (t == null)
         {
             this.gameObject.SetActive(false);
@@ -69,62 +93,44 @@ public class Coordinate : BaseUniqueObject<Coordinate>
     public void ChangeSizeByDistanceToCamera()
     {
         float distance = Math.Abs(Vector3.Distance(MyCamera.current.transform.position, this.transform.position)) / multiple;
-        items.ForEach(i => i.SetScale(distance));
-        this.transform.localScale = Vector3.one * distance;
+        SetScale(distance);
     }
-    public void Move(Vector3 pos, Vector3 add)
-    {
-        if (hit != null)
-        {
-            this.transform.position = pos + hit.Project(add);
-            target.position = this.transform.position;
-        }
-    }
-    private Item FindItem(string name)
-    {
-        Transform t = this.transform.Find(name);
-        return new Item(t);
-    }
-    class Item
+    protected class Item
     {
         public Transform target { get; set; }
         public Transform line { get; set; }
-        public Transform head { get; set; }
-        private MeshRenderer mrLine, mrHead;
-        private Material defaultMaterial;
-        private float defaultLineXY = 0.001f;
-        private float defaultLineZ = 0.01f;
-        public Item(Transform t)
+        public MeshRenderer mrLine, mrHead;
+        public Material defaultMaterial;
+
+        public Item()
         {
-            target = t;
-            Debug.Log(t.name + "    " + t.forward);
-            line = t.Find("Line");
-            head = t.Find("Head");
-            mrLine = line.GetComponent<MeshRenderer>();
-            mrHead = head.GetComponent<MeshRenderer>();
-            defaultMaterial = mrLine.sharedMaterial;
+
         }
         public Vector3 Project(Vector3 v)
         {
             return Vector3.Project(v, target.forward);
         }
-        public void SetHeadPosZ(float f)
-        {
-            head.localPosition = new Vector3(0, 0, f);
-        }
-        public void SetScale(float f)
-        {
-            line.localScale = new Vector3(defaultLineXY / f, defaultLineXY / f, defaultLineZ);
-        }
         public void SetMaterial(Material m)
         {
-            mrLine.sharedMaterial = m;
-            mrHead.sharedMaterial = m;
+            if (mrLine != null)
+            {
+                mrLine.sharedMaterial = m;
+            }
+            if (mrHead != null)
+            {
+                mrHead.sharedMaterial = m;
+            }
         }
         public void Recovery()
         {
-            mrLine.sharedMaterial = defaultMaterial;
-            mrHead.sharedMaterial = defaultMaterial;
+            if (mrLine != null)
+            {
+                mrLine.sharedMaterial = defaultMaterial;
+            }
+            if (mrHead != null)
+            {
+                mrHead.sharedMaterial = defaultMaterial;
+            }
         }
     }
 }

@@ -6,9 +6,6 @@ public class FloorTile : BaseUniqueObject<FloorTile>
 {
     private List<GameObject> objList = new List<GameObject>();
     public const float thickness = 0.2f;
-    private int index = 0;
-    private bool isAnim = false;
-    private float useTime = 0f;
     private float amountTime = 5f;
     public void Load(int x, int z)
     {
@@ -26,29 +23,28 @@ public class FloorTile : BaseUniqueObject<FloorTile>
                 target.localPosition = vector3;
                 target.localScale = new Vector3(1, thickness, 1);
                 target.GetComponent<Renderer>().sharedMaterial = ResourceStatic.GREY;
-                target.gameObject.SetActive(false);
+                target.gameObject.SetActive(true);
                 objList.Add(target.gameObject);
-                PoolOfAnim.current.AddQueue(amountTime / (x * z), f =>
-                {
-                    if (f == 1)
-                    {
-                        target.gameObject.SetActive(true);
-                        PoolOfAnim.current.AddList(2f, ff =>
-                        {
-                            target.localPosition = Vector3.Lerp(vector3, vector3 + Vector3.up * 10, ff);
-                            if (ff == 1)
-                            {
-                                PoolOfAnim.current.AddList(2f, fff =>
-                                {
-                                    target.localPosition = Vector3.Lerp(vector3 + Vector3.up * 10, vector3, fff);
-                                });
-                            }
-                        });
-                    }
-                });
+                // PoolOfAnim.current.AddQueue(amountTime / (x * z), f =>
+                // {
+                //     if (f == 1)
+                //     {
+                //         target.gameObject.SetActive(true);
+                //         PoolOfAnim.current.AddList(2f, ff =>
+                //         {
+                //             target.localPosition = Vector3.Lerp(vector3, vector3 + Vector3.up * 10, ff);
+                //             if (ff == 1)
+                //             {
+                //                 PoolOfAnim.current.AddList(2f, fff =>
+                //                 {
+                //                     target.localPosition = Vector3.Lerp(vector3 + Vector3.up * 10, vector3, fff);
+                //                 });
+                //             }
+                //         });
+                //     }
+                // });
             }
         }
-        // isAnim = true;
     }
     private void Clear()
     {

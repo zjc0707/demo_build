@@ -47,9 +47,19 @@ public abstract class BaseUniqueObject<T> : BaseObject where T : MonoBehaviour
         }
     }
 
-    protected BaseUniqueObject()
+    private void Awake()
     {
         _instance = this as T;
     }
+    // protected BaseUniqueObject()
+    // {
+    //     if (_instance != null)
+    //     {
+    //         Debug.Log(_instance.GetType().Name);
+    //         Debug.Log(this.GetType().Name);
+    //     }
+
+    //     _instance = this as T;
+    // }
 
 }

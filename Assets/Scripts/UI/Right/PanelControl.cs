@@ -39,6 +39,14 @@ public class PanelControl : BasePanel<PanelControl>
     {
         position.Set(target.localPosition);
     }
+    public void UpdateRotData()
+    {
+        rotation.Set(target.localEulerAngles);
+    }
+    public void UpdateScaleData()
+    {
+        scale.Set(target.localScale);
+    }
     public void SetTargetMaterial(Material material)
     {
         targetBuilding.SetMaterial(material);
@@ -55,19 +63,19 @@ public class PanelControl : BasePanel<PanelControl>
         {
             if (target == null) return;
             target.localPosition = this.position.ToVector3();
-            Coordinate.current.SetTarget(target);
+            Coordinate.Target.SetTarget(target);
         });
         this.rotation.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localEulerAngles = this.rotation.ToVector3();
-            Coordinate.current.SetTarget(target);
+            Coordinate.Target.SetTarget(target);
         });
         this.scale.AddValueChangedListener(delegate
         {
             if (target == null) return;
             target.localScale = this.scale.ToVector3();
-            Coordinate.current.SetTarget(target);
+            Coordinate.Target.SetTarget(target);
         });
         //输入框编辑完监听事件
         this.position.AddEndEditListener(delegate

@@ -56,7 +56,7 @@ public abstract class BaseInputMouse
         if (Input.GetMouseButton(1))
         {
             OnMouseRightClick();
-            Coordinate.current.ChangeSizeByDistanceToCamera();
+            Coordinate.Target.ChangeSizeByDistanceToCamera();
         }
         if (EventSystem.current.IsPointerOverGameObject())
         {
@@ -71,7 +71,7 @@ public abstract class BaseInputMouse
         if (scroll != 0)
         {
             MyCamera.current.transform.Translate(Vector3.forward * scroll * scaleSpeed, Space.Self);
-            Coordinate.current.ChangeSizeByDistanceToCamera();
+            Coordinate.Target.ChangeSizeByDistanceToCamera();
         }
     }
     protected virtual void OnMouseLeftClick()

@@ -9,25 +9,38 @@ public class PanelState : BasePanel<PanelState>
 {
     private static List<Item> items;
     public BaseInputMouse baseInputMouse;
-    private InputMouseHand inputMouseHand;
+    private InputMouseCamera inputMouseHand;
     private InputMouseMove inputMouseMove;
     protected override void _Start()
     {
         base.Open();
         items = new List<Item>();
-        items.Add(new Item(this.transform.Find("HandTool"), delegate
+        items.Add(new Item(this.transform.Find("CameraTool"), delegate
         {
             baseInputMouse = inputMouseHand;
         }));
-        items.Add(new Item(this.transform.Find("MoveTool"), delegate
+        items.Add(new Item(this.transform.Find("PositionTool"), delegate
         {
             baseInputMouse = inputMouseMove;
+            Coordinate.Target = CoordinatePosition.current;
         }));
-        items.Add(new Item(this.transform.Find("RotateTool"), null));
-        // items[1].button.onClick.Invoke();
+        items.Add(new Item(this.transform.Find("RotationTool"), delegate
+        {
+            baseInputMouse = inputMouseMove;
+            Coordinate.Target = CoordinateRotation.current;
+        }));
+        items.Add(new Item(this.transform.Find("ScaleTool"), delegate
+        {
+            baseInputMouse = inputMouseMove;
+            Coordinate.Target = CoordinateScale.current;
+        }));
+
         inputMouseMove = new InputMouseMove();
-        inputMouseHand = new InputMouseHand();
-        baseInputMouse = inputMouseHand;
+        inputMouseHand = new InputMouseCamera();
+        items[1].button.onClick.Invoke();
+        Debug.Log(CoordinatePosition.current.name);
+        Debug.Log(CoordinateRotation.current.name);
+        Debug.Log(CoordinateScale.current.name);
     }
     private void Update()
     {

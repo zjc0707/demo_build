@@ -81,21 +81,4 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
         this.gameObject.SetActive(false);
         _Start();
     }
-
-    // IEnumerator Wait()
-    // {
-    //     if (buttonClose != null)
-    //     {
-    //         RectTransform rect = buttonClose.transform.parent.GetComponent<RectTransform>();
-    //         while (rect.sizeDelta.y == 0)
-    //         {
-    //             yield return 1;
-    //         }
-    //         Debug.Log(rect.sizeDelta);
-    //         buttonClose.GetComponent<RectTransform>().sizeDelta = Vector2.one * rect.sizeDelta.y;
-    //     }
-    //     this.gameObject.SetActive(false);
-    //     _Start();
-    //     yield return 1;
-    // }
 }

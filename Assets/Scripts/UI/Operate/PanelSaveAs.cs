@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-public class PanelSaveAs : BasePanel<PanelOperate>
+public class PanelSaveAs : BasePanel<PanelSaveAs>
 {
     protected override int StackType { get { return UIStackType.OPERATE; } }
     public InputField inputFieldName;
@@ -29,6 +29,7 @@ public class PanelSaveAs : BasePanel<PanelOperate>
     }
     private void Submit()
     {
+
         SaveUtil.Save(inputFieldName.text, delegate
         {
             base.Clear();

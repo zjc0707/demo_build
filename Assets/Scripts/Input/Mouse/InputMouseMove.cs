@@ -11,7 +11,7 @@ public class InputMouseMove : BaseInputMouse
     private const int STATE_COORDINATE = 2;
     private int state = STATE_NONE;
     private RaycastHit hit;
-    private Vector3 targetBeforeMovePos, targetToScreenPos, mouseClickToWorldPos, offset;
+    private Vector3 targetToScreenPos, mouseClickToWorldPos;
     /// <summary>
     /// 单击选择物体
     /// </summary>
@@ -30,22 +30,20 @@ public class InputMouseMove : BaseInputMouse
             //点击到其他地方
             if (building != null)
             {
-                Coordinate.current.SetTarget(hitTarget);
+                Coordinate.Target.SetTarget(hitTarget);
                 PanelControl.current.SetData(building);
                 building.Choose();
                 state = STATE_BUILDING;
             }
-            else if (Coordinate.current.Hit(hitTarget))
+            else if (Coordinate.Target.Hit(hitTarget))
             {
                 state = STATE_COORDINATE;
-                targetBeforeMovePos = Coordinate.current.transform.position;
-                targetToScreenPos = MyCamera.current.Camera.WorldToScreenPoint(targetBeforeMovePos);
+                targetToScreenPos = MyCamera.current.Camera.WorldToScreenPoint(Coordinate.Target.transform.position);
                 mouseClickToWorldPos = MyCamera.current.Camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, targetToScreenPos.z));
-                offset = targetBeforeMovePos - mouseClickToWorldPos;
             }
             else
             {
-                Coordinate.current.SetTarget(null);
+                Coordinate.Target.SetTarget(null);
                 PanelControl.current.Close();
                 state = STATE_NONE;
             }
@@ -60,8 +58,7 @@ public class InputMouseMove : BaseInputMouse
         if (state == STATE_COORDINATE)
         {
             Vector3 nowMouseClickToWorldPos = MyCamera.current.Camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, targetToScreenPos.z));
-            Coordinate.current.Move(targetBeforeMovePos, nowMouseClickToWorldPos - mouseClickToWorldPos);
-            PanelControl.current.UpdatePosData();
+            Coordinate.Target.Change(nowMouseClickToWorldPos - mouseClickToWorldPos);
         }
     }
     protected override void OnMouseLeftClickUp()
@@ -69,7 +66,7 @@ public class InputMouseMove : BaseInputMouse
         if (state == STATE_COORDINATE)
         {
             state = STATE_BUILDING;
-            Coordinate.current.Recovery();
+            Coordinate.Target.Recovery();
         }
     }
 }

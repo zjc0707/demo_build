@@ -3,13 +3,13 @@ using UnityEngine;
 /// 鼠标移动相机事件
 /// 左键拖动相机
 /// </summary>
-public class InputMouseHand : BaseInputMouse
+public class InputMouseCamera : BaseInputMouse
 {
     public const float moveSpeed = 0.6f;
     protected override void OnMouseLeftClick()
     {
         MoveCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), moveSpeed);
-        Coordinate.current.ChangeSizeByDistanceToCamera();
+        Coordinate.Target.ChangeSizeByDistanceToCamera();
     }
     private void MoveCamera(float _MouseX, float _MouseY, float _Speed)     //移动相机
     {
