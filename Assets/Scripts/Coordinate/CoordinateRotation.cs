@@ -37,10 +37,6 @@ public class CoordinateRotation : Coordinate
             defaultMaterial = mrLine.sharedMaterial,
         };
     }
-    protected override void SetScale(float distance)
-    {
-        this.transform.localScale = Vector3.one * distance;
-    }
     protected override void SetBeforeData()
     {
         switch (hit.target.name)
@@ -50,11 +46,5 @@ public class CoordinateRotation : Coordinate
             case "Z": axis = this.transform.forward; break;
             default: Debug.LogError("匹配失败：" + hit.target.name); break;
         }
-        beforeData = this.transform.eulerAngles;
-        // MyCamera.current.Camera.w
-        // Debug.DrawLine(targetTransform.position, MyCamera.current.transform.position, Color.red, 1000);
-        // Debug.DrawLine(MyCamera.current.transform.position, MyCamera.current.transform.position + 50 * MyCamera.current.transform.forward, Color.green, 1000);
-        // Debug.DrawLine(targetTransform.position, targetTransform.position + 50 * hit.target.forward, Color.red, 1000);
-
     }
 }

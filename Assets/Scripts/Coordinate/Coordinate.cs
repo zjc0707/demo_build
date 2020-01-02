@@ -22,13 +22,9 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
     }
     protected List<Item> items;
     /// <summary>
-    /// 目标物体修改前的pos/rot/scale数据
+    /// 在相机到目标物体的距离的比例
     /// </summary>
-    protected Vector3 beforeData;
-    /// <summary>
-    /// 根据相机距离调整大小时的比例
-    /// </summary>
-    private const float multiple = 2f;
+    protected const float multiple = 0.3f;
     /// <summary>
     /// 移动物体对象
     /// </summary>
@@ -41,7 +37,6 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
     }
     public abstract void Change(Vector3 add);
     protected abstract Item FindItem(string name);
-    protected abstract void SetScale(float distance);
     /// <summary>
     /// 判断是否点击到，若是则出现相应变化
     /// </summary>
@@ -92,8 +87,11 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
     }
     public void ChangeSizeByDistanceToCamera()
     {
-        float distance = Math.Abs(Vector3.Distance(MyCamera.current.transform.position, this.transform.position)) / multiple;
-        SetScale(distance);
+        if (targetTransform == null)
+        {
+            return;
+        }
+        this.transform.position = (1 - multiple) * MyCamera.current.transform.position + multiple * targetTransform.position;
     }
     protected class Item
     {
@@ -101,15 +99,6 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
         public Transform line { get; set; }
         public MeshRenderer mrLine, mrHead;
         public Material defaultMaterial;
-
-        public Item()
-        {
-
-        }
-        public Vector3 Project(Vector3 v)
-        {
-            return Vector3.Project(v, target.forward);
-        }
         public void SetMaterial(Material m)
         {
             if (mrLine != null)

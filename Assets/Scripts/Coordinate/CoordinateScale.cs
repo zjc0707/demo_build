@@ -6,14 +6,15 @@ public class CoordinateScale : Coordinate
     {
         current = this;
     }
-    private const float defaultLineXY = 1f;
-    private const float defaultLineZ = 1f;
+    private Vector3 axis;
+    private Vector3 forward;
+    private Vector3 beforeData;
     public override void Change(Vector3 add)
     {
         if (hit != null)
         {
-            // this.transform.localScale = Vector3.one + hit.Project(add);
-            targetTransform.localScale = beforeData + hit.Project(add);
+            float f = Vector3.Dot(add, forward) > 0 ? 1 : -1;
+            targetTransform.localScale = beforeData + f * axis * Vector3.Project(add, forward).magnitude;
             PanelControl.current.UpdateScaleData();
         }
     }
@@ -32,13 +33,16 @@ public class CoordinateScale : Coordinate
             defaultMaterial = mrLine.sharedMaterial,
         };
     }
-    protected override void SetScale(float distance)
-    {
-        items.ForEach(i => i.line.localScale = new Vector3(defaultLineXY / distance, defaultLineXY / distance, defaultLineZ));
-        this.transform.localScale = Vector3.one * distance;
-    }
     protected override void SetBeforeData()
     {
+        switch (hit.target.name)
+        {
+            case "X": axis = Vector3.right; break;
+            case "Y": axis = Vector3.up; break;
+            case "Z": axis = Vector3.forward; break;
+            default: Debug.LogError("匹配失败：" + hit.target.name); break;
+        }
         beforeData = targetTransform.localScale;
+        forward = hit.target.forward;
     }
 }

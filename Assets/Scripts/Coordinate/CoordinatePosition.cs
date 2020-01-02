@@ -6,14 +6,16 @@ public class CoordinatePosition : Coordinate
     {
         current = this;
     }
-    private const float defaultLineXY = 0.001f;
-    private const float defaultLineZ = 0.01f;
+    private Vector3 beforeTargetData;
+    private Vector3 forward;
+    private Vector3 beforeData;
     public override void Change(Vector3 add)
     {
         if (hit != null)
         {
-            this.transform.position = beforeData + hit.Project(add);
-            targetTransform.position = this.transform.position;
+            Vector3 project = Vector3.Project(add, forward);
+            this.transform.position = beforeData + project;
+            targetTransform.position = beforeTargetData + project / multiple;
             PanelControl.current.UpdatePosData();
         }
     }
@@ -32,13 +34,10 @@ public class CoordinatePosition : Coordinate
             defaultMaterial = mrLine.sharedMaterial,
         };
     }
-    protected override void SetScale(float distance)
-    {
-        items.ForEach(i => i.line.localScale = new Vector3(defaultLineXY / distance, defaultLineXY / distance, defaultLineZ));
-        this.transform.localScale = Vector3.one * distance;
-    }
     protected override void SetBeforeData()
     {
-        beforeData = targetTransform.position;
+        beforeData = this.transform.position;
+        beforeTargetData = targetTransform.position;
+        forward = hit.target.forward;
     }
 }
