@@ -28,13 +28,15 @@ public abstract class BaseInputMouse
         }
         if (catchBuilding != null)
         {
+            //从UI界面点击获取物体后
             RaycastHit hit;
             Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit))
             {
-                //长按状态下鼠标跟随，拾取对象边移动边调整位置，避免超出边界等
+                //拾取对象边移动边调整位置，避免超出边界等
+                // Debug.Log(hit.transform.name);
                 CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
-                catchBuilding.transform.localPosition = localPosition;
+                // catchBuilding.transform.localPosition = localPosition;
             }
             if (Input.GetMouseButton(0))
             {
@@ -98,6 +100,8 @@ public abstract class BaseInputMouse
     /// <param name="building"></param>
     public void Catch(Building building)
     {
+        Coordinate.Target.SetTarget(null);
+        PanelControl.current.Close();
         this.ClearCatch();
         catchBuilding = building;
 

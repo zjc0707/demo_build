@@ -14,7 +14,7 @@ public class CoordinateScale : Coordinate
         if (hit != null)
         {
             float f = Vector3.Dot(add, forward) > 0 ? 1 : -1;
-            targetTransform.localScale = beforeData + f * axis * Vector3.Project(add, forward).magnitude;
+            targetTransform.localScale = beforeData + 2 * f * axis * Vector3.Project(add, forward).magnitude;
             PanelControl.current.UpdateScaleData();
         }
     }

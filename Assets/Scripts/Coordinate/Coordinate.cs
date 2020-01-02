@@ -8,7 +8,7 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
     {
         set
         {
-            if (_target != null)
+            if (_target != null && _target != value)
             {
                 value.SetTarget(_target.targetTransform);
                 _target.SetTarget(null);
