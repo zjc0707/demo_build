@@ -6,11 +6,12 @@ public class CoordinateRotation : Coordinate
     {
         current = this;
     }
+    Vector3 axis;
     public override void Change(Vector3 add)
     {
         if (hit != null)
         {
-            this.transform.eulerAngles = Compute(beforeData + hit.Project(add) * 10);
+            this.transform.RotateAround(this.transform.position, axis, Input.GetAxis("Mouse X") * 10);
             targetTransform.eulerAngles = this.transform.eulerAngles;
             PanelControl.current.UpdateRotData();
         }
@@ -42,6 +43,18 @@ public class CoordinateRotation : Coordinate
     }
     protected override void SetBeforeData()
     {
-        beforeData = targetTransform.eulerAngles;
+        switch (hit.target.name)
+        {
+            case "X": axis = this.transform.right; break;
+            case "Y": axis = this.transform.up; break;
+            case "Z": axis = this.transform.forward; break;
+            default: Debug.LogError("匹配失败：" + hit.target.name); break;
+        }
+        beforeData = this.transform.eulerAngles;
+        // MyCamera.current.Camera.w
+        // Debug.DrawLine(targetTransform.position, MyCamera.current.transform.position, Color.red, 1000);
+        // Debug.DrawLine(MyCamera.current.transform.position, MyCamera.current.transform.position + 50 * MyCamera.current.transform.forward, Color.green, 1000);
+        // Debug.DrawLine(targetTransform.position, targetTransform.position + 50 * hit.target.forward, Color.red, 1000);
+
     }
 }
