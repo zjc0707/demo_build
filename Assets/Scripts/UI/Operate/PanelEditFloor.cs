@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+[UIType(UIStackType.OPERATE)]
 public class PanelEditFloor : BasePanel<PanelEditFloor>
 {
     public InputField length;

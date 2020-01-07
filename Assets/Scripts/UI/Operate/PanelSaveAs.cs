@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+[UIType(UIStackType.OPERATE)]
 public class PanelSaveAs : BasePanel<PanelSaveAs>
 {
-    protected override int StackType { get { return UIStackType.OPERATE; } }
     public InputField inputFieldName;
     public Button buttonSubmit, buttonQuit;
     protected override void _Start()

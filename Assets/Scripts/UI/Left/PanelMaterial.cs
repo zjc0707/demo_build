@@ -1,9 +1,7 @@
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.UI;
+[UIType(UIStackType.LEFT)]
 public class PanelMaterial : BasePanel<PanelMaterial>
 {
-    protected override int StackType { get { return UIStackType.LEFT; } }
     public Transform baseItem;
     protected override void _Start()
     {

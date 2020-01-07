@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
-
+[UIType(UIStackType.LEFT)]
 public class PanelModel : BasePanel<PanelModel>
 {
-    protected override int StackType { get { return UIStackType.LEFT; } }
     public Transform baseItem;
 
     protected override void _Start()

@@ -1,7 +1,7 @@
 using UnityEngine.UI;
+[UIType(UIStackType.OPERATE)]
 public class PanelOperate : BasePanel<PanelOperate>
 {
-    protected override int StackType { get { return UIStackType.OPERATE; } }
     public Button buttonBack, buttonEditFloorTile, buttonCameraRecovery;
     private Text buttonEditFloorTileText;
     protected override void _Start()

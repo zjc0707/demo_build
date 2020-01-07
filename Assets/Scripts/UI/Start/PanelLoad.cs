@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+[UIType(UIStackType.START)]
 public class PanelLoad : BasePanel<PanelLoad>
 {
-    protected override int StackType { get { return UIStackType.START; } }
     /// <summary>
     /// 用于克隆的基础行
     /// </summary>

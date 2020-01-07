@@ -1,23 +1,35 @@
-﻿using System.IO;
+﻿using System.Reflection;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+[UIType(UIStackType.NULL)]
 public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
 {
     public Button buttonClose;
     public Button buttonLink;
-    protected virtual int StackType { get { return UIStackType.NULL; } }
+    private int? _typeValue;
+    public int typeValue
+    {
+        get
+        {
+            if (_typeValue == null)
+            {
+                _typeValue = this.GetType().GetCustomAttribute<UIType>().value;
+            }
+            return _typeValue.GetValueOrDefault();
+        }
+    }
     /// <summary>
     /// 子类中用该函数代替原来的Start()
     /// </summary>
     protected abstract void _Start();
     public virtual void Close()
     {
-        if (StackType != UIStackType.NULL)
+        if (typeValue != UIStackType.NULL)
         {
-            UIStackDic.Close(StackType);
+            UIStackDic.Close(typeValue);
         }
         else
         {
@@ -29,16 +41,16 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     /// </summary>
     public void Clear()
     {
-        if (StackType != UIStackType.NULL)
+        if (typeValue != UIStackType.NULL)
         {
-            UIStackDic.Clear(StackType);
+            UIStackDic.Clear(typeValue);
         }
     }
     public virtual void Open()
     {
-        if (StackType != UIStackType.NULL)
+        if (typeValue != UIStackType.NULL)
         {
-            UIStackDic.Open(StackType, this.gameObject);
+            UIStackDic.Open(typeValue, this.gameObject);
         }
         else
         {
@@ -58,10 +70,6 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
             {
                 this.Close();
             });
-            // Debug.Log(buttonClose.transform.parent.name);
-            // Debug.Log(buttonClose.transform.parent.Find("Button").GetComponent<RectTransform>().sizeDelta);
-            // float height = buttonClose.transform.parent.GetComponent<RectTransform>().sizeDelta.y;
-            // buttonClose.GetComponent<RectTransform>().sizeDelta = Vector2.one * height;
         }
         if (buttonLink != null)
         {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+[UIType(UIStackType.START)]
 public class PanelStart : BasePanel<PanelStart>
 {
-    protected override int StackType { get { return UIStackType.START; } }
     public Button buttonCreate, buttonLoad;
     protected override void _Start()
     {
