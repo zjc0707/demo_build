@@ -8,13 +8,13 @@ using System.Collections;
 public class MyWebRequest : BaseUniqueObject<MyWebRequest>
 {
     private const string PATH_FOLDER_AB_INTERNET = "http://47.102.133.53/AB/";
-    public string PATH_FOLDER_AB_LOACL;
+    public string LOCAL_ASSET_PATH;
     private void Awake()
     {
-        this.PATH_FOLDER_AB_LOACL = Application.persistentDataPath + "/assets/";
-        if (!Directory.Exists(PATH_FOLDER_AB_LOACL))
+        this.LOCAL_ASSET_PATH = Application.persistentDataPath + "/assets/";
+        if (!Directory.Exists(LOCAL_ASSET_PATH))
         {
-            Directory.CreateDirectory(PATH_FOLDER_AB_LOACL);
+            Directory.CreateDirectory(LOCAL_ASSET_PATH);
         }
     }
     /// <summary>
@@ -47,6 +47,9 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             Debug.Log("资源数目不相等:" + amount + "/" + (internet.Count + local.Count));
         }
     }
+    /// <summary>
+    /// 下载网络资源并缓存至本地
+    /// </summary>
     IEnumerator _DownAssetBundle(List<ModelData> datas, Action<int> action)
     {
         Debug.Log("下载资源数目：" + datas.Count);
@@ -75,10 +78,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 amount += 1;
                 //保存ab包到本地
-                string path = PATH_FOLDER_AB_LOACL + data.ABName;
+                string path = LOCAL_ASSET_PATH + data.ABName;
                 if (!File.Exists(path))
                 {
-                    File.Create(PATH_FOLDER_AB_LOACL + data.ABName).Dispose();
+                    File.Create(LOCAL_ASSET_PATH + data.ABName).Dispose();
                 }
                 File.WriteAllBytes(path, webRequest.downloadHandler.data);
                 data.AssetBundle = AssetBundle.LoadFromMemory(webRequest.downloadHandler.data);
@@ -86,6 +89,9 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         }
         action((int)amount);
     }
+    /// <summary>
+    /// 加载本地缓存资源
+    /// </summary>
     IEnumerator _DownAssetBundleLocal(List<ModelData> datas, Action<int> action)
     {
         Debug.Log("读取本地资源数目：" + datas.Count);
@@ -94,7 +100,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         for (int i = 0; i < datas.Count; ++i)
         {
             ModelData data = datas[i];
-            string url = PATH_FOLDER_AB_LOACL + data.ABName;
+            string url = LOCAL_ASSET_PATH + data.ABName;
             Debug.Log(url);
             AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(url);
             while (!request.isDone)
