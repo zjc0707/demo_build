@@ -14,40 +14,44 @@ public class PanelModel : BasePanel<PanelModel>
     }
     private void Load()
     {
-        List<ModelData> items = ModelDataTest.List;
-        foreach (ModelData t in items)
+        // List<ModelData> items = ModelDataTest.List;
+        List<Manifest> localManifests = LocalAssetUtil.Manifests;
+        localManifests.ForEach(manifest =>
         {
-            Transform clone = Instantiate(baseItem.gameObject).transform;
-            clone.GetComponentInChildren<Text>().text = t.Name;
-            clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
+            manifest.Models.ForEach(model =>
             {
-                Building building = BuildingHelper.Create(t);
-                building.Choose();
-                // MouseBehaviour.current.Catch(building);
-                PanelState.current.baseInputMouse.Catch(building);
-                int maxBuilding = building.IsTooBig();
-                if (maxBuilding != int.MinValue)
+                Transform clone = Instantiate(baseItem.gameObject).transform;
+                clone.GetComponentInChildren<Text>().text = model.Name;
+                clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
                 {
-                    building.gameObject.SetActive(false);
-                    PanelDialog.current.Open("场景过小，\n需扩建至(" + maxBuilding + "," + maxBuilding + ")", delegate
+                    Building building = BuildingHelper.Create(model);
+                    building.Choose();
+                    // MouseBehaviour.current.Catch(building);
+                    PanelState.current.baseInputMouse.Catch(building);
+                    int maxBuilding = building.IsTooBig();
+                    if (maxBuilding != int.MinValue)
                     {
-                        Floor.current.Load(maxBuilding, maxBuilding);
-                    }, delegate
+                        building.gameObject.SetActive(false);
+                        PanelDialog.current.Open("场景过小，\n需扩建至(" + maxBuilding + "," + maxBuilding + ")", delegate
+                        {
+                            Floor.current.Load(maxBuilding, maxBuilding);
+                        }, delegate
+                        {
+                            building.gameObject.SetActive(true);
+                            WhenTooBig(building);
+                        });
+                    }
+                    else
                     {
-                        building.gameObject.SetActive(true);
                         WhenTooBig(building);
-                    });
-                }
-                else
-                {
-                    WhenTooBig(building);
-                }
-            });
-            // clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
-            clone.Find("Image").GetComponent<Image>().sprite = AssetBundleUtil.DicSprite[t.Id];
+                    }
+                });
+                // clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
+                clone.Find("Image").GetComponent<Image>().sprite = AssetBundleUtil.DicSprite[model.Id];
 
-            clone.SetParent(baseItem.parent);
-        }
+                clone.SetParent(baseItem.parent);
+            });
+        });
 
         baseItem.gameObject.SetActive(false);
     }

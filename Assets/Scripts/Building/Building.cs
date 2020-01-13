@@ -6,7 +6,7 @@ using cakeslice;
 
 public class Building : BaseObject
 {
-    public ModelData data;
+    public Model data;
     /// <summary>
     /// 高亮射线的集合
     /// </summary>

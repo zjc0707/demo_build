@@ -32,7 +32,7 @@ public class PanelControl : BasePanel<PanelControl>
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
-        buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
+        // buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
         AddListener();
     }
     public void UpdatePosData()

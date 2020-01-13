@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
 {
-    private Dictionary<int, List<AssetItem>> dicGoPool = new Dictionary<int, List<AssetItem>>();
+    private Dictionary<int, List<Item>> dicGoPool = new Dictionary<int, List<Item>>();
     /// <summary>
     /// 资源池中最大存活时间为checkSpan + maxAliveTime
     /// 单位 秒
@@ -12,7 +12,7 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     private float useTime = 0;
     public GameObject Create(int id)
     {
-        List<AssetItem> list = GetList(id);
+        List<Item> list = GetList(id);
         GameObject rs = null;
         if (list.Count == 0)
         {
@@ -20,7 +20,7 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
         }
         else
         {
-            AssetItem item = list[list.Count - 1];
+            Item item = list[list.Count - 1];
             rs = item.gameObject;
             rs.SetActive(true);
             list.RemoveAt(list.Count - 1);
@@ -33,9 +33,9 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     }
     public void Destroy(int id, GameObject go)
     {
-        List<AssetItem> list = GetList(id);
+        List<Item> list = GetList(id);
         go.SetActive(false);
-        list.Add(new AssetItem()
+        list.Add(new Item()
         {
             gameObject = go,
             saveTime = TimeUtil.UnixTimeSpan
@@ -53,12 +53,12 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     private void CheckOutOfAliveTime()
     {
         List<int> listIndex = new List<int>();
-        foreach (List<AssetItem> list in dicGoPool.Values)
+        foreach (List<Item> list in dicGoPool.Values)
         {
             listIndex.Clear();
             for (int i = 0; i < list.Count; ++i)
             {
-                AssetItem item = list[i];
+                Item item = list[i];
                 if (TimeUtil.UnixTimeSpan - item.saveTime > maxAliveTime)
                 {
                     GameObject.Destroy(item.gameObject);
@@ -71,18 +71,18 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
             }
         }
     }
-    private List<AssetItem> GetList(int id)
+    private List<Item> GetList(int id)
     {
-        List<AssetItem> list = null;
+        List<Item> list = null;
         if (!dicGoPool.TryGetValue(id, out list))
         {
-            list = new List<AssetItem>();
+            list = new List<Item>();
             dicGoPool.Add(id, list);
         }
         return list;
     }
 
-    class AssetItem
+    class Item
     {
         public GameObject gameObject { get; set; }
         public long saveTime { get; set; }

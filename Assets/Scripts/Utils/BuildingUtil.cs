@@ -65,7 +65,7 @@ public static class BuildingUtil
         // }
         return result;
     }
-    public static Building GetComponentBuilding(Transform target, ModelData data)
+    public static Building GetComponentBuilding(Transform target, Model data)
     {
         Building result = GetComponentBuilding(target);
         result.data = data;

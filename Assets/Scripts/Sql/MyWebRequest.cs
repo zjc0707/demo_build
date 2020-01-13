@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 using System.Collections;
 public class MyWebRequest : BaseUniqueObject<MyWebRequest>
 {
-    private const string PATH_FOLDER_AB_INTERNET = "http://47.102.133.53/AB/";
+    // private const string PATH_FOLDER_AB_INTERNET = "http://47.102.133.53/AB/";
     public string LOCAL_ASSET_PATH;
     private void Awake()
     {
@@ -23,42 +23,54 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     private const int TIMEOUT = 10;
     public void Post(string url, WWWForm form, Action<string> action, bool closeLoadingBeforeAction = true)
     {
-        StartCoroutine(_Post(url, form, action, closeLoadingBeforeAction));
+        StartCoroutine(IPost(url, form, action, closeLoadingBeforeAction));
     }
-    public void LoadAssetBundle(List<ModelData> internet, List<ModelData> local, Action action)
+    public void Get(string url, Action<string> action, bool closeLoadingBeforeAction = true)
     {
-        StartCoroutine(_LoadAB(internet, local, action));
+        StartCoroutine(IGet(url, action, closeLoadingBeforeAction));
     }
-    IEnumerator _LoadAB(List<ModelData> internet, List<ModelData> local, Action action)
+    public void LoadAssetBundle(List<Model> internet, List<Manifest> local, Action action)
     {
+        StartCoroutine(ILoadAB(internet, local, action));
+    }
+    IEnumerator ILoadAB(List<Model> internet, List<Manifest> local, Action action)
+    {
+        Debug.Log(string.Format("internet:{0}\nlocal:{1}", Json.Serialize(internet), Json.Serialize(local)));
         int amount = 0;
-        yield return _DownAssetBundle(internet, i => amount += i);
-        yield return _DownAssetBundleLocal(local, i => amount += i);
-        if (amount == internet.Count + local.Count)
+        yield return IDownAssetBundle(internet, i => amount += i);
+        if (amount != internet.Count)
         {
-            List<ModelData> list = new List<ModelData>();
-            list.AddRange(internet);
-            list.AddRange(local);
-            yield return _LoadAssetBundle(list);
-            action();
+            yield break;
         }
-        else
+        internet.ForEach(model =>
         {
-            Debug.Log("资源数目不相等:" + amount + "/" + (internet.Count + local.Count));
-        }
+            if (local.Exists(m => m.ModelType.Id == model.ModelTypeId))
+            {
+                local.Find(m => m.ModelType.Id == model.ModelTypeId).Models.Add(model);
+            }
+            else
+            {
+                local.Add(new Manifest()
+                {
+                    ModelType = new ModelType() { Id = model.ModelTypeId },
+                    Models = new List<Model>() { model }
+                });
+            }
+        });
+        yield return ILoadAssetBundle(local);
+        action();
     }
     /// <summary>
     /// 下载网络资源并缓存至本地
     /// </summary>
-    IEnumerator _DownAssetBundle(List<ModelData> datas, Action<int> action)
+    IEnumerator IDownAssetBundle(List<Model> datas, Action<int> action)
     {
         Debug.Log("下载资源数目：" + datas.Count);
         float amount = 0f;
         PanelLoading.current.WebLoading();
-        for (int i = 0; i < datas.Count; ++i)
+        foreach (Model data in datas)
         {
-            ModelData data = datas[i];
-            string url = PATH_FOLDER_AB_INTERNET + data.ABName;
+            string url = WebUtil.HOST + "fileServer/download/" + data.FileUrl;
             Debug.Log(url);
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.SendWebRequest();
@@ -78,13 +90,15 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 amount += 1;
                 //保存ab包到本地
-                string path = LOCAL_ASSET_PATH + data.ABName;
-                if (!File.Exists(path))
+                string directoryPath = LOCAL_ASSET_PATH + data.ModelTypeId;
+                if (!Directory.Exists(directoryPath))
                 {
-                    File.Create(LOCAL_ASSET_PATH + data.ABName).Dispose();
+                    Directory.CreateDirectory(directoryPath);
                 }
-                File.WriteAllBytes(path, webRequest.downloadHandler.data);
-                data.AssetBundle = AssetBundle.LoadFromMemory(webRequest.downloadHandler.data);
+                string filePath = directoryPath + '/' + data.Id;
+                Debug.Log((File.Exists(filePath) ? "覆盖:" : "新建:") + filePath);
+                File.Create(filePath).Dispose();
+                File.WriteAllBytes(filePath, webRequest.downloadHandler.data);
             }
         }
         action((int)amount);
@@ -92,68 +106,92 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     /// <summary>
     /// 加载本地缓存资源
     /// </summary>
-    IEnumerator _DownAssetBundleLocal(List<ModelData> datas, Action<int> action)
+    IEnumerator IDownAssetBundleLocal(Model data, Action<AssetBundle> action)
     {
-        Debug.Log("读取本地资源数目：" + datas.Count);
-        float amount = 0f;
         PanelLoading.current.WebLoading();
-        for (int i = 0; i < datas.Count; ++i)
+        string url = LOCAL_ASSET_PATH + data.ModelTypeId + '/' + data.Id;
+        Debug.Log(url);
+        AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(url);
+        while (!request.isDone)
         {
-            ModelData data = datas[i];
-            string url = LOCAL_ASSET_PATH + data.ABName;
-            Debug.Log(url);
-            AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(url);
-            while (!request.isDone)
-            {
-                string str = string.Format("读取本地资源{0}%,正在读取：{1}", (int)((amount + request.progress) / datas.Count * 100), data.Name);
-                yield return 1;
-            }
-            amount += 1;
-            data.AssetBundle = request.assetBundle;
+            yield return 1;
         }
-        action((int)amount);
+        action(request.assetBundle);
     }
-    IEnumerator _LoadAssetBundle(List<ModelData> datas)
+    IEnumerator ILoadAssetBundle(List<Manifest> datas)
     {
-        Debug.Log("加载资源数目：" + datas.Count);
-        float amount = 0f;
-        foreach (ModelData data in datas)
+        int all = 0;
+        foreach (Manifest manifest in datas)
         {
-            AssetBundleRequest request = data.AssetBundle.LoadAllAssetsAsync();
-            while (!request.isDone)
+            float amount = 0f;
+            foreach (Model data in manifest.Models)
             {
-                string str = string.Format("已加载{0}%,正在加载：{1}", (int)((amount + request.progress) / datas.Count * 100), data.Name);
-                PanelLoading.current.Progress(amount + request.progress, datas.Count, str);
-                yield return 1;
-            }
-            amount += 1;
-            foreach (UnityEngine.Object obj in request.allAssets)
-            {
-                // Debug.Log(obj.name + "   " + obj.GetType());
-                if (obj.GetType() == typeof(GameObject))
+                AssetBundle assetBundle = null;
+                yield return IDownAssetBundleLocal(data, ab => assetBundle = ab);
+                AssetBundleRequest request = assetBundle.LoadAllAssetsAsync();
+                while (!request.isDone)
                 {
-                    AssetBundleUtil.DicPrefab.Add(data.Id, obj as GameObject);
+                    string str = string.Format("类型{0} 已加载{1}%, 正在加载：{2}",
+                                         data.ModelTypeId, (int)((amount + request.progress) / manifest.Models.Count * 100), data.Name);
+                    PanelLoading.current.Progress(amount + request.progress, manifest.Models.Count, str);
+                    yield return 1;
                 }
-                if (obj.GetType() == typeof(Sprite))
+                amount++;
+                all++;
+                foreach (UnityEngine.Object obj in request.allAssets)
                 {
-                    AssetBundleUtil.DicSprite.Add(data.Id, obj as Sprite);
+                    if (obj.GetType() == typeof(GameObject))
+                    {
+                        AssetBundleUtil.DicPrefab.Add(data.Id, obj as GameObject);
+                    }
+                    if (obj.GetType() == typeof(Sprite))
+                    {
+                        AssetBundleUtil.DicSprite.Add(data.Id, obj as Sprite);
+                    }
                 }
+                assetBundle.Unload(false);
             }
-            data.AssetBundle.Unload(false);
-            data.AssetBundle = null;
         }
-        if (AssetBundleUtil.DicPrefab.Count != datas.Count)
+        if (AssetBundleUtil.DicPrefab.Count != all)
         {
-            PanelLoading.current.Error("错误（资源缺失）：" + AssetBundleUtil.DicPrefab.Count + "/" + datas.Count);
+            PanelLoading.current.Error("错误（资源缺失）：" + AssetBundleUtil.DicPrefab.Count + "/" + all);
         }
         else
         {
+            Debug.Log("总资源数目：" + all);
             PanelLoading.current.Close();
         }
     }
-    IEnumerator _Post(string url, WWWForm form, Action<string> action, bool closeLoadingBeforeAction)
+    IEnumerator IPost(string url, WWWForm form, Action<string> action, bool closeLoadingBeforeAction)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, form);
+        webRequest.timeout = TIMEOUT;
+        webRequest.SendWebRequest();
+        PanelLoading.current.WebLoading();
+        while (!webRequest.isDone)
+        {
+            yield return 1;
+        }
+        if (webRequest.isHttpError || webRequest.isNetworkError)
+        {
+            PanelLoading.current.Error(webRequest.error);
+            Debug.Log(webRequest.error);
+        }
+        else
+        {
+            if (closeLoadingBeforeAction)
+            {
+                PanelLoading.current.Close();
+            }
+            if (action != null)
+            {
+                action(webRequest.downloadHandler.text);
+            }
+        }
+    }
+    IEnumerator IGet(string url, Action<string> action, bool closeLoadingBeforeAction)
+    {
+        UnityWebRequest webRequest = UnityWebRequest.Get(url);
         webRequest.timeout = TIMEOUT;
         webRequest.SendWebRequest();
         PanelLoading.current.WebLoading();

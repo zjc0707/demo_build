@@ -3,17 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 public static class LocalAssetUtil
 {
-    public static List<AssetItem> Manifest
+    private static List<Manifest> manifests;
+    public static List<Manifest> Manifests
     {
         set
         {
-            SaveManifest(value);
+            manifests = value;
+            SaveManifests(value);
         }
         get
         {
-            return LoadManifest();
+            if (null == manifests)
+            {
+                manifests = LoadManifests();
+            }
+            return manifests;
         }
     }
+    public static Model GetModel(int id)
+    {
+        foreach (Manifest manifest in manifests)
+        {
+            foreach (Model model in manifest.Models)
+            {
+                if (model.Id == id)
+                {
+                    return model;
+                }
+            }
+        }
+        return null;
+    }
+
     private static string _path;
     private static string path
     {
@@ -26,22 +47,22 @@ public static class LocalAssetUtil
             return _path;
         }
     }
-    private static List<AssetItem> LoadManifest()
+    private static List<Manifest> LoadManifests()
     {
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             Debug.Log("exist:" + json);
-            return string.IsNullOrEmpty(json) ? new List<AssetItem>() : Json.Parse<List<AssetItem>>(json);
+            return string.IsNullOrEmpty(json) ? new List<Manifest>() : Json.Parse<List<Manifest>>(json);
         }
         else
         {
             File.Create(path).Dispose();
-            Debug.Log("create");
-            return new List<AssetItem>();
+            Debug.Log("create:" + path);
+            return new List<Manifest>();
         }
     }
-    private static void SaveManifest(List<AssetItem> manifest)
+    private static void SaveManifests(List<Manifest> manifest)
     {
         string json = Json.Serialize(manifest);
         Debug.Log("更新本地manifest：" + json);

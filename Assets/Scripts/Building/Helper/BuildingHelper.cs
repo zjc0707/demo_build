@@ -19,7 +19,7 @@ public static class BuildingHelper
         LastTarget.Recovery();
         LastTarget = null;
     }
-    public static Building Create(ModelData data)
+    public static Building Create(Model data)
     {
         GameObject obj = CreateGameObjcet(data);
         Building building = BuildingUtil.GetComponentBuilding(obj.transform, data);
@@ -27,13 +27,17 @@ public static class BuildingHelper
     }
     public static Building Create(BuildingSaveData data)
     {
-        ModelData modelData = ModelDataTest.Find(data.ModelDataId);
-        GameObject obj = CreateGameObjcet(modelData);
-        Building building = BuildingUtil.GetComponentBuilding(obj.transform, modelData);
+        Model model = LocalAssetUtil.GetModel(data.ModelDataId);
+        if (model == null)
+        {
+            return null;
+        }
+        GameObject obj = CreateGameObjcet(model);
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform, model);
         TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         return building;
     }
-    private static GameObject CreateGameObjcet(ModelData data)
+    private static GameObject CreateGameObjcet(Model data)
     {
         GameObject rs = PoolOfAsset.current.Create(data.Id);
         int count = 0;

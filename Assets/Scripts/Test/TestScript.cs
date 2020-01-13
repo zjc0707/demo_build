@@ -123,11 +123,11 @@ public class TestScript : BaseUniqueObject<TestScript>
         // // Debug.Log(new Vector3SaveData(1, 1, 1));
         // Debug.Log(saveData.CameraTransformGroup);
         // Debug.Log(saveData);
-        TestData test = new TestData()
-        {
-            Str = "test",
-            array = new int[] { 1, 2, 3, 4 }
-        };
+        // TestData test = new TestData()
+        // {
+        //     Str = "test",
+        //     array = new int[] { 1, 2, 3, 4 }
+        // };
         // object array = test.array;
         // Type t = array.GetType();
         // Debug.Log(t.IsArray);
@@ -139,7 +139,7 @@ public class TestScript : BaseUniqueObject<TestScript>
         // {
         //     Debug.Log(rs.GetValue(i));
         // }
-        Debug.Log(test);
+        // Debug.Log(test);
     }
     public void FileTest()
     {

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
 public static class AssetBundleUtil
 {
     public static Dictionary<int, GameObject> DicPrefab = new Dictionary<int, GameObject>();
@@ -12,42 +13,43 @@ public static class AssetBundleUtil
     }
     public static void Load()
     {
-        List<AssetItem> localManifest = LocalAssetUtil.Manifest;
-        List<ModelData> modelDatas = ModelDataTest.List,
-                        loadLocal = new List<ModelData>(),
-                        loadInternet = new List<ModelData>();
-        foreach (ModelData data in modelDatas)
+        List<Manifest> localManifests = LocalAssetUtil.Manifests;
+        WebUtil.FindModelList(rs =>
         {
-            bool existCustom = false;
-            foreach (AssetItem item in localManifest)
+            Debug.Log(rs);
+            Manifest manifestType0 = localManifests.Find(m => m.ModelType.Id == 0);
+            ResultData<object> rsData = Json.Parse<ResultData<object>>(rs);
+            if (!rsData.Success)
             {
-                if (item.Id == data.Id)
-                {
-                    loadLocal.Add(data);
-                    existCustom = true;
-                    break;
-                }
+                Debug.LogError(rsData.Obj.ToString());
+                PanelLoading.current.Error(rsData.Obj.ToString());
+                return;
             }
-            if (!existCustom)
+            List<Model> needDownload;
+            if (null == manifestType0)
             {
-                loadInternet.Add(data);
+                needDownload = (rsData.Obj as JArray).ToObject<List<Model>>();
             }
-        }
-        MyWebRequest.current.LoadAssetBundle(loadInternet, loadLocal, () =>
-        {
-            if (modelDatas.Count != localManifest.Count)
+            else
             {
-                // 最后更新本地manifest
-                localManifest.Clear();
-                foreach (ModelData data in modelDatas)
+                needDownload = new List<Model>();
+                (rsData.Obj as JArray).ToObject<List<Model>>().ForEach(m =>
                 {
-                    localManifest.Add(new AssetItem()
+                    if (!manifestType0.Models.Exists(i => i.Id == m.Id))
                     {
-                        Id = data.Id
-                    });
-                }
-                LocalAssetUtil.Manifest = localManifest;
+                        needDownload.Add(m);
+                    }
+                });
             }
+            MyWebRequest.current.LoadAssetBundle(needDownload, localManifests, () =>
+            {
+                if (needDownload.Count == 0)
+                {
+                    Debug.Log("无更新项");
+                    return;
+                }
+                LocalAssetUtil.Manifests = localManifests;
+            });
         });
     }
 }
