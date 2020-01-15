@@ -21,13 +21,13 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     /// seconds
     /// </summary>
     private const int TIMEOUT = 10;
-    public void Post(string url, WWWForm form, Action<string> action, bool closeLoadingBeforeAction = true)
+    public void Post(string url, WWWForm form, Action<string> success, Action failure = null, bool closeLoadingBeforeAction = true)
     {
-        StartCoroutine(IPost(url, form, action, closeLoadingBeforeAction));
+        StartCoroutine(IPost(url, form, success, failure, closeLoadingBeforeAction));
     }
-    public void Get(string url, Action<string> action, bool closeLoadingBeforeAction = true)
+    public void Get(string url, Action<string> success, Action failure = null, bool closeLoadingBeforeAction = true)
     {
-        StartCoroutine(IGet(url, action, closeLoadingBeforeAction));
+        StartCoroutine(IGet(url, success, failure, closeLoadingBeforeAction));
     }
     public void LoadAssetBundle(List<Model> internet, List<Manifest> local, Action action)
     {
@@ -36,29 +36,35 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     IEnumerator ILoadAB(List<Model> internet, List<Manifest> local, Action action)
     {
         Debug.Log(string.Format("internet:{0}\nlocal:{1}", Json.Serialize(internet), Json.Serialize(local)));
-        int amount = 0;
-        yield return IDownAssetBundle(internet, i => amount += i);
-        if (amount != internet.Count)
+        if (internet != null && internet.Count > 0)
         {
-            yield break;
-        }
-        internet.ForEach(model =>
-        {
-            if (local.Exists(m => m.ModelType.Id == model.ModelTypeId))
+            int amount = 0;
+            yield return IDownAssetBundle(internet, i => amount += i);
+            if (amount != internet.Count)
             {
-                local.Find(m => m.ModelType.Id == model.ModelTypeId).Models.Add(model);
+                yield break;
             }
-            else
+            internet.ForEach(model =>
             {
-                local.Add(new Manifest()
+                if (local.Exists(m => m.ModelType.Id == model.ModelTypeId))
                 {
-                    ModelType = new ModelType() { Id = model.ModelTypeId },
-                    Models = new List<Model>() { model }
-                });
-            }
-        });
+                    local.Find(m => m.ModelType.Id == model.ModelTypeId).Models.Add(model);
+                }
+                else
+                {
+                    local.Add(new Manifest()
+                    {
+                        ModelType = new ModelType() { Id = model.ModelTypeId },
+                        Models = new List<Model>() { model }
+                    });
+                }
+            });
+        }
         yield return ILoadAssetBundle(local);
-        action();
+        if (action != null)
+        {
+            action();
+        }
     }
     /// <summary>
     /// 下载网络资源并缓存至本地
@@ -162,7 +168,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             PanelLoading.current.Close();
         }
     }
-    IEnumerator IPost(string url, WWWForm form, Action<string> action, bool closeLoadingBeforeAction)
+    IEnumerator IPost(string url, WWWForm form, Action<string> success, Action failure, bool closeLoadingBeforeAction)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, form);
         webRequest.timeout = TIMEOUT;
@@ -176,6 +182,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         {
             PanelLoading.current.Error(webRequest.error);
             Debug.Log(webRequest.error);
+            if (failure != null)
+            {
+                failure();
+            }
         }
         else
         {
@@ -183,13 +193,13 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 PanelLoading.current.Close();
             }
-            if (action != null)
+            if (success != null)
             {
-                action(webRequest.downloadHandler.text);
+                success(webRequest.downloadHandler.text);
             }
         }
     }
-    IEnumerator IGet(string url, Action<string> action, bool closeLoadingBeforeAction)
+    IEnumerator IGet(string url, Action<string> success, Action failure, bool closeLoadingBeforeAction)
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
         webRequest.timeout = TIMEOUT;
@@ -203,6 +213,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         {
             PanelLoading.current.Error(webRequest.error);
             Debug.Log(webRequest.error);
+            if (failure != null)
+            {
+                failure();
+            }
         }
         else
         {
@@ -210,9 +224,9 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 PanelLoading.current.Close();
             }
-            if (action != null)
+            if (success != null)
             {
-                action(webRequest.downloadHandler.text);
+                success(webRequest.downloadHandler.text);
             }
         }
     }

@@ -9,8 +9,13 @@ public class PanelModel : BasePanel<PanelModel>
 
     protected override void _Start()
     {
-        Load();
+
+        // base.Open();
+    }
+    public override void Open()
+    {
         base.Open();
+        Load();
     }
     private void Load()
     {

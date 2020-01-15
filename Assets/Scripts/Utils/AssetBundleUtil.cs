@@ -50,6 +50,10 @@ public static class AssetBundleUtil
                 }
                 LocalAssetUtil.Manifests = localManifests;
             });
+        },
+        () =>
+        {
+            MyWebRequest.current.LoadAssetBundle(null, localManifests, null);
         });
     }
 }

@@ -13,8 +13,9 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         //统一关闭按钮样式
         foreach (Image image in this.transform.GetComponentsInChildren<Image>())
         {
-            if (image.name == "ButtonClose")
+            if (image.name.Equals("ButtonClose"))
             {
+                Debug.Log(image.transform.parent.parent.name + "   " + image.name);
                 image.color = new Color(253 / 255f, 97 / 255f, 97 / 255f, 255 / 255f);
             }
         }
@@ -27,20 +28,17 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     private void Start()
     {
         OpenStart();
-        // canvasOperate.gameObject.SetActive(false);
-        // canvasOperate.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(delegate
-        // {
-        //     Sport.current.TurnToInit();
-        // });
     }
     public void CloseStart()
     {
         canvasStart.gameObject.SetActive(false);
         canvasInit.gameObject.SetActive(true);
+        PanelModel.current.Open();
     }
     public void OpenStart()
     {
-        canvasStart.gameObject.SetActive(true);
         canvasInit.gameObject.SetActive(false);
+        canvasStart.gameObject.SetActive(true);
+
     }
 }
