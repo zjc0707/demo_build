@@ -20,6 +20,10 @@ public class InputMouseMove : BaseInputMouse
         Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out hit))
         {
+            Coordinate.Target.SetTarget(null);
+            PanelList.current.LastRecovery();
+            PanelControl.current.Close();
+            state = STATE_NONE;
             return;
         }
         Transform hitTarget = hit.collider.transform;
@@ -30,9 +34,7 @@ public class InputMouseMove : BaseInputMouse
             //点击到其他地方
             if (building != null)
             {
-                Coordinate.Target.SetTarget(hitTarget);
-                PanelControl.current.SetData(building);
-                building.Choose();
+                PanelList.current.Select(building);
                 state = STATE_BUILDING;
             }
             else if (Coordinate.Target.Hit(hitTarget))
@@ -44,6 +46,7 @@ public class InputMouseMove : BaseInputMouse
             else
             {
                 Coordinate.Target.SetTarget(null);
+                PanelList.current.LastRecovery();
                 PanelControl.current.Close();
                 state = STATE_NONE;
             }

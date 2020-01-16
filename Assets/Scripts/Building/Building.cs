@@ -32,29 +32,12 @@ public class Building : BaseObject
     /// </summary>
     private Dictionary<Renderer, Material[]> dicMaterial;
     /// <summary>
-    /// 选中物体，恢复上一个被选中的物体高亮
-    /// </summary>
-    public void Choose()
-    {
-        BuildingHelper.LastRecovery();
-        ShowHighLight();
-
-        BuildingHelper.LastTarget = this;
-    }
-    /// <summary>
-    /// 复原物体材质
-    /// </summary>
-    public void Recovery()
-    {
-        HideHighLight();
-    }
-    /// <summary>
     /// 放置该物体
     /// </summary>
     public void Build()
     {
-        Recovery();
-        BuildingRoom.current.Add(this);
+        HideHighLight();
+        PanelList.current.Add(this);
         // this.AdjustPosition();
     }
     /// <summary>
@@ -107,14 +90,14 @@ public class Building : BaseObject
         int minFloor = Math.Min(Floor.current.x, Floor.current.z);
         return (maxBuilding > minFloor) ? maxBuilding : int.MinValue;
     }
-    private void ShowHighLight()
+    public void ShowHighLight()
     {
         foreach (Outline outline in outlineList)
         {
             outline.enabled = true;
         }
     }
-    private void HideHighLight()
+    public void HideHighLight()
     {
         foreach (Outline outline in outlineList)
         {

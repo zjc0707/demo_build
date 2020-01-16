@@ -4,7 +4,15 @@ using UnityEngine;
 
 public static class BuildingUtil
 {
+    /// <summary>
+    /// 记录场景中每种物体的个数
+    /// </summary>
+    /// <typeparam name="int">modelId</typeparam>
+    /// <typeparam name="int">number of model</typeparam>
+    /// <returns></returns>
+    private static Dictionary<int, int> dicCount = new Dictionary<int, int>();
     private static Dictionary<Transform, Building> buildingCache = new Dictionary<Transform, Building>();
+    #region util
     /// <summary>
     /// 根据centerAndSize添加包围盒
     /// </summary>
@@ -20,8 +28,6 @@ public static class BuildingUtil
             boxCollider.size = cs.Size;
             Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
         }
-        //避免碰撞
-        // boxCollider.isTrigger = true;
         return boxCollider;
     }
     /// <summary>
@@ -36,9 +42,10 @@ public static class BuildingUtil
             return buildingCache[target];
         }
         Transform t = target;
+        Transform buildingRoom = PanelList.current.buildingRoom;
         while (t != null)
         {
-            if (t.parent == BuildingRoom.current.transform)
+            if (t.parent == buildingRoom)
             {
                 Building building = GetComponentBuilding(t);
                 buildingCache.Add(target, building);
@@ -72,4 +79,46 @@ public static class BuildingUtil
         // Debug.Log(data == null);
         return result;
     }
+    #endregion
+    #region create
+    public static Building Create(Model data)
+    {
+        GameObject obj = CreateGameObjcet(data);
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform, data);
+        return building;
+    }
+    public static Building Create(BuildingSaveData data)
+    {
+        Model model = LocalAssetUtil.GetModel(data.ModelDataId);
+        if (model == null)
+        {
+            return null;
+        }
+        GameObject obj = CreateGameObjcet(model);
+        Building building = BuildingUtil.GetComponentBuilding(obj.transform, model);
+        TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
+        return building;
+    }
+    private static GameObject CreateGameObjcet(Model data)
+    {
+        GameObject rs = PoolOfAsset.current.Create(data.Id);
+        int count = 0;
+        string name = data.Name;
+        if (name.Contains("."))
+        {
+            name = name.Substring(0, name.IndexOf('.'));
+        }
+        if (dicCount.TryGetValue(data.Id, out count))
+        {
+            rs.name = string.Format("{0}({1})", name, count);
+            dicCount[data.Id] = ++count;
+        }
+        else
+        {
+            dicCount.Add(data.Id, ++count);
+            rs.name = name;
+        }
+        return rs;
+    }
+    #endregion
 }

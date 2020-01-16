@@ -16,9 +16,9 @@ public static class SaveUtil
         saveData.FloorSaveData.Z = Floor.current.z;
         //--building
         List<BuildingSaveData> buildingSaveDatas = new List<BuildingSaveData>();
-        foreach (Building building in BuildingRoom.current.buildingList)
+        foreach (PanelList.Item item in PanelList.current.items)
         {
-            buildingSaveDatas.Add(new BuildingSaveData(building));
+            buildingSaveDatas.Add(new BuildingSaveData(item.building));
         }
         saveData.BuildingRoomSaveData.BuildingSaveDatas = buildingSaveDatas;
         //--toJson
@@ -54,10 +54,10 @@ public static class SaveUtil
             //--floor
             Floor.current.Load(saveData.FloorSaveData.X, saveData.FloorSaveData.Z);
             //--building
-            BuildingRoom.current.Reset();
+            PanelList.current.Reset();
             foreach (BuildingSaveData data in saveData.BuildingRoomSaveData.BuildingSaveDatas)
             {
-                BuildingRoom.current.Add(BuildingHelper.Create(data));
+                PanelList.current.Add(BuildingUtil.Create(data));
             }
             //--camera
             MyCamera.current.MoveAnim(TransformGroupUtil.Parse(saveData.CameraTransformGroup));

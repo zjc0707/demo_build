@@ -18,11 +18,11 @@ public class PanelControl : BasePanel<PanelControl>
         Load();
         base.Close();
     }
-    public override void Close()
-    {
-        base.Close();
-        BuildingHelper.LastRecovery();
-    }
+    // public override void Close()
+    // {
+    //     base.Close();
+    //     // 
+    // }
     public void SetData(Building building)
     {
         base.Open();
@@ -97,7 +97,7 @@ public class PanelControl : BasePanel<PanelControl>
             {
                 return;
             }
-            BuildingRoom.current.Remove(targetBuilding);
+            PanelList.current.Remove(targetBuilding);
             base.Close();
         });
         this.buttonMaterialRecovery.onClick.AddListener(delegate

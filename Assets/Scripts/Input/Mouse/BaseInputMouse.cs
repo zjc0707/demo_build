@@ -17,33 +17,30 @@ public abstract class BaseInputMouse
     private Vector3 localPosition;
     public virtual void MyUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit hit;
-            Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
-                CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
-            }
-        }
+        // if (Input.GetMouseButtonDown(0))
+        // {
+        //     RaycastHit hit;
+        //     Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
+        //     if (Physics.Raycast(ray, out hit))
+        //     {
+        //         CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
+        //     }
+        // }
         if (catchBuilding != null)
         {
             //从UI界面点击获取物体后
-            RaycastHit hit;
-            Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
-                //拾取对象边移动边调整位置，避免超出边界等
-                // Debug.Log(hit.transform.name);
-                CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
-                // catchBuilding.transform.localPosition = localPosition;
-            }
+            // RaycastHit hit;
+            // Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
+            // if (Physics.Raycast(ray, out hit))
+            // {
+            //     CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
+            // }
             if (Input.GetMouseButton(0))
             {
                 Debug.Log("放置物品：" + catchBuilding.name);
                 catchBuilding.Build();
                 catchBuilding = null;
-                BuildingRoom.current.SetBuildingsColliderEnable(true);
+                PanelList.current.SetBuildingsColliderEnable(true);
                 return;
             }
         }
@@ -64,6 +61,13 @@ public abstract class BaseInputMouse
         {
             //点到UGUI上不进行处理
             return;
+        }
+        //一直跟随鼠标移动
+        RaycastHit hit;
+        Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
+            CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -112,7 +116,7 @@ public abstract class BaseInputMouse
         localPosition = t.localPosition;
         catchBuilding.boxCollider.enabled = false;
 
-        BuildingRoom.current.SetBuildingsColliderEnable(false);
+        PanelList.current.SetBuildingsColliderEnable(false);
     }
     /// <summary>
     /// 清空已经拾取的内容
@@ -121,7 +125,7 @@ public abstract class BaseInputMouse
     {
         if (catchBuilding == null) return;
         catchBuilding.Build();
-        BuildingRoom.current.Remove(catchBuilding);
+        PanelList.current.Remove(catchBuilding);
         catchBuilding = null;
     }
 }

@@ -14,7 +14,7 @@ public class PanelStart : BasePanel<PanelStart>
             UGUITree.current.CloseStart();
             Floor.current.Reset();
             MyCamera.current.Reset();
-            BuildingRoom.current.Reset();
+            PanelList.current.Reset();
         });
         buttonLoad.onClick.AddListener(delegate
         {

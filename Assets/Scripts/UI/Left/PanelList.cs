@@ -5,15 +5,26 @@ using UnityEngine.UI;
 [UIType(UIStackType.LEFT)]
 public class PanelList : BasePanel<PanelList>
 {
+    public class Item
+    {
+        public Transform ui { get; set; }
+        public Image background { get; set; }
+        public Building building { get; set; }
+    }
+    public List<Item> items { get; private set; }
+    /// <summary>
+    /// 点击/长按对象
+    /// </summary>
+    private Item selectItem;
     #region UI对象
-    public Transform content;
-    public Transform baseItem;
-    public List<Transform> items;
-    public VerticalLayoutGroup verticalLayoutGroup;
-    public const int itemHeight = 30;
+    private Transform content;
+    private Transform baseItem;
+    private VerticalLayoutGroup verticalLayoutGroup;
+    private const int itemHeight = 30;
+    private Color selectColor = Color.yellow;
     #endregion
     #region 长按
-    private Vector3 mouseToItem, itemStartPosition;
+    private Vector3 itemStartPosition;
     private int itemSiblingIndex;
     /// <summary>
     /// 按下计时
@@ -24,13 +35,9 @@ public class PanelList : BasePanel<PanelList>
     /// </summary>
     private float longDownTime = 0f;
     /// <summary>
-    /// 点击/长按对象
-    /// </summary>
-    private Transform selectItem;
-    /// <summary>
     ///出发长按所需时间
     /// </summary>
-    public const float NEED_DOWN_TIME = 0.15f;
+    private const float NEED_DOWN_TIME = 0.15f;
     #endregion
     #region 状态
     private enum STATE : int
@@ -41,6 +48,13 @@ public class PanelList : BasePanel<PanelList>
     }
     private STATE state = STATE.NULL;
     #endregion
+    #region Building
+    /// <summary>
+    /// 所有building的父类
+    /// </summary>
+    public Transform buildingRoom;
+    #endregion
+
     protected override void _Start()
     {
         if (content == null)
@@ -53,17 +67,7 @@ public class PanelList : BasePanel<PanelList>
         }
         verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
         baseItem.gameObject.SetActive(false);
-
-        baseItem.gameObject.SetActive(true);
-        for (int i = 0; i < 5; ++i)
-        {
-            GameObject clone = Instantiate(baseItem.gameObject, content);
-            clone.name = i.ToString();
-            clone.GetComponentInChildren<Text>().text = i.ToString();
-            EventTriggerListener.Get(clone).onDown += OnDown;
-            items.Add(clone.transform);
-        }
-        baseItem.gameObject.SetActive(false);
+        items = new List<Item>();
     }
     private void Update()
     {
@@ -74,10 +78,8 @@ public class PanelList : BasePanel<PanelList>
             {
                 state = STATE.LONG_DOWN;
                 verticalLayoutGroup.enabled = false;
-                itemStartPosition = selectItem.position;
-                mouseToItem = Input.mousePosition - selectItem.position;
-                itemSiblingIndex = selectItem.GetSiblingIndex();
-                Debug.Log(selectItem.GetSiblingIndex());
+                itemStartPosition = selectItem.ui.position;
+                itemSiblingIndex = selectItem.ui.GetSiblingIndex();
             }
         }
         if (state > STATE.NULL)
@@ -85,7 +87,7 @@ public class PanelList : BasePanel<PanelList>
             if (Input.GetMouseButtonUp(0))
             {
                 state = STATE.NULL;
-                selectItem = null;
+                // selectItem.ui = null;
                 downTime = 0f;
                 longDownTime = 0f;
                 verticalLayoutGroup.enabled = true;
@@ -93,33 +95,24 @@ public class PanelList : BasePanel<PanelList>
         }
         if (state == STATE.LONG_DOWN)
         {
-            // if (longDownTime < NEED_DOWN_TIME)
-            // {
-            //     longDownTime += Time.deltaTime;
-            //     selectItem.position = new Vector3(selectItem.position.x, (Input.mousePosition - mouseToItem).y, selectItem.position.z);
-            // }
-            // else
-            // {
-            //     selectItem.position = new Vector3(selectItem.position.x, Input.mousePosition.y, selectItem.position.z);
-            // }
-            selectItem.position = new Vector3(selectItem.position.x, Input.mousePosition.y, selectItem.position.z);
+            selectItem.ui.position = new Vector3(selectItem.ui.position.x, Input.mousePosition.y, selectItem.ui.position.z);
 
-            if (selectItem.localPosition.y > 0)
+            if (selectItem.ui.localPosition.y > 0)
             {
-                selectItem.localPosition = new Vector3(selectItem.localPosition.x, 0, selectItem.localPosition.z);
+                selectItem.ui.localPosition = new Vector3(selectItem.ui.localPosition.x, 0, selectItem.ui.localPosition.z);
             }
-            else if (selectItem.localPosition.y < -1 * (items.Count - 1) * itemHeight)
+            else if (selectItem.ui.localPosition.y < -1 * (items.Count - 1) * itemHeight)
             {
-                selectItem.localPosition = new Vector3(selectItem.localPosition.x, -1 * (items.Count - 1) * itemHeight, selectItem.localPosition.z);
+                selectItem.ui.localPosition = new Vector3(selectItem.ui.localPosition.x, -1 * (items.Count - 1) * itemHeight, selectItem.ui.localPosition.z);
             }
 
-            float add = selectItem.position.y - itemStartPosition.y;
+            float add = selectItem.ui.position.y - itemStartPosition.y;
             if (Math.Abs(add) >= itemHeight)//移动距离大于UI高度时
             {
                 //根据移动的上下确定nextItem的位置，将items中二者位置调换，
-                //UI中将selectItem的初始坐标赋值nextItem
+                //UI中将selectItem.ui的初始坐标赋值nextItem
                 int nextIndex = itemSiblingIndex - (add > 0 ? 1 : -1);
-                Transform t = items[nextIndex - 1];//getSiblingIndex()从1开始
+                Transform t = items[nextIndex - 1].ui;//getSiblingIndex()从1开始
                 items.RemoveAt(itemSiblingIndex - 1);
                 items.Insert(nextIndex - 1, selectItem);
                 Vector3 pos = t.position;
@@ -127,14 +120,93 @@ public class PanelList : BasePanel<PanelList>
                 itemStartPosition = pos;
 
                 itemSiblingIndex = nextIndex;
-                selectItem.SetSiblingIndex(nextIndex);
+                selectItem.ui.SetSiblingIndex(nextIndex);
             }
         }
     }
     private void OnDown(GameObject go)
     {
-        Debug.Log("down:" + go.name);
-        selectItem = go.transform;
+        Debug.Log("count:" + items.Count);
+        items.ForEach(i =>
+        {
+            Debug.Log(i.ui == null);
+        });
+        Select(items.Find(item => item.ui.gameObject == go));
         state = STATE.DOWN;
     }
+    #region BuildRoom Method
+    public void Add(Building building)
+    {
+        GameObject clone = Instantiate(baseItem.gameObject, content);
+        clone.name = building.gameObject.name;
+        clone.GetComponentInChildren<Text>().text = clone.name;
+        EventTriggerListener.Get(clone).onDown += OnDown;
+        clone.SetActive(true);
+        building.transform.SetParent(buildingRoom);
+        items.Add(new Item()
+        {
+            building = building,
+            ui = clone.transform,
+            background = clone.GetComponent<Image>()
+        });
+    }
+    public void Remove(Building building)
+    {
+        LastRecovery();
+        int index = items.FindIndex(i => i.building == building);
+        Item item = items[index];
+        PoolOfAsset.current.Destroy(building);
+        GameObject.DestroyImmediate(item.ui.gameObject);
+        Coordinate.Target.SetTarget(null);
+        items.RemoveAt(index);
+    }
+    public void Reset()
+    {
+        items.ForEach(i =>
+        {
+            GameObject.DestroyImmediate(i.ui.gameObject);
+            PoolOfAsset.current.Destroy(i.building);
+        });
+        items.Clear();
+    }
+    /// <summary>
+    /// 统一修改building对象的boxcollider.enable,使放置时不会被挡住位置
+    /// </summary>
+    /// <param name="enable"></param>
+    public void SetBuildingsColliderEnable(bool enable)
+    {
+        items.ForEach(i =>
+        {
+            i.building.boxCollider.enabled = enable;
+        });
+    }
+    public void LastRecovery()
+    {
+        if (selectItem == null)
+        {
+            return;
+        }
+        selectItem.building.HideHighLight();
+        selectItem.background.color = Color.white;
+        selectItem = null;
+    }
+    public void Select(Building building)
+    {
+        Select(items.Find(i => i.building == building));
+    }
+    private void Select(Item item)
+    {
+        LastRecovery();
+        if (item == null)
+        {
+            Debug.Log("null");
+            return;
+        }
+        item.building.ShowHighLight();
+        item.background.color = selectColor;
+        PanelControl.current.SetData(item.building);
+        Coordinate.Target.SetTarget(item.building.transform);
+        selectItem = item;
+    }
+    #endregion
 }

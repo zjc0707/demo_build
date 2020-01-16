@@ -31,8 +31,8 @@ public class PanelModel : BasePanel<PanelModel>
                 clone.GetComponentInChildren<Text>().text = model.Name;
                 clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
                 {
-                    Building building = BuildingHelper.Create(model);
-                    building.Choose();
+                    Building building = BuildingUtil.Create(model);
+                    // PanelList.current.Select(building);
                     // MouseBehaviour.current.Catch(building);
                     PanelState.current.baseInputMouse.Catch(building);
                     int maxBuilding = building.IsTooBig();

@@ -72,6 +72,10 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
     {
         items.ForEach(i => i.Recovery());
     }
+    /// <summary>
+    /// 设定坐标到目标物体，参数为null时隐藏
+    /// </summary>
+    /// <param name="t"></param>
     public virtual void SetTarget(Transform t)
     {
         targetTransform = t;
