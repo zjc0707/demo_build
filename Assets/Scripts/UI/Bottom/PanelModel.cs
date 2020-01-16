@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-[UIType(UIStackType.LEFT)]
+[UIType(UIStackType.BOTTOM)]
 public class PanelModel : BasePanel<PanelModel>
 {
     public Transform baseItem;
-
+    private bool load = false;
     protected override void _Start()
     {
 
-        // base.Open();
     }
     public override void Open()
     {
         base.Open();
-        Load();
+        if (!load)
+        {
+            Load();
+        }
     }
     private void Load()
     {

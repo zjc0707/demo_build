@@ -1,5 +1,5 @@
 using UnityEngine;
-[UIType(UIStackType.LEFT)]
+[UIType(UIStackType.BOTTOM)]
 public class PanelMaterial : BasePanel<PanelMaterial>
 {
     public Transform baseItem;

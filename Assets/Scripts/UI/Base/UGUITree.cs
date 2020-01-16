@@ -34,6 +34,7 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         canvasStart.gameObject.SetActive(false);
         canvasInit.gameObject.SetActive(true);
         PanelModel.current.Open();
+        PanelList.current.Open();
     }
     public void OpenStart()
     {
