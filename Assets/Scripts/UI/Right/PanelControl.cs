@@ -8,7 +8,7 @@ public class PanelControl : BasePanel<PanelControl>
 {
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
-    private Button buttonOperate, buttonClear, buttonMaterialRecovery;
+    private Button buttonClear, buttonMaterialRecovery;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
@@ -32,7 +32,6 @@ public class PanelControl : BasePanel<PanelControl>
         position.Set(target.localPosition);
         rotation.Set(target.localEulerAngles);
         scale.Set(target.localScale);
-        // buttonOperate.gameObject.SetActive(targetBuilding.data.Operate == 1);
         AddListener();
     }
     public void UpdatePosData()
@@ -86,11 +85,6 @@ public class PanelControl : BasePanel<PanelControl>
         {
             this.rotation.Set(target.localEulerAngles);
         });
-        //进入操作模式
-        // this.buttonOperate.onClick.AddListener(delegate
-        // {
-        //     Sport.current.TurnToOperate(targetBuilding);
-        // });
         this.buttonClear.onClick.AddListener(delegate
         {
             if (target == null)
@@ -126,7 +120,6 @@ public class PanelControl : BasePanel<PanelControl>
         rotation = new InputFieldVector3(inputFields[4], inputFields[5], inputFields[6]);
         scale = new InputFieldVector3(inputFields[7], inputFields[8], inputFields[9]);
         Transform content = this.transform.Find("Content");
-        buttonOperate = content.Find("ButtonOperate").GetComponent<Button>();
         buttonClear = content.Find("ButtonClear").GetComponent<Button>();
         buttonMaterialRecovery = content.Find("Material").Find("ButtonGroup").Find("ButtonRecovery").GetComponent<Button>();
     }

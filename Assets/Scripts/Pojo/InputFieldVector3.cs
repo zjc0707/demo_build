@@ -19,18 +19,11 @@ public class InputFieldVector3
         Z = z;
     }
 
-    public void Set(float x, float y, float z)
-    {
-        X.text = x.ToString();
-        Y.text = y.ToString();
-        Z.text = z.ToString();
-    }
-
     public void Set(Vector3 v)
     {
-        X.text = v.x.ToString();
-        Y.text = v.y.ToString();
-        Z.text = v.z.ToString();
+        X.text = v.x.ToString("F2");
+        Y.text = v.y.ToString("F2");
+        Z.text = v.z.ToString("F2");
     }
 
     public Vector3 ToVector3()
@@ -61,21 +54,8 @@ public class InputFieldVector3
 
     public void RemoveValueChangedListener()
     {
-        //不清楚监听事件会叠加
         X.onValueChanged.RemoveAllListeners();
         Y.onValueChanged.RemoveAllListeners();
         Y.onValueChanged.RemoveAllListeners();
-    }
-
-    public override string ToString()
-    {
-        try
-        {
-            return string.Format("[x: {0}, y: {1}, z: {2} ]", X.text, Y.text, Z.text);
-        }
-        catch (NullReferenceException e)
-        {
-            return e.Message;
-        }
     }
 }

@@ -27,6 +27,10 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     protected abstract void _Start();
     public virtual void Close()
     {
+        if (!this.gameObject.activeInHierarchy)
+        {
+            return;//已经隐藏的界面调用不进行栈操作
+        }
         if (typeValue != UIStackType.NULL)
         {
             UIStackDic.Close(typeValue);
