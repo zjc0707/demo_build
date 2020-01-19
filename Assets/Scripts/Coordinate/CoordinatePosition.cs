@@ -17,6 +17,7 @@ public class CoordinatePosition : Coordinate
             this.transform.position = beforeData + project;
             targetTransform.position = beforeTargetData + project / multiple;
             PanelControl.current.UpdatePosData();
+            PanelAnimEditor.current.UpdatePosition();
         }
     }
     protected override Item FindItem(string name)

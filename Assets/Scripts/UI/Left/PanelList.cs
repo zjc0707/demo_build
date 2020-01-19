@@ -126,11 +126,6 @@ public class PanelList : BasePanel<PanelList>
     }
     private void OnDown(GameObject go)
     {
-        Debug.Log("count:" + items.Count);
-        items.ForEach(i =>
-        {
-            Debug.Log(i.ui == null);
-        });
         Select(items.Find(item => item.ui.gameObject == go));
         state = STATE.DOWN;
     }

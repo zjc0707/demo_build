@@ -11,6 +11,10 @@ public static class BuildingUtil
     /// <typeparam name="int">number of model</typeparam>
     /// <returns></returns>
     private static Dictionary<int, int> dicCount = new Dictionary<int, int>();
+    /// <summary>
+    /// 赋值给每个Building对象唯一标识符，自增
+    /// </summary>
+    private static int guid = 0;
     private static Dictionary<Transform, Building> buildingCache = new Dictionary<Transform, Building>();
     #region util
     /// <summary>
@@ -76,6 +80,7 @@ public static class BuildingUtil
     {
         Building result = GetComponentBuilding(target);
         result.data = data;
+        result.guid = guid++;
         // Debug.Log(data == null);
         return result;
     }
@@ -84,7 +89,7 @@ public static class BuildingUtil
     public static Building Create(Model data)
     {
         GameObject obj = CreateGameObjcet(data);
-        Building building = BuildingUtil.GetComponentBuilding(obj.transform, data);
+        Building building = GetComponentBuilding(obj.transform, data);
         return building;
     }
     public static Building Create(BuildingSaveData data)
@@ -95,7 +100,7 @@ public static class BuildingUtil
             return null;
         }
         GameObject obj = CreateGameObjcet(model);
-        Building building = BuildingUtil.GetComponentBuilding(obj.transform, model);
+        Building building = GetComponentBuilding(obj.transform, model);
         TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
         return building;
     }

@@ -11,28 +11,37 @@ public class InputFieldVector3
     public InputField X { get; }
     public InputField Y { get; }
     public InputField Z { get; }
-
+    private Vector3 data;
+    public Vector3 Data
+    {
+        set
+        {
+            // Debug.Log("Set:oldData=" + data + "value=" + value);
+            data = value;
+            X.text = value.x.ToString("F2");
+            Y.text = value.y.ToString("F2");
+            Z.text = value.z.ToString("F2");
+        }
+        get
+        {
+            // Debug.Log("Get:" + data);
+            return data;
+        }
+    }
+    public bool interactable
+    {
+        set
+        {
+            X.interactable = value;
+            Y.interactable = value;
+            Z.interactable = value;
+        }
+    }
     public InputFieldVector3(InputField x, InputField y, InputField z)
     {
         X = x;
         Y = y;
         Z = z;
-    }
-
-    public void Set(Vector3 v)
-    {
-        X.text = v.x.ToString("F2");
-        Y.text = v.y.ToString("F2");
-        Z.text = v.z.ToString("F2");
-    }
-
-    public Vector3 ToVector3()
-    {
-        float x = 0f, y = 0f, z = 0f;
-        float.TryParse(X.text, out x);
-        float.TryParse(Y.text, out y);
-        float.TryParse(Z.text, out z);
-        return new Vector3(x, y, z);
     }
 
     /// <summary>
@@ -51,7 +60,6 @@ public class InputFieldVector3
         Y.onEndEdit.AddListener(call);
         Z.onEndEdit.AddListener(call);
     }
-
     public void RemoveValueChangedListener()
     {
         X.onValueChanged.RemoveAllListeners();

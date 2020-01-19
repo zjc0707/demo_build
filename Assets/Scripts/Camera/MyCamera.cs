@@ -7,7 +7,6 @@ public class MyCamera : BaseUniqueObject<MyCamera>
 
     public readonly float y = 10;
     public readonly TransformGroup initTransformGroup = new TransformGroup(new Vector3(0, 5, 0), new Vector3(45, 45, 0));
-    private TimeGroup timeGroup = new TimeGroup(0.5f);
     private Camera _camera;
     public Camera Camera
     {

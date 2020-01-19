@@ -14,6 +14,7 @@ public class CoordinateRotation : Coordinate
             this.transform.RotateAround(this.transform.position, axis, Input.GetAxis("Mouse X") * 10);
             targetTransform.eulerAngles = this.transform.eulerAngles;
             PanelControl.current.UpdateRotData();
+            PanelAnimEditor.current.UpdateRotation();
         }
     }
     private Vector3 Compute(Vector3 v)

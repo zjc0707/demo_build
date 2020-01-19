@@ -17,24 +17,8 @@ public abstract class BaseInputMouse
     private Vector3 localPosition;
     public virtual void MyUpdate()
     {
-        // if (Input.GetMouseButtonDown(0))
-        // {
-        //     RaycastHit hit;
-        //     Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
-        //     if (Physics.Raycast(ray, out hit))
-        //     {
-        //         CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
-        //     }
-        // }
         if (catchBuilding != null)
         {
-            //从UI界面点击获取物体后
-            // RaycastHit hit;
-            // Ray ray = MyCamera.current.Camera.ScreenPointToRay(Input.mousePosition);
-            // if (Physics.Raycast(ray, out hit))
-            // {
-            //     CatchParent.current.transform.localPosition = new Vector3(hit.point.x, 0, hit.point.z);
-            // }
             if (Input.GetMouseButton(0))
             {
                 Debug.Log("放置物品：" + catchBuilding.name);
@@ -71,6 +55,7 @@ public abstract class BaseInputMouse
         }
         if (Input.GetMouseButtonDown(0))
         {
+            Debug.Log("GetMouseButtonDown(0)");
             OnMouseLeftClickDown();
         }
         float scroll = Input.GetAxis("Mouse ScrollWheel");

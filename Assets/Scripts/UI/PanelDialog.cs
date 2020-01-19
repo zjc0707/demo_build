@@ -1,61 +1,49 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 public class PanelDialog : BasePanel<PanelDialog>
 {
-    public Button close, submit;
+    public Button buttonQuit, buttonSubmit;
     public Text title, content;
-    private UnityAction submitAction, quitAction;
+    private Action actionSubmit, actionQuit;
     protected override void _Start()
     {
-        this.submitAction = delegate
+        buttonQuit.onClick.AddListener(delegate
         {
-            Debug.Log("empty");
-        };
-        this.quitAction = delegate
+            if (actionQuit != null)
+            {
+                actionQuit();
+            }
+            base.Close();
+        });
+        buttonSubmit.onClick.AddListener(delegate
         {
-
-        };
-        close.onClick.AddListener(this.quitAction);
-        submit.onClick.AddListener(this.submitAction);
+            if (actionSubmit != null)
+            {
+                actionSubmit();
+            }
+            base.Close();
+        });
     }
-    public void Open(string contentText, UnityAction action, UnityAction after = null)
+    public void Open(string contentText)
     {
-        this.Open(null, contentText, action, after);
+        this.Open(contentText, null);
     }
-    public void Open(string title, string contentText, UnityAction action, UnityAction after = null)
+    public void Open(string contentText, Action submit, Action quit = null)
+    {
+        this.Open(null, contentText, submit, quit);
+    }
+    public void Open(string title, string contentText, Action submit, Action quit = null)
     {
         if (!string.IsNullOrEmpty(title))
         {
             this.title.text = title;
         }
         content.text = contentText;
-        close.onClick.RemoveListener(this.quitAction);
-        submit.onClick.RemoveListener(this.submitAction);
-        this.submitAction = delegate
-        {
-            Debug.Log("123");
-            if (action != null)
-            {
-                action();
-            }
-            base.Close();
-            if (after != null)
-            {
-                after();
-            }
-        };
-        this.quitAction = delegate
-        {
-            if (after != null)
-            {
-                after();
-            }
-            base.Close();
-        };
-        close.onClick.AddListener(this.quitAction);
-        submit.onClick.AddListener(this.submitAction);
-        Debug.Log("open");
+        this.actionSubmit = submit;
+        this.actionQuit = quit;
+        this.buttonQuit.gameObject.SetActive(quit != null);
         base.Open();
     }
 }

@@ -39,10 +39,12 @@ public class PanelModel : BasePanel<PanelModel>
                     if (maxBuilding != int.MinValue)
                     {
                         building.gameObject.SetActive(false);
-                        PanelDialog.current.Open("场景过小，\n需扩建至(" + maxBuilding + "," + maxBuilding + ")", delegate
+                        PanelDialog.current.Open("场景过小，\n需扩建至(" + maxBuilding + "," + maxBuilding + ")", () =>
                         {
                             Floor.current.Load(maxBuilding, maxBuilding);
-                        }, delegate
+                            building.gameObject.SetActive(true);
+                            WhenTooBig(building);
+                        }, () =>
                         {
                             building.gameObject.SetActive(true);
                             WhenTooBig(building);
@@ -53,7 +55,6 @@ public class PanelModel : BasePanel<PanelModel>
                         WhenTooBig(building);
                     }
                 });
-                // clone.Find("Image").GetComponent<Image>().sprite = ImageUtil.GetSprite(t);
                 clone.Find("Image").GetComponent<Image>().sprite = AssetBundleUtil.DicSprite[model.Id];
 
                 clone.SetParent(baseItem.parent);

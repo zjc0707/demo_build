@@ -11,6 +11,12 @@ public class PanelState : BasePanel<PanelState>
     public BaseInputMouse baseInputMouse;
     private InputMouseCamera inputMouseHand;
     private InputMouseMove inputMouseMove;
+    public enum State
+    {
+        NORMAL = 0,//默认模式
+        ANIM_EDITOR = 1//动画编辑模式
+    }
+    public State state = State.NORMAL;
     protected override void _Start()
     {
         base.Open();
@@ -38,9 +44,9 @@ public class PanelState : BasePanel<PanelState>
         inputMouseMove = new InputMouseMove();
         inputMouseHand = new InputMouseCamera();
         items[1].button.onClick.Invoke();
-        Debug.Log(CoordinatePosition.current.name);
-        Debug.Log(CoordinateRotation.current.name);
-        Debug.Log(CoordinateScale.current.name);
+        // Debug.Log(CoordinatePosition.current.name);
+        // Debug.Log(CoordinateRotation.current.name);
+        // Debug.Log(CoordinateScale.current.name);
     }
     private void Update()
     {

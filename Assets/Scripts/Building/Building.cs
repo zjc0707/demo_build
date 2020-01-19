@@ -6,7 +6,19 @@ using cakeslice;
 
 public class Building : BaseObject
 {
+    /// <summary>
+    /// 唯一标识符，不写入数据库仅用于缓存，在BuildingUtil中创建Building赋值
+    /// </summary>
+    public int guid;
     public Model data;
+    /// <summary>
+    /// 场景动画
+    /// </summary>
+    public List<AnimData> normalAnimDatas;
+    /// <summary>
+    /// 出场动画
+    /// </summary>
+    public List<AnimData> appearanceAnimDatas;
     /// <summary>
     /// 高亮射线的集合
     /// </summary>
@@ -129,6 +141,8 @@ public class Building : BaseObject
         boxCollider = BuildingUtil.AddBoxCollider(this.gameObject);
         LoadDownToFloorY();
         outlineList = new List<Outline>();
+        normalAnimDatas = new List<AnimData>();
+        appearanceAnimDatas = new List<AnimData>();
         foreach (MeshRenderer mesh in this.transform.GetComponentsInChildren<MeshRenderer>())
         {
             outlineList.Add(mesh.gameObject.AddComponent<Outline>());

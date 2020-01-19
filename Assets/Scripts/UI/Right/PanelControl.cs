@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+[UIType(UIStackType.RIGHT)]
 public class PanelControl : BasePanel<PanelControl>
 {
     private InputField objectName;
     private InputFieldVector3 position, rotation, scale;
-    private Button buttonClear, buttonMaterialRecovery;
+    private Button buttonClear, buttonMaterialRecovery, buttonNormalAnim, buttonAppearanceAnim;
+    private Toggle toggleAnim;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
@@ -16,35 +17,33 @@ public class PanelControl : BasePanel<PanelControl>
     protected override void _Start()
     {
         Load();
+        AddListener();
         base.Close();
     }
-    // public override void Close()
-    // {
-    //     base.Close();
-    //     // 
-    // }
     public void SetData(Building building)
     {
-        base.Open();
         targetBuilding = building;
         target = targetBuilding.transform;
         objectName.text = target.name;
-        position.Set(target.localPosition);
-        rotation.Set(target.localEulerAngles);
-        scale.Set(target.localScale);
-        AddListener();
+        position.Data = target.localPosition;
+        rotation.Data = target.localEulerAngles;
+        scale.Data = target.localScale;
+        base.Open();
     }
     public void UpdatePosData()
     {
-        position.Set(target.localPosition);
+        if (target == null) return;
+        position.Data = target.localPosition;
     }
     public void UpdateRotData()
     {
-        rotation.Set(target.localEulerAngles);
+        if (target == null) return;
+        rotation.Data = target.localEulerAngles;
     }
     public void UpdateScaleData()
     {
-        scale.Set(target.localScale);
+        if (target == null) return;
+        scale.Data = target.localScale;
     }
     public void SetTargetMaterial(Material material)
     {
@@ -55,35 +54,38 @@ public class PanelControl : BasePanel<PanelControl>
     /// </summary>
     private void AddListener()
     {
-        if (!isFirst) return;
-        isFirst = false;
+        Debug.Log("Addlistener");
+        // if (!isFirst) return;
+        // isFirst = false;
         //输入框监听事件
         this.position.AddValueChangedListener(delegate
         {
             if (target == null) return;
-            target.localPosition = this.position.ToVector3();
+            target.localPosition = this.position.Data;
             Coordinate.Target.SetTarget(target);
         });
         this.rotation.AddValueChangedListener(delegate
         {
             if (target == null) return;
-            target.localEulerAngles = this.rotation.ToVector3();
+            target.localEulerAngles = this.rotation.Data;
             Coordinate.Target.SetTarget(target);
         });
         this.scale.AddValueChangedListener(delegate
         {
             if (target == null) return;
-            target.localScale = this.scale.ToVector3();
+            target.localScale = this.scale.Data;
             Coordinate.Target.SetTarget(target);
         });
-        //输入框编辑完监听事件
+        // 输入框编辑完监听事件
         this.position.AddEndEditListener(delegate
         {
-            this.position.Set(target.localPosition);
+            if (target == null) return;
+            this.position.Data = target.localPosition;
         });
         this.rotation.AddEndEditListener(delegate
         {
-            this.rotation.Set(target.localEulerAngles);
+            if (target == null) return;
+            this.rotation.Data = target.localEulerAngles;
         });
         this.buttonClear.onClick.AddListener(delegate
         {
@@ -96,13 +98,20 @@ public class PanelControl : BasePanel<PanelControl>
         });
         this.buttonMaterialRecovery.onClick.AddListener(delegate
         {
+            if (target == null) return;
             targetBuilding.RecovercyMaterial();
         });
+        this.buttonNormalAnim.onClick.AddListener(delegate
+        {
+            if (target == null) return;
+            PanelAnim.current.Open(targetBuilding, PanelAnim.AnimType.NORMAL);
+        });
+        this.buttonAppearanceAnim.onClick.AddListener(delegate
+        {
+            if (target == null) return;
+            PanelAnim.current.Open(targetBuilding, PanelAnim.AnimType.APPEARANCE);
+        });
     }
-
-    /// <summary>
-    /// 匹配输入框
-    /// </summary>
     private void Load()
     {
         InputField[] inputFields = this.GetComponentsInChildren<InputField>();
@@ -122,5 +131,8 @@ public class PanelControl : BasePanel<PanelControl>
         Transform content = this.transform.Find("Content");
         buttonClear = content.Find("ButtonClear").GetComponent<Button>();
         buttonMaterialRecovery = content.Find("Material").Find("ButtonGroup").Find("ButtonRecovery").GetComponent<Button>();
+        buttonNormalAnim = content.Find("Anim/Content/Button").GetComponent<Button>();
+        buttonAppearanceAnim = content.Find("Anim/Content2/Button").GetComponent<Button>();
+        toggleAnim = content.Find("Anim/Content/Toggle").GetComponent<Toggle>();
     }
 }

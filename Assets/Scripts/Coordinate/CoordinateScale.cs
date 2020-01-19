@@ -16,6 +16,7 @@ public class CoordinateScale : Coordinate
             float f = Vector3.Dot(add, forward) > 0 ? 1 : -1;
             targetTransform.localScale = beforeData + 2 * f * axis * Vector3.Project(add, forward).magnitude;
             PanelControl.current.UpdateScaleData();
+            PanelAnimEditor.current.UpdateScale();
         }
     }
     protected override Item FindItem(string name)

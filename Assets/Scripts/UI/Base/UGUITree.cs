@@ -15,7 +15,7 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         {
             if (image.name.Equals("ButtonClose"))
             {
-                Debug.Log(image.transform.parent.parent.name + "   " + image.name);
+                // Debug.Log(image.transform.parent.parent.name + "   " + image.name);
                 image.color = new Color(253 / 255f, 97 / 255f, 97 / 255f, 255 / 255f);
             }
         }

@@ -31,8 +31,8 @@ public class InputMouseMove : BaseInputMouse
         if (state <= STATE_BUILDING)
         {
             Building building = BuildingUtil.FindBuilding(hitTarget);
-            //点击到其他地方
-            if (building != null)
+            bool isNormal = PanelState.current.state == PanelState.State.NORMAL;
+            if (building != null && isNormal)
             {
                 PanelList.current.Select(building);
                 state = STATE_BUILDING;
@@ -43,8 +43,9 @@ public class InputMouseMove : BaseInputMouse
                 targetToScreenPos = MyCamera.current.Camera.WorldToScreenPoint(Coordinate.Target.transform.position);
                 mouseClickToWorldPos = MyCamera.current.Camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, targetToScreenPos.z));
             }
-            else
+            else if (isNormal)
             {
+                //点击到其他地方
                 Coordinate.Target.SetTarget(null);
                 PanelList.current.LastRecovery();
                 PanelControl.current.Close();
