@@ -11,12 +11,12 @@ public class PanelAnim : BasePanel<PanelAnim>
         NORMAL = 0,
         APPEARANCE = 1
     }
-    // private AnimType animType;
     private const string NAME_NORMAL_ANIMS = "场景动画列表";
     private const string NAME_APPEARANCE_ANIMS = "出场动画列表";
     #region UI
     private Text panelName;
     private InputField buildingName;
+    private Button buttonPlay;
     private Transform item;
     private List<Transform> items;
     private Dictionary<int, List<Transform>> itemsCache;
@@ -26,6 +26,7 @@ public class PanelAnim : BasePanel<PanelAnim>
         panelName = transform.Find("Top/Button/Text").GetComponent<Text>();
         buildingName = transform.Find("Content/Name/InputField").GetComponent<InputField>();
         item = transform.Find("Content/Scroll View/Viewport/Content/Item");
+        buttonPlay = transform.Find("Content/ButtonPlay").GetComponent<Button>();
         item.gameObject.SetActive(false);
         items = new List<Transform>();
         itemsCache = new Dictionary<int, List<Transform>>();
@@ -36,6 +37,14 @@ public class PanelAnim : BasePanel<PanelAnim>
             {
                 AddItem(animData);
                 animDatas.Add(animData);
+            });
+        });
+        buttonPlay.onClick.AddListener(delegate
+        {
+            buttonPlay.interactable = false;
+            PoolOfAnim.current.AddQueue(targetBuilding.transform, animDatas, () =>
+            {
+                buttonPlay.interactable = true;
             });
         });
     }
@@ -88,6 +97,10 @@ public class PanelAnim : BasePanel<PanelAnim>
         }
         animDatas.ForEach(AddItem);
     }
+    /// <summary>
+    /// 添加UI item
+    /// </summary>
+    /// <param name="data"></param>
     private void AddItem(AnimData data)
     {
         Transform clone = Instantiate(item, item.parent);

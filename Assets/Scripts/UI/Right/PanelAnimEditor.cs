@@ -5,6 +5,171 @@ using UnityEngine;
 [UIType(UIStackType.RIGHT)]
 public class PanelAnimEditor : BasePanel<PanelAnimEditor>
 {
+    private Item data, begin, end;
+    private InputField inputFieldDuration, inputFieldName;
+    private Action<AnimData> actionResult;
+    private Button buttonPlay;
+    /// <summary>
+    /// open时记录对象初始值，用于close时复原
+    /// </summary>
+    private TransformGroup initialValue;
+    protected override void _Start()
+    {
+        data = new Item(transform.Find("Content/Data"));
+        begin = new Item(transform.Find("Content/DataBegin"));
+        end = new Item(transform.Find("Content/DataEnd"));
+        inputFieldDuration = transform.Find("Content/DataTime/InputField").GetComponent<InputField>();
+        inputFieldName = transform.Find("Content/Name/InputField").GetComponent<InputField>();
+        buttonPlay = transform.Find("Content/ButtonPlay").GetComponent<Button>();
+        #region listener
+        data.Position.AddValueChangedListener(delegate
+        {
+            if (data.Target == null) return;
+            begin.UpdatePosition();
+            end.UpdatePosition();
+            data.Target.localPosition = data.Position.Data;
+            Coordinate.Target.SetTarget(data.Target);
+        });
+        data.Rotation.AddValueChangedListener(delegate
+        {
+            if (data.Target == null) return;
+            begin.UpdateRotation();
+            end.UpdateRotation();
+            data.Target.localEulerAngles = data.Rotation.Data;
+            Coordinate.Target.SetTarget(data.Target);
+        });
+        data.Scale.AddValueChangedListener(delegate
+        {
+            if (data.Target == null) return;
+            begin.UpdateScale();
+            end.UpdateScale();
+            data.Target.localScale = data.Scale.Data;
+            Coordinate.Target.SetTarget(data.Target);
+        });
+        transform.Find("Content/ButtonSave").GetComponent<Button>().onClick.AddListener(delegate
+        {
+            if (!(begin.IsLock && end.IsLock))
+            {
+                PanelDialog.current.Open("请先锁定");
+                return;
+            }
+            actionResult(new AnimData()
+            {
+                Name = inputFieldName.text,
+                Duration = float.Parse(inputFieldDuration.text),
+                Begin = begin.TransformGroup,
+                End = end.TransformGroup
+            });
+            this.Close();
+        });
+        buttonPlay.onClick.AddListener(delegate
+        {
+            if (!(begin.IsLock && end.IsLock))
+            {
+                PanelDialog.current.Open("请先锁定");
+                return;
+            }
+            AnimData animData = new AnimData()
+            {
+                Name = inputFieldName.text,
+                Duration = float.Parse(inputFieldDuration.text),
+                Begin = begin.TransformGroup,
+                End = end.TransformGroup
+            };
+            buttonPlay.interactable = false;
+            PoolOfAnim.current.AddOne(animData.Duration, f =>
+            {
+                animData.Lerp(begin.Target, f);
+                data.UpdatePosition();
+                data.UpdateRotation();
+                data.UpdateScale();
+            }, () =>
+            {
+                buttonPlay.interactable = true;
+            });
+        });
+        #endregion
+    }
+    public void UpdatePosition()
+    {
+        if (!this.gameObject.activeInHierarchy) return;
+        data.UpdatePosition();
+        begin.UpdatePosition();
+        end.UpdatePosition();
+    }
+    public void UpdateRotation()
+    {
+        if (!this.gameObject.activeInHierarchy) return;
+        data.UpdateRotation();
+        begin.UpdateRotation();
+        end.UpdateRotation();
+    }
+    public void UpdateScale()
+    {
+        if (!this.gameObject.activeInHierarchy) return;
+        data.UpdateScale();
+        begin.UpdateScale();
+        end.UpdateScale();
+    }
+    public override void Close()
+    {
+        initialValue.Inject(begin.Target);//复原
+        Coordinate.Target.SetTarget(begin.Target);
+        PanelState.current.state = PanelState.State.NORMAL;
+        base.Close();
+    }
+    public override void Open()
+    {
+        PanelState.current.state = PanelState.State.ANIM_EDITOR;
+        base.Open();
+    }
+    public void Open(AnimData animData, Building building, Action<AnimData> actionResult)
+    {
+        Fresh();
+        initialValue = building.transformGroup;
+        Transform target = building.transform;
+        //修改已有项，全部锁定，物体处于End位置
+        inputFieldName.text = animData.Name;
+        inputFieldDuration.text = animData.Duration.ToString();
+        animData.Begin.Inject(target);
+        begin.Target = target;
+        begin.Lock();
+        animData.End.Inject(target);
+        end.Target = target;
+        end.Lock();
+        data.Target = target;
+        Coordinate.Target.SetTarget(target);
+        this.actionResult = actionResult;
+        this.Open();
+    }
+    public void Add(List<AnimData> animDatas, Building building, Action<AnimData> actionResult)
+    {
+        Fresh();
+        initialValue = building.transformGroup;
+        Transform target = building.transform;
+        if (animDatas.Count > 0)
+        {
+            animDatas[animDatas.Count - 1].End.Inject(target);
+            begin.Target = target;
+            begin.Lock();
+        }
+        else
+        {
+            begin.Target = target;
+        }
+        end.Target = target;
+        inputFieldName.text = (animDatas.Count + 1).ToString();
+        inputFieldDuration.text = "1";
+        data.Target = target;
+        Coordinate.Target.SetTarget(target);
+        this.actionResult = actionResult;
+        this.Open();
+    }
+    private void Fresh()
+    {
+        begin.QuitLock();
+        end.QuitLock();
+    }
     private class Item
     {
         public InputFieldVector3 Position { get; }
@@ -47,6 +212,10 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
             Position = new InputFieldVector3(inputFields[0], inputFields[1], inputFields[2]);
             Rotation = new InputFieldVector3(inputFields[3], inputFields[4], inputFields[5]);
             Scale = new InputFieldVector3(inputFields[6], inputFields[7], inputFields[8]);
+            if (parent.Find("Button") == null)
+            {
+                return;
+            }
             ButtonLock = parent.Find("Button").GetComponent<Button>();
             ButtonText = parent.Find("Button/Text").GetComponent<Text>();
             //listener
@@ -60,24 +229,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                     UpdateScale();
                 }
             });
-            // Position.AddValueChangedListener(delegate
-            // {
-            //     if (Target == null) return;
-            //     Target.localPosition = this.Position.Data;
-            //     Coordinate.Target.SetTarget(Target);
-            // });
-            // Rotation.AddValueChangedListener(delegate
-            // {
-            //     if (Target == null) return;
-            //     Target.localEulerAngles = this.Rotation.Data;
-            //     Coordinate.Target.SetTarget(Target);
-            // });
-            // Scale.AddValueChangedListener(delegate
-            // {
-            //     if (Target == null) return;
-            //     Target.localScale = this.Scale.Data;
-            //     Coordinate.Target.SetTarget(Target);
-            // });
+
         }
         public void Lock()
         {
@@ -110,120 +262,5 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
             if (Target == null || IsLock) return;
             Scale.Data = Target.localScale;
         }
-    }
-    private Item begin, end;
-    private InputField inputFieldDuration, inputFieldName;
-    private Action<AnimData> actionResult;
-    /// <summary>
-    /// open时记录对象初始值，用于close时复原
-    /// </summary>
-    private TransformGroup initialValue;
-    protected override void _Start()
-    {
-        begin = new Item(transform.Find("Content/DataBegin"));
-        end = new Item(transform.Find("Content/DataEnd"));
-        inputFieldDuration = transform.Find("Content/DataTime/InputField").GetComponent<InputField>();
-        inputFieldName = transform.Find("Content/Name/InputField").GetComponent<InputField>();
-        //listener
-        transform.Find("Content/ButtonPlay").GetComponent<Button>().onClick.AddListener(delegate
-        {
-
-        });
-        transform.Find("Content/ButtonSave").GetComponent<Button>().onClick.AddListener(delegate
-        {
-            if (actionResult == null)
-            {
-                Debug.LogError("actionResult == null");
-                return;
-            }
-            if (!(begin.IsLock && end.IsLock))
-            {
-                PanelDialog.current.Open("请先锁定");
-                return;
-            }
-            actionResult(new AnimData()
-            {
-                Name = inputFieldName.text,
-                Duration = float.Parse(inputFieldDuration.text),
-                Begin = begin.TransformGroup,
-                End = end.TransformGroup
-            });
-            this.Close();
-        });
-    }
-    public void UpdatePosition()
-    {
-        if (!this.gameObject.activeInHierarchy) return;
-        begin.UpdatePosition();
-        end.UpdatePosition();
-    }
-    public void UpdateRotation()
-    {
-        if (!this.gameObject.activeInHierarchy) return;
-        begin.UpdateRotation();
-        end.UpdateRotation();
-    }
-    public void UpdateScale()
-    {
-        if (!this.gameObject.activeInHierarchy) return;
-        begin.UpdateScale();
-        end.UpdateScale();
-    }
-    public override void Close()
-    {
-        initialValue.Inject(begin.Target);//复原
-        Coordinate.Target.SetTarget(begin.Target);
-        PanelState.current.state = PanelState.State.NORMAL;
-        base.Close();
-    }
-    public override void Open()
-    {
-        PanelState.current.state = PanelState.State.ANIM_EDITOR;
-        base.Open();
-    }
-    public void Open(AnimData data, Building building, Action<AnimData> actionResult)
-    {
-        Fresh();
-        initialValue = building.transformGroup;
-        Transform target = building.transform;
-        //修改已有项，全部锁定，物体处于End位置
-        inputFieldName.text = data.Name;
-        inputFieldDuration.text = data.Duration.ToString();
-        data.Begin.Inject(target);
-        begin.Target = target;
-        begin.Lock();
-        data.End.Inject(target);
-        end.Target = target;
-        end.Lock();
-        Coordinate.Target.SetTarget(target);
-        this.actionResult = actionResult;
-        this.Open();
-    }
-    public void Add(List<AnimData> animDatas, Building building, Action<AnimData> actionResult)
-    {
-        Fresh();
-        initialValue = building.transformGroup;
-        Transform target = building.transform;
-        if (animDatas.Count > 0)
-        {
-            animDatas[animDatas.Count - 1].End.Inject(target);
-            begin.Target = target;
-            begin.Lock();
-        }
-        else
-        {
-            begin.Target = target;
-        }
-        end.Target = target;
-        inputFieldName.text = (animDatas.Count + 1).ToString();
-        inputFieldDuration.text = "1";
-        Coordinate.Target.SetTarget(target);
-        this.actionResult = actionResult;
-        this.Open();
-    }
-    private void Fresh()
-    {
-        begin.QuitLock();
-        end.QuitLock();
     }
 }
