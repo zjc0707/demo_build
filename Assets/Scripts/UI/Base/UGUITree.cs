@@ -7,6 +7,7 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     public Canvas canvasInit;
     public Canvas canvasOperate;
     public Canvas canvasStart;
+    public Canvas canvasViewModel;
 
     private void Awake()
     {
@@ -27,6 +28,8 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     }
     private void Start()
     {
+        canvasViewModel.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(ViewModelTurnOff);
+        canvasViewModel.gameObject.SetActive(false);
         OpenStart();
     }
     public void CloseStart()
@@ -40,6 +43,21 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     {
         canvasInit.gameObject.SetActive(false);
         canvasStart.gameObject.SetActive(true);
-
+    }
+    public void ViewModelTurnOff()
+    {
+        PoolOfAnim.current.ViewModelTurnOff();
+        canvasViewModel.gameObject.SetActive(false);
+        CanvasInit.current.ViewModelTurnOff(PanelState.current.ViewModelTurnOff);
+    }
+    public void ViewModelTurnOn()
+    {
+        PanelState.current.ViewModelTurnOn();
+        Coordinate.Target.SetTarget(null);
+        CanvasInit.current.ViewModelTurnOn(() =>
+        {
+            PoolOfAnim.current.ViewModelTurnOn();
+            canvasViewModel.gameObject.SetActive(true);
+        });
     }
 }

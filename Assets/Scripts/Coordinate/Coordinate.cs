@@ -3,7 +3,13 @@ using System;
 using UnityEngine;
 public abstract class Coordinate : BaseUniqueObject<Coordinate>
 {
+    [Obsolete("改为使用Target", true)]
+    public new static Coordinate current { get { return null; } }
     private static Coordinate _target;
+    /// <summary>
+    /// 当前坐标系
+    /// </summary>
+    /// <value></value>
     public static Coordinate Target
     {
         set

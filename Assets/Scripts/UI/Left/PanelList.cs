@@ -31,10 +31,6 @@ public class PanelList : BasePanel<PanelList>
     /// /// </summary>
     private float downTime = 0f;
     /// <summary>
-    /// 长按计时
-    /// </summary>
-    private float longDownTime = 0f;
-    /// <summary>
     ///出发长按所需时间
     /// </summary>
     private const float NEED_DOWN_TIME = 0.15f;
@@ -68,6 +64,7 @@ public class PanelList : BasePanel<PanelList>
         verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
         baseItem.gameObject.SetActive(false);
         items = new List<Item>();
+        this.transform.Find("Buttons/ButtonViewModel").GetComponent<Button>().onClick.AddListener(UGUITree.current.ViewModelTurnOn);
     }
     private void Update()
     {
@@ -89,7 +86,6 @@ public class PanelList : BasePanel<PanelList>
                 state = STATE.NULL;
                 // selectItem.ui = null;
                 downTime = 0f;
-                longDownTime = 0f;
                 verticalLayoutGroup.enabled = true;
             }
         }
@@ -189,6 +185,10 @@ public class PanelList : BasePanel<PanelList>
     {
         Select(items.Find(i => i.building == building));
     }
+    /// <summary>
+    /// 选择目标，物体或UI
+    /// </summary>
+    /// <param name="item"></param>
     private void Select(Item item)
     {
         LastRecovery();

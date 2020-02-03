@@ -7,7 +7,7 @@ using cakeslice;
 public class Building : BaseObject
 {
     /// <summary>
-    /// 唯一标识符，不写入数据库仅用于缓存，在BuildingUtil中创建Building赋值
+    /// 唯一标识符，不写入数据库仅用于缓存，在BuildingUtil中创建Building时赋值
     /// </summary>
     public int guid;
     public Model data;
@@ -15,6 +15,7 @@ public class Building : BaseObject
     /// 场景动画
     /// </summary>
     public List<AnimData> normalAnimDatas;
+    public bool isAnimOn;
     /// <summary>
     /// 出场动画
     /// </summary>

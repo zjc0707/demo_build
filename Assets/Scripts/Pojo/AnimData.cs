@@ -11,6 +11,5 @@ public class AnimData
         target.localPosition = Vector3.Lerp(Begin.Position, End.Position, f);
         target.localEulerAngles = Vector3.Lerp(Begin.EulerAngles, End.EulerAngles, f);
         target.localScale = Vector3.Lerp(Begin.Scale, End.Scale, f);
-        Coordinate.Target.SetTarget(target);
     }
 }

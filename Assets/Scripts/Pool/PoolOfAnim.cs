@@ -5,6 +5,10 @@ using UnityEngine.Events;
 public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
 {
     /// <summary>
+    /// 是否为观赏模式，观赏模式下进行itemQueueList的动画
+    /// </summary>
+    private bool isViewModel;
+    /// <summary>
     /// 单向动画，如相机的复位移动
     /// 播放完不会恢复
     /// </summary>
@@ -17,14 +21,14 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <summary>
     /// 并行循环多节点动画，浏览整体时并行播放不同物体的动画
     /// </summary>
-    private List<MyQueue<Item>> itemQueueList = new List<MyQueue<Item>>();
+    private Dictionary<int, MyQueue<Item>> itemQueueDic = new Dictionary<int, MyQueue<Item>>();
     /// <summary>
     /// 添加并行循环动画列表
     /// </summary>
     /// <param name="target">目标物体</param>
     /// <param name="animDatas">动画列表</param>
     /// <returns>下标</returns>
-    public int AddQueueList(Transform target, List<AnimData> animDatas)
+    public void AddItemQueueInDic(int key, Transform target, List<AnimData> animDatas)
     {
         MyQueue<Item> items = new MyQueue<Item>();
         animDatas.ForEach(data => items.Add(new Item()
@@ -32,17 +36,22 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
             amountTime = data.Duration,
             action = f => data.Lerp(target, f)
         }));
-        itemQueueList.Add(items);
-        return itemQueueList.Count - 1;
+        itemQueueDic.Add(key, items);
     }
     /// <summary>
-    /// 停止集合中的动画并恢复初始状态,用于循环动画的取消
+    /// 移除集合中的动画并恢复初始状态,用于循环动画的取消
     /// </summary>
-    /// <param name="index"></param>
-    public void StopQueueList(int index)
+    /// <param name="key"></param>
+    public bool RemoveItemQueueInDic(int key)
     {
-        itemQueueList[index][0].Restart();
-        itemQueueList.RemoveAt(index);
+        MyQueue<Item> items;
+        if (itemQueueDic.TryGetValue(key, out items))
+        {
+            items[0].Restart();
+            itemQueueDic.Remove(key);
+            return true;
+        }
+        return false;
     }
     /// <summary>
     /// 添加单节点动画
@@ -50,7 +59,7 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <param name="amountTime">时长</param>
     /// <param name="action">动画事件</param>
     /// <param name="result"></param>
-    public void AddOne(float amountTime, Action<float> action, Action result = null)
+    public void AddItem(float amountTime, Action<float> action, Action result = null)
     {
         itemQueue.Clear();
         AddQueue(amountTime, action);
@@ -65,9 +74,20 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <param name="amountTime">时长</param>
     /// <param name="action">动画事件</param>
     /// <param name="result"></param>
-    public void AddOneNoRecovery(float amountTime, Action<float> action)
+    public void AddItemNoRecovery(float amountTime, Action<float> action, Action result = null)
     {
-        itemList.Add(new Item() { amountTime = amountTime, action = action });
+        itemList.Add(new Item()
+        {
+            amountTime = amountTime,
+            action = f =>
+            {
+                action(f);
+                if (f >= 1 && result != null)
+                {
+                    result();
+                }
+            }
+        });
     }
     /// <summary>
     /// 添加多节点动画
@@ -75,13 +95,29 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <param name="target"></param>
     /// <param name="animDatas"></param>
     /// <param name="result"></param>
-    public void AddQueue(Transform target, List<AnimData> animDatas, Action result = null)
+    public void AddItemInQueue(Transform target, List<AnimData> animDatas, Action result = null)
     {
         itemQueue.Clear();
-        animDatas.ForEach(data => AddQueue(data.Duration, f => data.Lerp(target, f)));
+        animDatas.ForEach(data => AddQueue(data.Duration, f =>
+        {
+            data.Lerp(target, f);
+            Coordinate.Target.SetTarget(target);
+        }));
         if (result != null)
         {
             AddQueue(0.001f, f => result());
+        }
+    }
+    public void ViewModelTurnOn()
+    {
+        isViewModel = true;
+    }
+    public void ViewModelTurnOff()
+    {
+        isViewModel = false;
+        foreach (MyQueue<Item> p in itemQueueDic.Values)
+        {
+            p[0].Restart();
         }
     }
     /// <summary>
@@ -96,43 +132,50 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     private void Update()
     {
         float deltaTime = Time.deltaTime;
-        for (int i = itemList.Count - 1; i >= 0; i--)
+        if (!isViewModel)
         {
-            if (itemList[i].Update(deltaTime))
+            for (int i = itemList.Count - 1; i >= 0; i--)
             {
-                itemList.RemoveAt(i);
+                if (itemList[i].Update(deltaTime))
+                {
+                    itemList.RemoveAt(i);
+                }
             }
-        }
-        #region  串行，需判断amountTime小于deltaTime的情况,结束后复原
-        float deltaTimeQueue = deltaTime;
-        while (itemQueue.SurplusCount > 0 && itemQueue.Peek().surplusTime <= deltaTimeQueue)
-        {
-            deltaTimeQueue -= itemQueue.Peek().surplusTime;
-            itemQueue.Dequeue().Finish();
-        }
-        if (itemQueue.SurplusCount > 0)
-        {
-            itemQueue.Peek().Update(deltaTimeQueue);
-        }
-        else if (itemQueue.Count > 0)
-        {
-            itemQueue[0].Restart();
-            itemQueue.Clear();
-        }
-        #endregion
-        #region 并行多节点动画
-        for (int i = itemQueueList.Count - 1; i >= 0; i--)
-        {
-            float deltaTimeQueue2 = deltaTime;
-            MyQueue<Item> items = itemQueueList[i];
-            while (items.Peek().surplusTime <= deltaTimeQueue2)
+            #region  串行，需判断amountTime小于deltaTime的情况,结束后复原
+            float deltaTimeQueue = deltaTime;
+            while (itemQueue.SurplusCount > 0 && itemQueue.Peek().surplusTime <= deltaTimeQueue)
             {
-                deltaTimeQueue2 -= items.Peek().surplusTime;
-                items.Dequeue().Finish();
+                deltaTimeQueue -= itemQueue.Peek().surplusTime;
+                itemQueue.Dequeue().Finish();
             }
-            items.Peek().Update(deltaTimeQueue2);
+            if (itemQueue.SurplusCount > 0)
+            {
+                itemQueue.Peek().Update(deltaTimeQueue);
+            }
+            else if (itemQueue.Count > 0)
+            {
+                itemQueue[0].Restart();
+                itemQueue.Clear();
+            }
+            #endregion
         }
-        #endregion
+        else
+        {
+            #region 并行多节点动画
+            for (int i = itemQueueDic.Count - 1; i >= 0; i--)
+            {
+                float deltaTimeQueue2 = deltaTime;
+                MyQueue<Item> items = itemQueueDic[i];
+                while (items.Peek().surplusTime <= deltaTimeQueue2)
+                {
+                    deltaTimeQueue2 -= items.Peek().surplusTime;
+                    items.Dequeue().Finish();
+                }
+                items.Peek().Update(deltaTimeQueue2);
+            }
+            #endregion
+        }
+
     }
     class MyQueue<T> : List<T> where T : class
     {

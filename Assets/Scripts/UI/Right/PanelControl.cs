@@ -13,7 +13,7 @@ public class PanelControl : BasePanel<PanelControl>
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
     private Building targetBuilding;
-    private bool isFirst = true;
+    private bool isChange;
     protected override void _Start()
     {
         Load();
@@ -22,28 +22,37 @@ public class PanelControl : BasePanel<PanelControl>
     }
     public void SetData(Building building)
     {
+        isChange = true;
         targetBuilding = building;
         target = targetBuilding.transform;
         objectName.text = target.name;
         position.Data = target.localPosition;
         rotation.Data = target.localEulerAngles;
         scale.Data = target.localScale;
+        toggleAnim.isOn = building.isAnimOn;
+        isChange = false;
         base.Open();
     }
     public void UpdatePosData()
     {
         if (target == null) return;
+        isChange = true;
         position.Data = target.localPosition;
+        isChange = false;
     }
     public void UpdateRotData()
     {
         if (target == null) return;
+        isChange = true;
         rotation.Data = target.localEulerAngles;
+        isChange = false;
     }
     public void UpdateScaleData()
     {
         if (target == null) return;
+        isChange = true;
         scale.Data = target.localScale;
+        isChange = false;
     }
     public void SetTargetMaterial(Material material)
     {
@@ -54,39 +63,42 @@ public class PanelControl : BasePanel<PanelControl>
     /// </summary>
     private void AddListener()
     {
-        Debug.Log("Addlistener");
-        // if (!isFirst) return;
-        // isFirst = false;
         //输入框监听事件
         this.position.AddValueChangedListener(delegate
         {
-            if (target == null) return;
+            if (target == null || isChange) return;
             target.localPosition = this.position.Data;
             Coordinate.Target.SetTarget(target);
         });
         this.rotation.AddValueChangedListener(delegate
         {
-            if (target == null) return;
+            if (target == null || isChange) return;
             target.localEulerAngles = this.rotation.Data;
             Coordinate.Target.SetTarget(target);
         });
         this.scale.AddValueChangedListener(delegate
         {
-            if (target == null) return;
+            if (target == null || isChange) return;
             target.localScale = this.scale.Data;
             Coordinate.Target.SetTarget(target);
         });
         // 输入框编辑完监听事件
         this.position.AddEndEditListener(delegate
         {
-            if (target == null) return;
+            if (target == null || isChange) return;
             this.position.Data = target.localPosition;
         });
         this.rotation.AddEndEditListener(delegate
         {
-            if (target == null) return;
+            if (target == null || isChange) return;
             this.rotation.Data = target.localEulerAngles;
         });
+        this.scale.AddEndEditListener(delegate
+        {
+            if (target == null || isChange) return;
+            this.scale.Data = target.localScale;
+        });
+        //button 
         this.buttonClear.onClick.AddListener(delegate
         {
             if (target == null)
@@ -110,6 +122,33 @@ public class PanelControl : BasePanel<PanelControl>
         {
             if (target == null) return;
             PanelAnim.current.Open(targetBuilding, PanelAnim.AnimType.APPEARANCE);
+        });
+        //toggle
+        this.toggleAnim.onValueChanged.AddListener(isOn =>
+        {
+            if (isChange)
+            {
+                return;
+            }
+            targetBuilding.isAnimOn = isOn;
+            if (isOn)
+            {
+                if (targetBuilding.normalAnimDatas.Count == 0)
+                {
+                    PanelDialog.current.Open("动画列表为空", () =>
+                    {
+                        isChange = true;
+                        this.toggleAnim.isOn = false;
+                        isChange = false;
+                    });
+                    return;
+                }
+                PoolOfAnim.current.AddItemQueueInDic(targetBuilding.guid, targetBuilding.transform, targetBuilding.normalAnimDatas);
+            }
+            else
+            {
+                PoolOfAnim.current.RemoveItemQueueInDic(targetBuilding.guid);
+            }
         });
     }
     private void Load()

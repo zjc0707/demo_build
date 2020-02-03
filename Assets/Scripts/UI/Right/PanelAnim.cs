@@ -42,7 +42,7 @@ public class PanelAnim : BasePanel<PanelAnim>
         buttonPlay.onClick.AddListener(delegate
         {
             buttonPlay.interactable = false;
-            PoolOfAnim.current.AddQueue(targetBuilding.transform, animDatas, () =>
+            PoolOfAnim.current.AddItemInQueue(targetBuilding.transform, animDatas, () =>
             {
                 buttonPlay.interactable = true;
             });
@@ -73,10 +73,12 @@ public class PanelAnim : BasePanel<PanelAnim>
         }
         if (items.Count == 0)
         {
+            Debug.Log("无内容不进行缓存");
             return;//无内容不进行缓存
         }
         if (!itemsCache.ContainsKey(targetBuilding.guid))
         {
+            Debug.Log("缓存");
             itemsCache.Add(targetBuilding.guid, items);
         }
         items.ForEach(p => p.gameObject.SetActive(false));
@@ -103,7 +105,7 @@ public class PanelAnim : BasePanel<PanelAnim>
     /// <param name="data"></param>
     private void AddItem(AnimData data)
     {
-        Transform clone = Instantiate(item, item.parent);
+        Transform clone = Instantiate(item.gameObject, item.parent).transform;
         clone.Find("ButtonName/Text").GetComponent<Text>().text = data.Name;
         clone.Find("ButtonName").GetComponent<Button>().onClick.AddListener(delegate
         {
@@ -121,5 +123,6 @@ public class PanelAnim : BasePanel<PanelAnim>
             Debug.Log("delete:" + data.Name);
         });
         clone.gameObject.SetActive(true);
+        items.Add(clone);
     }
 }

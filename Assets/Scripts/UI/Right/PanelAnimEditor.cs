@@ -77,9 +77,10 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 End = end.TransformGroup
             };
             buttonPlay.interactable = false;
-            PoolOfAnim.current.AddOne(animData.Duration, f =>
+            PoolOfAnim.current.AddItem(animData.Duration, f =>
             {
                 animData.Lerp(begin.Target, f);
+                Coordinate.Target.SetTarget(begin.Target);
                 data.UpdatePosition();
                 data.UpdateRotation();
                 data.UpdateScale();
