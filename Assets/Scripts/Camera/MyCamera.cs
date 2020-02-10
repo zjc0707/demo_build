@@ -37,7 +37,7 @@ public class MyCamera : BaseUniqueObject<MyCamera>
     public void MoveAnim(TransformGroup end)
     {
         TransformGroup start = base.transformGroup;
-        PoolOfAnim.current.AddItemNoRecovery(0.5f, f =>
+        PoolOfAnim.current.AddItem(0.5f, f =>
         {
             this.transform.position = Vector3.Lerp(start.Position, end.Position, f);
             this.transform.eulerAngles = Vector3.Lerp(start.EulerAngles, end.EulerAngles, f);

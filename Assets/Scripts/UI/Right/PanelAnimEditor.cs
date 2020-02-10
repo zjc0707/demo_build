@@ -12,7 +12,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     /// <summary>
     /// open时记录对象初始值，用于close时复原
     /// </summary>
-    private TransformGroup initialValue;
+    private TransformGroup openTransformGroup;
     protected override void _Start()
     {
         data = new Item(transform.Find("Content/Data"));
@@ -91,6 +91,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         });
         #endregion
     }
+    #region update
     public void UpdatePosition()
     {
         if (!this.gameObject.activeInHierarchy) return;
@@ -112,9 +113,10 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         begin.UpdateScale();
         end.UpdateScale();
     }
+    #endregion
     public override void Close()
     {
-        initialValue.Inject(begin.Target);//复原
+        openTransformGroup.Inject(begin.Target);//复原
         Coordinate.Target.SetTarget(begin.Target);
         PanelState.current.state = PanelState.State.NORMAL;
         base.Close();
@@ -124,10 +126,16 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         PanelState.current.state = PanelState.State.ANIM_EDITOR;
         base.Open();
     }
+    /// <summary>
+    /// 打开已有项，将building的transformGroup设为animData.End，startUI和endUI均赋值和锁定
+    /// </summary>
+    /// <param name="animData"></param>
+    /// <param name="building"></param>
+    /// <param name="actionResult"></param>
     public void Open(AnimData animData, Building building, Action<AnimData> actionResult)
     {
         Fresh();
-        initialValue = building.transformGroup;
+        openTransformGroup = building.transformGroup;
         Transform target = building.transform;
         //修改已有项，全部锁定，物体处于End位置
         inputFieldName.text = animData.Name;
@@ -143,10 +151,16 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         this.actionResult = actionResult;
         this.Open();
     }
+    /// <summary>
+    /// 新建项，若有animDatas不为空，将building的transformGroup设为上一项的End，锁定startUI，若无则不改变
+    /// </summary>
+    /// <param name="animDatas"></param>
+    /// <param name="building"></param>
+    /// <param name="actionResult"></param>
     public void Add(List<AnimData> animDatas, Building building, Action<AnimData> actionResult)
     {
         Fresh();
-        initialValue = building.transformGroup;
+        openTransformGroup = building.transformGroup;
         Transform target = building.transform;
         if (animDatas.Count > 0)
         {
@@ -168,8 +182,8 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     }
     private void Fresh()
     {
-        begin.QuitLock();
-        end.QuitLock();
+        begin.Unlock();
+        end.Unlock();
     }
     private class Item
     {
@@ -236,7 +250,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         {
             Lock(true);
         }
-        public void QuitLock()
+        public void Unlock()
         {
             Lock(false);
         }

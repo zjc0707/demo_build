@@ -65,6 +65,7 @@ public class PanelList : BasePanel<PanelList>
         baseItem.gameObject.SetActive(false);
         items = new List<Item>();
         this.transform.Find("Buttons/ButtonViewModel").GetComponent<Button>().onClick.AddListener(UGUITree.current.ViewModelTurnOn);
+        this.transform.Find("Buttons/ButtonPlayAppearanceAnim").GetComponent<Button>().onClick.AddListener(UGUITree.current.PlayAppearanceAnim);
     }
     private void Update()
     {

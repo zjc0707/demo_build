@@ -54,55 +54,78 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
         return false;
     }
     /// <summary>
-    /// 添加单节点动画
+    /// 添加单节点动画,动画结束不会复原
     /// </summary>
     /// <param name="amountTime">时长</param>
     /// <param name="action">动画事件</param>
     /// <param name="result"></param>
     public void AddItem(float amountTime, Action<float> action, Action result = null)
     {
-        itemQueue.Clear();
-        AddQueue(amountTime, action);
+        // itemQueue.Clear();
         if (result != null)
         {
-            AddQueue(0.001f, f => result());
-        }
-    }
-    /// <summary>
-    /// 添加单节点动画，动画结束不会复原
-    /// </summary>
-    /// <param name="amountTime">时长</param>
-    /// <param name="action">动画事件</param>
-    /// <param name="result"></param>
-    public void AddItemNoRecovery(float amountTime, Action<float> action, Action result = null)
-    {
-        itemList.Add(new Item()
-        {
-            amountTime = amountTime,
-            action = f =>
+            AddQueue(amountTime, f =>
             {
                 action(f);
-                if (f >= 1 && result != null)
+                if (f >= 1)
                 {
                     result();
                 }
-            }
-        });
+            });
+            AddQueue(0.001f, f => result());
+        }
+        else
+        {
+            AddQueue(amountTime, action);
+        }
     }
+    // /// <summary>
+    // /// 添加单节点动画，动画结束不会复原
+    // /// </summary>
+    // /// <param name="amountTime">时长</param>
+    // /// <param name="action">动画事件</param>
+    // /// <param name="result"></param>
+    // public void AddItemNoRecovery(float amountTime, Action<float> action, Action result = null)
+    // {
+    //     itemList.Add(new Item()
+    //     {
+    //         amountTime = amountTime,
+    //         action = f =>
+    //         {
+    //             action(f);
+    //             if (f >= 1 && result != null)
+    //             {
+    //                 result();
+    //             }
+    //         }
+    //     });
+    // }
     /// <summary>
-    /// 添加多节点动画
+    /// 根据animDatas添加多节点动画并显示物体，若animDatas为空则直接显形
     /// </summary>
     /// <param name="target"></param>
     /// <param name="animDatas"></param>
     /// <param name="result"></param>
     public void AddItemInQueue(Transform target, List<AnimData> animDatas, Action result = null)
     {
-        itemQueue.Clear();
-        animDatas.ForEach(data => AddQueue(data.Duration, f =>
+        // itemQueue.Clear();
+        if (animDatas.Count > 0)
         {
-            data.Lerp(target, f);
-            Coordinate.Target.SetTarget(target);
-        }));
+            int i = 0;
+            animDatas.ForEach(data => AddQueue(data.Duration, f =>
+            {
+                if ((i++) == 0)
+                {
+                    target.gameObject.SetActive(true);
+                }
+                data.Lerp(target, f);
+                Coordinate.Target.SetTarget(target);
+            }));
+        }
+        else
+        {
+            AddQueue(0.001f, f => { target.gameObject.SetActive(true); });
+        }
         if (result != null)
         {
             AddQueue(0.001f, f => result());
@@ -121,6 +144,17 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
         }
     }
     /// <summary>
+    /// 获取PanelList的items，并全部隐藏，通过动画一一显示
+    /// </summary>
+    public void PlayAppearanceAnim()
+    {
+        PanelList.current.items.ForEach(item =>
+        {
+            item.building.gameObject.SetActive(false);
+            AddItemInQueue(item.building.transform, item.building.appearanceAnimDatas);
+        });
+    }
+    /// <summary>
     /// 添加串行动画
     /// </summary>
     /// <param name="amountTime"></param>
@@ -134,14 +168,14 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
         float deltaTime = Time.deltaTime;
         if (!isViewModel)
         {
-            for (int i = itemList.Count - 1; i >= 0; i--)
-            {
-                if (itemList[i].Update(deltaTime))
-                {
-                    itemList.RemoveAt(i);
-                }
-            }
-            #region  串行，需判断amountTime小于deltaTime的情况,结束后复原
+            // for (int i = itemList.Count - 1; i >= 0; i--)
+            // {
+            //     if (itemList[i].Update(deltaTime))
+            //     {
+            //         itemList.RemoveAt(i);
+            //     }
+            // }
+            #region  串行，需判断amountTime小于deltaTime的情况,结束后不复原
             float deltaTimeQueue = deltaTime;
             while (itemQueue.SurplusCount > 0 && itemQueue.Peek().surplusTime <= deltaTimeQueue)
             {
@@ -154,7 +188,7 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
             }
             else if (itemQueue.Count > 0)
             {
-                itemQueue[0].Restart();
+                // itemQueue[0].Restart();
                 itemQueue.Clear();
             }
             #endregion

@@ -48,16 +48,27 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     {
         PoolOfAnim.current.ViewModelTurnOff();
         canvasViewModel.gameObject.SetActive(false);
-        CanvasInit.current.ViewModelTurnOff(PanelState.current.ViewModelTurnOff);
+        CanvasInit.current.ShowAllUI(PanelState.current.ViewModelTurnOff);
     }
     public void ViewModelTurnOn()
     {
         PanelState.current.ViewModelTurnOn();
         Coordinate.Target.SetTarget(null);
-        CanvasInit.current.ViewModelTurnOn(() =>
+        CanvasInit.current.HideAllUI(() =>
         {
             PoolOfAnim.current.ViewModelTurnOn();
             canvasViewModel.gameObject.SetActive(true);
+        });
+    }
+    public void PlayAppearanceAnim()
+    {
+        PanelState.current.ViewModelTurnOn();
+        Coordinate.Target.SetTarget(null);
+        CanvasInit.current.HideAllUI(() =>
+        {
+            PoolOfAnim.current.PlayAppearanceAnim();
+            canvasViewModel.gameObject.SetActive(true);
+            //TODO:关闭该怎么复原
         });
     }
 }

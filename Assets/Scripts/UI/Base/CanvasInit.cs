@@ -31,12 +31,12 @@ public class CanvasInit : BaseUniqueObject<CanvasInit>
             panelControlRT.localPosition = Vector3.Lerp(panelControlRTBegin, panelControlRTEnd, f);
         };
     }
-    public void ViewModelTurnOn(Action rs)
+    public void HideAllUI(Action rs)
     {
-        PoolOfAnim.current.AddItemNoRecovery(amountTime, hideAction, rs);
+        PoolOfAnim.current.AddItem(amountTime, hideAction, rs);
     }
-    public void ViewModelTurnOff(Action rs)
+    public void ShowAllUI(Action rs)
     {
-        PoolOfAnim.current.AddItemNoRecovery(amountTime, f => hideAction(1 - f), rs);
+        PoolOfAnim.current.AddItem(amountTime, f => hideAction(1 - f), rs);
     }
 }

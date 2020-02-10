@@ -26,5 +26,14 @@ public class TransformGroup : AbstractToStringObject
     {
 
     }
-
+    public bool Equals(TransformGroup obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        return this.Position.Equals(obj.Position)
+            && this.EulerAngles.Equals(obj.EulerAngles)
+            && this.Scale.Equals(obj.Scale);
+    }
 }
