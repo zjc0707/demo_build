@@ -49,10 +49,11 @@ public class PanelAnim : BasePanel<PanelAnim>
             });
         });
         transform.Find("Content/ButtonBack").GetComponent<Button>().onClick.AddListener(Close);
+        transform.Find("Content/Name/ButtonReverse").GetComponent<Button>().onClick.AddListener(Reverse);
         buttonPlay.onClick.AddListener(delegate
         {
             buttonPlay.interactable = false;
-            PoolOfAnim.current.AddItemInQueue(targetBuilding.transform, animDatas, () =>
+            PoolOfAnim.current.AddItemInQueue(targetBuilding.transform, animDatas, true, () =>
             {
                 buttonPlay.interactable = true;
             });
@@ -66,6 +67,7 @@ public class PanelAnim : BasePanel<PanelAnim>
         if (animType == AnimType.NORMAL)
         {
             openTransformGroup.Inject(targetBuilding.transform);
+            Coordinate.Target.SetTarget(targetBuilding.transform);
             base.Close();
         }
         else
@@ -75,12 +77,14 @@ public class PanelAnim : BasePanel<PanelAnim>
                 PanelDialog.current.Open("动画末尾项与编辑位置不相同，是否修改编辑位置", () =>
                 {
                     animDatas[animDatas.Count - 1].End.Inject(targetBuilding.transform);
+                    Coordinate.Target.SetTarget(targetBuilding.transform);
                     base.Close();
                 });
             }
             else
             {
                 openTransformGroup.Inject(targetBuilding.transform);
+                Coordinate.Target.SetTarget(targetBuilding.transform);
                 base.Close();
             }
         }
@@ -115,13 +119,30 @@ public class PanelAnim : BasePanel<PanelAnim>
         FreshItems();
         base.Open();
     }
+    /// <summary>
+    /// 集合翻转，集合项end和begin互换
+    /// </summary>
     public void Reverse()
     {
+        if (animDatas.Count == 0)
+        {
+            return;
+        }
+        animDatas[0].Begin.Inject(targetBuilding.transform);
+        Coordinate.Target.SetTarget(targetBuilding.transform);
         animDatas.Reverse();
         animDatas.ForEach(p =>
         {
-
+            TransformGroup tg = p.Begin;
+            p.Begin = p.End;
+            p.End = tg;
         });
+        //ui项翻转
+        items.Reverse();
+        for (int i = 0; i < items.Count; i++)
+        {
+            items[i].SetSiblingIndex(i);
+        }
     }
     private void BeforeFreshItems()
     {

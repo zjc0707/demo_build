@@ -8,18 +8,17 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// 是否为观赏模式，观赏模式下进行itemQueueList的动画
     /// </summary>
     private bool isViewModel;
-    /// <summary>
-    /// 单向动画，如相机的复位移动
-    /// 播放完不会恢复
-    /// </summary>
-    private List<Item> itemList = new List<Item>();
+    // /// <summary>
+    // /// 单向动画，如相机的复位移动
+    // /// 播放完不会恢复
+    // /// </summary>
+    // private List<Item> itemList = new List<Item>();
     /// <summary>
     /// 串行单节点（多节点）动画，如单物体动画列表的播放、单个动画的播放
-    /// 播放完会回到最初位置
     /// </summary>
     private MyQueue<Item> itemQueue = new MyQueue<Item>();
     /// <summary>
-    /// 并行循环多节点动画，浏览整体时并行播放不同物体的动画
+    /// /// 并行循环多节点动画，浏览整体时并行播放不同物体的动画
     /// </summary>
     private Dictionary<int, MyQueue<Item>> itemQueueDic = new Dictionary<int, MyQueue<Item>>();
     /// <summary>
@@ -72,7 +71,6 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
                     result();
                 }
             });
-            AddQueue(0.001f, f => result());
         }
         else
         {
@@ -106,7 +104,7 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <param name="target"></param>
     /// <param name="animDatas"></param>
     /// <param name="result"></param>
-    public void AddItemInQueue(Transform target, List<AnimData> animDatas, Action result = null)
+    public void AddItemInQueue(Transform target, List<AnimData> animDatas, bool coordinateFollow = true, Action result = null)
     {
         // itemQueue.Clear();
         if (animDatas.Count > 0)
@@ -119,7 +117,10 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
                     target.gameObject.SetActive(true);
                 }
                 data.Lerp(target, f);
-                Coordinate.Target.SetTarget(target);
+                if (coordinateFollow)
+                {
+                    Coordinate.Target.SetTarget(target);
+                }
             }));
         }
         else
@@ -138,21 +139,30 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     public void ViewModelTurnOff()
     {
         isViewModel = false;
-        foreach (MyQueue<Item> p in itemQueueDic.Values)
-        {
-            p[0].Restart();
-        }
+        // foreach (MyQueue<Item> p in itemQueueDic.Values)
+        // {
+        //     p[0].Restart();
+        // }
     }
     /// <summary>
     /// 获取PanelList的items，并全部隐藏，通过动画一一显示
     /// </summary>
     public void PlayAppearanceAnim()
     {
+        Debug.Log(PanelList.current.items.Count);
         PanelList.current.items.ForEach(item =>
         {
+            Debug.Log(item.building.name);
             item.building.gameObject.SetActive(false);
-            AddItemInQueue(item.building.transform, item.building.appearanceAnimDatas);
+            AddItemInQueue(item.building.transform, item.building.appearanceAnimDatas, false);
         });
+    }
+    /// <summary>
+    /// 中断动画
+    /// </summary>
+    public void StopAppearanceAnim()
+    {
+        itemQueue.Clear();
     }
     /// <summary>
     /// 添加串行动画

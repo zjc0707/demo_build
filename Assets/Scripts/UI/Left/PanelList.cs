@@ -13,6 +13,10 @@ public class PanelList : BasePanel<PanelList>
     }
     public List<Item> items { get; private set; }
     /// <summary>
+    /// buildings对应的tg数据，启动动画时缓存，结束时赋值
+    /// </summary>
+    private Dictionary<Item, TransformGroup> itemDataDic;
+    /// <summary>
     /// 点击/长按对象
     /// </summary>
     private Item selectItem;
@@ -64,6 +68,7 @@ public class PanelList : BasePanel<PanelList>
         verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
         baseItem.gameObject.SetActive(false);
         items = new List<Item>();
+        itemDataDic = new Dictionary<Item, TransformGroup>();
         this.transform.Find("Buttons/ButtonViewModel").GetComponent<Button>().onClick.AddListener(UGUITree.current.ViewModelTurnOn);
         this.transform.Find("Buttons/ButtonPlayAppearanceAnim").GetComponent<Button>().onClick.AddListener(UGUITree.current.PlayAppearanceAnim);
     }
@@ -185,6 +190,27 @@ public class PanelList : BasePanel<PanelList>
     public void Select(Building building)
     {
         Select(items.Find(i => i.building == building));
+    }
+    /// <summary>
+    /// 缓存编辑状态下的building.tg
+    /// </summary>
+    public void SaveBuildingDatas()
+    {
+        itemDataDic.Clear();
+        items.ForEach(p =>
+        {
+            itemDataDic.Add(p, p.building.transformGroup);
+        });
+    }
+    /// <summary>
+    /// 复原所有building的数据
+    /// </summary>
+    public void RecoveryBuildingDatas()
+    {
+        foreach (var p in itemDataDic)
+        {
+            p.Value.Inject(p.Key.building.transform);
+        }
     }
     /// <summary>
     /// 选择目标，物体或UI

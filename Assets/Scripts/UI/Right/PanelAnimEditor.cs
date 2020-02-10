@@ -9,6 +9,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     private InputField inputFieldDuration, inputFieldName;
     private Action<AnimData> actionResult;
     private Button buttonPlay;
+    private bool isAdd;
     /// <summary>
     /// open时记录对象初始值，用于close时复原
     /// </summary>
@@ -60,6 +61,15 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 Begin = begin.TransformGroup,
                 End = end.TransformGroup
             });
+            if (isAdd)
+            {
+                end.TransformGroup.Inject(begin.Target);
+            }
+            else
+            {
+                openTransformGroup.Inject(begin.Target);
+            }
+            Coordinate.Target.SetTarget(begin.Target);
             this.Close();
         });
         buttonPlay.onClick.AddListener(delegate
@@ -116,8 +126,6 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     #endregion
     public override void Close()
     {
-        openTransformGroup.Inject(begin.Target);//复原
-        Coordinate.Target.SetTarget(begin.Target);
         PanelState.current.state = PanelState.State.NORMAL;
         base.Close();
     }
@@ -135,6 +143,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     public void Open(AnimData animData, Building building, Action<AnimData> actionResult)
     {
         Fresh();
+        isAdd = false;
         openTransformGroup = building.transformGroup;
         Transform target = building.transform;
         //修改已有项，全部锁定，物体处于End位置
@@ -160,7 +169,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     public void Add(List<AnimData> animDatas, Building building, Action<AnimData> actionResult)
     {
         Fresh();
-        openTransformGroup = building.transformGroup;
+        isAdd = true;
         Transform target = building.transform;
         if (animDatas.Count > 0)
         {

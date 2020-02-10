@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System;
 using System.Collections.Generic;
 
 public class UGUITree : BaseUniqueObject<UGUITree>
@@ -8,7 +10,7 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     public Canvas canvasOperate;
     public Canvas canvasStart;
     public Canvas canvasViewModel;
-
+    private Action canvasViewModelQuitAction;
     private void Awake()
     {
         //统一关闭按钮样式
@@ -28,7 +30,10 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     }
     private void Start()
     {
-        canvasViewModel.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(ViewModelTurnOff);
+        canvasViewModel.transform.Find("ButtonQuit").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            canvasViewModelQuitAction();
+        });
         canvasViewModel.gameObject.SetActive(false);
         OpenStart();
     }
@@ -47,15 +52,18 @@ public class UGUITree : BaseUniqueObject<UGUITree>
     public void ViewModelTurnOff()
     {
         PoolOfAnim.current.ViewModelTurnOff();
+        PanelList.current.RecoveryBuildingDatas();
         canvasViewModel.gameObject.SetActive(false);
         CanvasInit.current.ShowAllUI(PanelState.current.ViewModelTurnOff);
     }
     public void ViewModelTurnOn()
     {
+        PanelList.current.SaveBuildingDatas();
         PanelState.current.ViewModelTurnOn();
         Coordinate.Target.SetTarget(null);
         CanvasInit.current.HideAllUI(() =>
         {
+            canvasViewModelQuitAction = ViewModelTurnOff;
             PoolOfAnim.current.ViewModelTurnOn();
             canvasViewModel.gameObject.SetActive(true);
         });
@@ -66,9 +74,17 @@ public class UGUITree : BaseUniqueObject<UGUITree>
         Coordinate.Target.SetTarget(null);
         CanvasInit.current.HideAllUI(() =>
         {
+            canvasViewModelQuitAction = StopAppearanceAnim;
+            PanelList.current.SaveBuildingDatas();
             PoolOfAnim.current.PlayAppearanceAnim();
             canvasViewModel.gameObject.SetActive(true);
-            //TODO:关闭该怎么复原
         });
+    }
+    public void StopAppearanceAnim()
+    {
+        PoolOfAnim.current.StopAppearanceAnim();
+        PanelList.current.RecoveryBuildingDatas();
+        canvasViewModel.gameObject.SetActive(false);
+        CanvasInit.current.ShowAllUI(PanelState.current.ViewModelTurnOff);
     }
 }
