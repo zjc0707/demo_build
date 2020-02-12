@@ -10,7 +10,7 @@ public class Building : BaseObject
     /// 唯一标识符，不写入数据库仅用于缓存，在BuildingUtil中创建Building时赋值
     /// </summary>
     public int guid;
-    public Model data;
+    public int modelDataId;
     /// <summary>
     /// 场景动画
     /// </summary>

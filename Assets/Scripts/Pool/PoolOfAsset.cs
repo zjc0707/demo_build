@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
 {
+    /// <summary>
+    /// 对象池，key-对象modelId
+    /// </summary>
+    /// <returns></returns>
     private Dictionary<int, List<Item>> dicGoPool = new Dictionary<int, List<Item>>();
     /// <summary>
     /// 资源池中最大存活时间为checkSpan + maxAliveTime
@@ -10,6 +14,11 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     private float maxAliveTime = 5;
     private float checkSpan = 1;
     private float useTime = 0;
+    /// <summary>
+    /// 根据id创建go对象
+    /// </summary>
+    /// <param name="id">model数据的id</param>
+    /// <returns></returns>
     public GameObject Create(int id)
     {
         List<Item> list = GetList(id);
@@ -29,7 +38,7 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     }
     public void Destroy(Building building)
     {
-        Destroy(building.data.Id, building.gameObject);
+        Destroy(building.modelDataId, building.gameObject);
     }
     public void Destroy(int id, GameObject go)
     {

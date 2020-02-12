@@ -157,7 +157,7 @@ public class PanelAnim : BasePanel<PanelAnim>
         }
         if (!itemsCache.ContainsKey(targetBuilding.guid))
         {
-            Debug.Log("缓存");
+            Debug.Log("缓存guid：" + targetBuilding.guid);
             itemsCache.Add(targetBuilding.guid, items);
         }
         items.ForEach(p => p.gameObject.SetActive(false));
@@ -170,9 +170,11 @@ public class PanelAnim : BasePanel<PanelAnim>
         {
             return;
         }
-        if (itemsCache.TryGetValue(targetBuilding.guid, out items))
+        List<Transform> transforms;
+        if (itemsCache.TryGetValue(targetBuilding.guid, out transforms))
         {
             //缓存中存在则不重复加载
+            items = transforms;
             items.ForEach(p => p.gameObject.SetActive(true));
             return;
         }

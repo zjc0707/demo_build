@@ -11,7 +11,8 @@ public class EventTriggerListener : UnityEngine.EventSystems.EventTrigger
     public delegate void KeyCodeDelegate(GameObject go, KeyCode key);
 
     public VoidDelegate onClick;
-    public VoidDelegate onDown;
+    public VoidDelegate onLeftDown;
+    public VoidDelegate onRightDown;
     public VoidDelegate onEnter;
     public VoidDelegate onExit;
     public VoidDelegate onUp;
@@ -37,7 +38,15 @@ public class EventTriggerListener : UnityEngine.EventSystems.EventTrigger
     }
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if (onDown != null) onDown(gameObject);
+        // Debug.Log("eventData.button:" + eventData.button);
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            if (onLeftDown != null) onLeftDown(gameObject);
+        }
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (onRightDown != null) onRightDown(gameObject);
+        }
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

@@ -7,9 +7,32 @@ public class PanelList : BasePanel<PanelList>
 {
     public class Item
     {
-        public Transform ui { get; set; }
-        public Image background { get; set; }
-        public Building building { get; set; }
+        public Transform ui { get; private set; }
+        /// <summary>
+        /// 整条的颜色
+        /// </summary>
+        /// <value></value>
+        public Image background { get; private set; }
+        public Building building { get; private set; }
+        /// <summary>
+        /// 下拉按钮
+        /// </summary>
+        /// <value></value>
+        private Image downArrow { get; set; }
+        private bool isOpen;
+        public Item(Building building, Transform ui)
+        {
+            this.building = building;
+            this.ui = ui;
+            this.background = ui.GetComponent<Image>();
+            this.downArrow = ui.Find("Image").GetComponent<Image>();
+            this.downArrow.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                //TODO: 下拉涉及子物体嵌套，待定
+                Debug.Log(isOpen);
+                isOpen = !isOpen;
+            });
+        }
     }
     public List<Item> items { get; private set; }
     /// <summary>
@@ -21,6 +44,8 @@ public class PanelList : BasePanel<PanelList>
     /// </summary>
     private Item selectItem;
     #region UI对象
+    private Action rightClickPanelButtonCloneAction;
+    private GameObject rightClickPanel;
     private Transform content;
     private Transform baseItem;
     private VerticalLayoutGroup verticalLayoutGroup;
@@ -57,20 +82,29 @@ public class PanelList : BasePanel<PanelList>
 
     protected override void _Start()
     {
-        if (content == null)
-        {
-            content = this.transform.Find("Scroll View").Find("Viewport").Find("Content");
-        }
-        if (baseItem == null)
-        {
-            baseItem = content.Find("Item");
-        }
+        content = this.transform.Find("Scroll View").Find("Viewport").Find("Content");
+        baseItem = content.Find("Item");
+        rightClickPanel = this.transform.Find("Scroll View/Viewport/RightClickPanel").gameObject;
+        rightClickPanel.SetActive(false);
         verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
         baseItem.gameObject.SetActive(false);
         items = new List<Item>();
         itemDataDic = new Dictionary<Item, TransformGroup>();
+        //listener
         this.transform.Find("Buttons/ButtonViewModel").GetComponent<Button>().onClick.AddListener(UGUITree.current.ViewModelTurnOn);
         this.transform.Find("Buttons/ButtonPlayAppearanceAnim").GetComponent<Button>().onClick.AddListener(UGUITree.current.PlayAppearanceAnim);
+        rightClickPanel.transform.Find("ButtonClone").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (rightClickPanelButtonCloneAction != null)
+            {
+                rightClickPanelButtonCloneAction();
+            }
+        });
+        //action
+        PanelState.current.baseInputMouse.leftClickUpDelegate += delegate
+        {
+            rightClickPanel.SetActive(false);
+        };
     }
     private void Update()
     {
@@ -126,10 +160,31 @@ public class PanelList : BasePanel<PanelList>
             }
         }
     }
-    private void OnDown(GameObject go)
+    /// <summary>
+    /// 按钮左键点击事件
+    /// </summary>
+    /// <param name="go"></param>
+    private void OnLeftDown(GameObject go)
     {
+        Debug.Log("OnLeftDown");
         Select(items.Find(item => item.ui.gameObject == go));
         state = STATE.DOWN;
+    }
+    /// <summary>
+    /// 右键点击事件，更新右键面板中的按钮的点击事件
+    /// </summary>
+    /// <param name="go"></param>
+    private void OnRigheDown(GameObject go)
+    {
+        Debug.Log("OnRigheDown");
+        rightClickPanel.SetActive(true);
+        rightClickPanel.transform.position = Input.mousePosition;
+        rightClickPanelButtonCloneAction = delegate
+        {
+            Item item = items.Find(p => p.ui.gameObject == go);
+            BuildingUtil.Clone(item.building);
+            Select(items[items.Count - 1]);
+        };
     }
     #region BuildRoom Method
     public void Add(Building building)
@@ -137,15 +192,11 @@ public class PanelList : BasePanel<PanelList>
         GameObject clone = Instantiate(baseItem.gameObject, content);
         clone.name = building.gameObject.name;
         clone.GetComponentInChildren<Text>().text = clone.name;
-        EventTriggerListener.Get(clone).onDown += OnDown;
+        EventTriggerListener.Get(clone).onLeftDown += OnLeftDown;
+        EventTriggerListener.Get(clone).onRightDown += OnRigheDown;
         clone.SetActive(true);
         building.transform.SetParent(buildingRoom);
-        items.Add(new Item()
-        {
-            building = building,
-            ui = clone.transform,
-            background = clone.GetComponent<Image>()
-        });
+        items.Add(new Item(building, clone.transform));
     }
     public void Remove(Building building)
     {

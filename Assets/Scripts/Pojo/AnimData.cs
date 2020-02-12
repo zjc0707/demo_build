@@ -12,4 +12,14 @@ public class AnimData
         target.localEulerAngles = Vector3.Lerp(Begin.EulerAngles, End.EulerAngles, f);
         target.localScale = Vector3.Lerp(Begin.Scale, End.Scale, f);
     }
+    public AnimData Clone()
+    {
+        return new AnimData()
+        {
+            Name = this.Name,
+            Begin = this.Begin.Clone(),
+            End = this.End.Clone(),
+            Duration = this.Duration
+        };
+    }
 }

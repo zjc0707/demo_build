@@ -4,7 +4,19 @@ using UnityEngine;
 using Newtonsoft.Json.Linq;
 public static class AssetBundleUtil
 {
+    /// <summary>
+    /// ab包提取的go缓存对象
+    /// </summary>
+    /// <typeparam name="int">modelId</typeparam>
+    /// <typeparam name="GameObject"></typeparam>
+    /// <returns></returns>
     public static Dictionary<int, GameObject> DicPrefab = new Dictionary<int, GameObject>();
+    /// <summary>
+    /// ab包提取的sprite对象
+    /// </summary>
+    /// <typeparam name="int">modelId</typeparam>
+    /// <typeparam name="Sprite"></typeparam>
+    /// <returns></returns>
     public static Dictionary<int, Sprite> DicSprite = new Dictionary<int, Sprite>();
     public static void Clear()
     {

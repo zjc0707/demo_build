@@ -60,7 +60,7 @@ public static class BuildingUtil
         return null;
     }
     /// <summary>
-    /// 返回target上的Building及其子类的脚本
+    /// 返回target上的Building脚本，若不存在则添加
     /// </summary>
     public static Building GetComponentBuilding(Transform target)
     {
@@ -76,21 +76,39 @@ public static class BuildingUtil
         // }
         return result;
     }
-    public static Building GetComponentBuilding(Transform target, Model data)
+    /// <summary>
+    /// 根据data给target新增building脚本，并赋值guid
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static Building AddComponentBuilding(Transform target, Model data)
     {
         Building result = GetComponentBuilding(target);
-        result.data = data;
+        result.modelDataId = data.Id;
         result.guid = guid++;
-        // Debug.Log(data == null);
         return result;
+    }
+    /// <summary>
+    /// 克隆
+    /// </summary>
+    /// <param name="building"></param>
+    /// <returns></returns>
+    public static Building Clone(Building building)
+    {
+        Building cloneBuilding = Create(LocalAssetUtil.GetModel(building.modelDataId));
+        cloneBuilding.Build();
+        building.transformGroup.Inject(cloneBuilding.transform);
+        building.appearanceAnimDatas.ForEach(p => cloneBuilding.appearanceAnimDatas.Add(p.Clone()));
+        building.normalAnimDatas.ForEach(p => cloneBuilding.normalAnimDatas.Add(p.Clone()));
+        return cloneBuilding;
     }
     #endregion
     #region create
     public static Building Create(Model data)
     {
         GameObject obj = CreateGameObjcet(data);
-        Building building = GetComponentBuilding(obj.transform, data);
-        return building;
+        return AddComponentBuilding(obj.transform, data);
     }
     public static Building Create(BuildingSaveData data)
     {
@@ -100,9 +118,8 @@ public static class BuildingUtil
             return null;
         }
         GameObject obj = CreateGameObjcet(model);
-        Building building = GetComponentBuilding(obj.transform, model);
         TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
-        return building;
+        return AddComponentBuilding(obj.transform, model);
     }
     private static GameObject CreateGameObjcet(Model data)
     {

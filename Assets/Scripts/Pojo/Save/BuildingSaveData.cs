@@ -4,7 +4,7 @@ public class BuildingSaveData
     public int ModelDataId { get; set; }
     public BuildingSaveData(Building building)
     {
-        this.ModelDataId = building.data.Id;
+        this.ModelDataId = building.modelDataId;
         this.TransformGroup = TransformGroupUtil.ToSaveData(building.transformGroup);
     }
     public BuildingSaveData()

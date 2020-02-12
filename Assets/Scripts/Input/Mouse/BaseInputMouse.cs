@@ -8,6 +8,11 @@ using UnityEngine.EventSystems;
 /// </summary>
 public abstract class BaseInputMouse
 {
+    /// <summary>
+    /// 外部额外的点击事件
+    /// </summary>
+    public delegate void ClickDelegate();
+    public ClickDelegate leftClickUpDelegate;
     public const float rotateSpeed = 180.0f;
     public const float scaleSpeed = 2f;
     protected Building catchBuilding;
@@ -30,6 +35,10 @@ public abstract class BaseInputMouse
         }
         if (Input.GetMouseButtonUp(0))
         {
+            if (leftClickUpDelegate != null)
+            {
+                leftClickUpDelegate();
+            }
             OnMouseLeftClickUp();
         }
         if (Input.GetMouseButton(0))
