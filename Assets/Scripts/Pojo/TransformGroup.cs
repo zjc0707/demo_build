@@ -45,4 +45,22 @@ public class TransformGroup : AbstractToStringObject
             && this.EulerAngles.Equals(obj.EulerAngles)
             && this.Scale.Equals(obj.Scale);
     }
+    public static TransformGroup operator +(TransformGroup a, TransformGroup b)
+    {
+        return new TransformGroup()
+        {
+            Position = a.Position + b.Position,
+            EulerAngles = a.EulerAngles + b.EulerAngles,
+            Scale = a.Scale + b.Scale
+        };
+    }
+    public static TransformGroup operator -(TransformGroup a, TransformGroup b)
+    {
+        return new TransformGroup()
+        {
+            Position = a.Position - b.Position,
+            EulerAngles = a.EulerAngles - b.EulerAngles,
+            Scale = a.Scale - b.Scale
+        };
+    }
 }

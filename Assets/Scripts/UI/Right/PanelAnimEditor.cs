@@ -7,11 +7,12 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
 {
     private Item data, begin, end;
     private InputField inputFieldDuration, inputFieldName;
+    private bool isRelative;
     private Action<AnimData> actionResult;
     private Button buttonPlay;
     private bool isAdd;
     /// <summary>
-    /// open时记录对象初始值，用于close时复原
+    /// open时记录对象在PanelAnim下的值，用于close时复原
     /// </summary>
     private TransformGroup openTransformGroup;
     protected override void _Start()
@@ -47,31 +48,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
             data.Target.localScale = data.Scale.Data;
             Coordinate.Target.SetTarget(data.Target);
         });
-        transform.Find("Content/ButtonSave").GetComponent<Button>().onClick.AddListener(delegate
-        {
-            if (!(begin.IsLock && end.IsLock))
-            {
-                PanelDialog.current.Open("请先锁定");
-                return;
-            }
-            actionResult(new AnimData()
-            {
-                Name = inputFieldName.text,
-                Duration = float.Parse(inputFieldDuration.text),
-                Begin = begin.TransformGroup,
-                End = end.TransformGroup
-            });
-            if (isAdd)
-            {
-                end.TransformGroup.Inject(begin.Target);
-            }
-            else
-            {
-                openTransformGroup.Inject(begin.Target);
-            }
-            Coordinate.Target.SetTarget(begin.Target);
-            this.Close();
-        });
+        transform.Find("Content/ButtonSave").GetComponent<Button>().onClick.AddListener(Save);
         buttonPlay.onClick.AddListener(delegate
         {
             if (!(begin.IsLock && end.IsLock))
@@ -79,17 +56,12 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 PanelDialog.current.Open("请先锁定");
                 return;
             }
-            AnimData animData = new AnimData()
-            {
-                Name = inputFieldName.text,
-                Duration = float.Parse(inputFieldDuration.text),
-                Begin = begin.TransformGroup,
-                End = end.TransformGroup
-            };
+            AnimData animData = GetAnimData();
             buttonPlay.interactable = false;
+            Action<float> action = animData.Lerp(begin.Target, PanelAnim.current.openTransformGroup);
             PoolOfAnim.current.AddItem(animData.Duration, f =>
             {
-                animData.Lerp(begin.Target, f);
+                action(f);
                 Coordinate.Target.SetTarget(begin.Target);
                 data.UpdatePosition();
                 data.UpdateRotation();
@@ -98,6 +70,24 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
             {
                 buttonPlay.interactable = true;
             });
+        });
+        transform.Find("Content/ToggleGroup/ToggleAbsolute").GetComponent<Toggle>().onValueChanged.AddListener(isOn =>
+        {
+            if (isOn)
+            {
+                isRelative = false;
+                begin.IsRelative = isRelative;
+                end.IsRelative = isRelative;
+            }
+        });
+        transform.Find("Content/ToggleGroup/ToggleRelative").GetComponent<Toggle>().onValueChanged.AddListener(isOn =>
+        {
+            if (isOn)
+            {
+                isRelative = true;
+                begin.IsRelative = isRelative;
+                end.IsRelative = isRelative;
+            }
         });
         #endregion
     }
@@ -124,6 +114,33 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         end.UpdateScale();
     }
     #endregion
+    public void Save()
+    {
+        if (!(begin.IsLock && end.IsLock))
+        {
+            PanelDialog.current.Open("请先锁定");
+            return;
+        }
+        AnimData data = GetAnimData();
+        actionResult(data);
+        if (isAdd)
+        {
+            if (data.IsRelative)
+            {
+                (PanelAnim.current.openTransformGroup + data.End).Inject(begin.Target);
+            }
+            else
+            {
+                data.End.Inject(begin.Target);
+            }
+        }
+        else
+        {
+            openTransformGroup.Inject(begin.Target);
+        }
+        Coordinate.Target.SetTarget(begin.Target);
+        this.Close();
+    }
     public override void Close()
     {
         PanelState.current.state = PanelState.State.NORMAL;
@@ -189,6 +206,17 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         this.actionResult = actionResult;
         this.Open();
     }
+    private AnimData GetAnimData()
+    {
+        return new AnimData()
+        {
+            Name = inputFieldName.text,
+            Duration = float.Parse(inputFieldDuration.text),
+            Begin = begin.TransformGroup,
+            End = end.TransformGroup,
+            IsRelative = isRelative
+        };
+    }
     private void Fresh()
     {
         begin.Unlock();
@@ -227,6 +255,46 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 UpdatePosition();
                 UpdateRotation();
                 UpdateScale();
+            }
+        }
+        private TransformGroup openTransformGroup;
+        private TransformGroup OpenTransformGroup
+        {
+            get
+            {
+                if (openTransformGroup == null)
+                {
+                    openTransformGroup = PanelAnim.current.openTransformGroup;
+                }
+                return openTransformGroup;
+            }
+        }
+        private bool isRelative;
+        public bool IsRelative
+        {
+            set
+            {
+                if (isRelative == value)
+                {
+                    return;
+                }
+                isRelative = value;
+                if (isRelative)
+                {
+                    Position.Data -= OpenTransformGroup.Position;
+                    Rotation.Data -= OpenTransformGroup.EulerAngles;
+                    Scale.Data -= OpenTransformGroup.Scale;
+                }
+                else
+                {
+                    Position.Data += OpenTransformGroup.Position;
+                    Rotation.Data += OpenTransformGroup.EulerAngles;
+                    Scale.Data += OpenTransformGroup.Scale;
+                }
+            }
+            get
+            {
+                return isRelative;
             }
         }
         public Item(Transform parent)
@@ -274,17 +342,17 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         public void UpdatePosition()
         {
             if (Target == null || IsLock) return;
-            Position.Data = Target.localPosition;
+            Position.Data = isRelative ? Target.localPosition - OpenTransformGroup.Position : Target.localPosition;
         }
         public void UpdateRotation()
         {
             if (Target == null || IsLock) return;
-            Rotation.Data = Target.localEulerAngles;
+            Rotation.Data = isRelative ? Target.localEulerAngles - OpenTransformGroup.EulerAngles : Target.localEulerAngles;
         }
         public void UpdateScale()
         {
             if (Target == null || IsLock) return;
-            Scale.Data = Target.localScale;
+            Scale.Data = isRelative ? Target.localScale - OpenTransformGroup.Scale : Target.localScale;
         }
     }
 }

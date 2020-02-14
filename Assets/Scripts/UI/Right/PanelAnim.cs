@@ -6,9 +6,9 @@ public class PanelAnim : BasePanel<PanelAnim>
 {
     private Building targetBuilding;
     /// <summary>
-    /// open时记录对象初始值，用于close时复原
+    /// open时记录对象初始值即对象在编辑模式下的值，用于close时复原
     /// </summary>
-    private TransformGroup openTransformGroup;
+    public TransformGroup openTransformGroup;
     private List<AnimData> animDatas;
     public enum AnimType
     {
@@ -53,41 +53,44 @@ public class PanelAnim : BasePanel<PanelAnim>
         buttonPlay.onClick.AddListener(delegate
         {
             buttonPlay.interactable = false;
-            PoolOfAnim.current.AddItemInQueue(targetBuilding.transform, animDatas, true, () =>
+            PoolOfAnim.current.AddItemInQueue(targetBuilding.transform, animDatas, true, openTransformGroup, () =>
             {
                 buttonPlay.interactable = true;
             });
         });
     }
     /// <summary>
-    /// 关闭并复位,编辑出场动画时判断end的状态和物体编辑时状态是否相同
+    /// 关闭并复位
     /// </summary>
     public override void Close()
     {
-        if (animType == AnimType.NORMAL)
-        {
-            openTransformGroup.Inject(targetBuilding.transform);
-            Coordinate.Target.SetTarget(targetBuilding.transform);
-            base.Close();
-        }
-        else
-        {
-            if (animDatas.Count > 0 && !animDatas[animDatas.Count - 1].End.Equals(openTransformGroup))
-            {
-                PanelDialog.current.Open("动画末尾项与编辑位置不相同，是否修改编辑位置", () =>
-                {
-                    animDatas[animDatas.Count - 1].End.Inject(targetBuilding.transform);
-                    Coordinate.Target.SetTarget(targetBuilding.transform);
-                    base.Close();
-                });
-            }
-            else
-            {
-                openTransformGroup.Inject(targetBuilding.transform);
-                Coordinate.Target.SetTarget(targetBuilding.transform);
-                base.Close();
-            }
-        }
+        openTransformGroup.Inject(targetBuilding.transform);
+        Coordinate.Target.SetTarget(targetBuilding.transform);
+        base.Close();
+        // if (animType == AnimType.NORMAL)
+        // {
+        //     openTransformGroup.Inject(targetBuilding.transform);
+        //     Coordinate.Target.SetTarget(targetBuilding.transform);
+        //     base.Close();
+        // }
+        // else
+        // {
+        //     if (animDatas.Count > 0 && !animDatas[animDatas.Count - 1].End.Equals(openTransformGroup))
+        //     {
+        //         PanelDialog.current.Open("动画末尾项与编辑位置不相同，是否修改编辑位置", () =>
+        //         {
+        //             animDatas[animDatas.Count - 1].End.Inject(targetBuilding.transform);
+        //             Coordinate.Target.SetTarget(targetBuilding.transform);
+        //             base.Close();
+        //         });
+        //     }
+        //     else
+        //     {
+        //         openTransformGroup.Inject(targetBuilding.transform);
+        //         Coordinate.Target.SetTarget(targetBuilding.transform);
+        //         base.Close();
+        //     }
+        // }
     }
     /// <summary>
     /// 打开页面，根据type选择窗口名和缓存集合
@@ -113,7 +116,15 @@ public class PanelAnim : BasePanel<PanelAnim>
         }
         if (animDatas.Count > 0)
         {
-            animDatas[animDatas.Count - 1].End.Inject(targetBuilding.transform);
+            AnimData data = animDatas[animDatas.Count - 1];
+            if (data.IsRelative)
+            {
+                (data.End + openTransformGroup).Inject(targetBuilding.transform);
+            }
+            else
+            {
+                data.End.Inject(targetBuilding.transform);
+            }
             Coordinate.Target.SetTarget(targetBuilding.transform);
         }
         FreshItems();
@@ -128,7 +139,15 @@ public class PanelAnim : BasePanel<PanelAnim>
         {
             return;
         }
-        animDatas[0].Begin.Inject(targetBuilding.transform);
+        AnimData data = animDatas[0];
+        if (data.IsRelative)
+        {
+            (openTransformGroup + data.Begin).Inject(targetBuilding.transform);
+        }
+        else
+        {
+            data.Begin.Inject(targetBuilding.transform);
+        }
         Coordinate.Target.SetTarget(targetBuilding.transform);
         animDatas.Reverse();
         animDatas.ForEach(p =>

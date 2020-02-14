@@ -33,7 +33,7 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
         animDatas.ForEach(data => items.Add(new Item()
         {
             amountTime = data.Duration,
-            action = f => data.Lerp(target, f)
+            action = data.Lerp(target)
         }));
         itemQueueDic.Add(key, items);
     }
@@ -104,24 +104,28 @@ public class PoolOfAnim : BaseUniqueObject<PoolOfAnim>
     /// <param name="target"></param>
     /// <param name="animDatas"></param>
     /// <param name="result"></param>
-    public void AddItemInQueue(Transform target, List<AnimData> animDatas, bool coordinateFollow = true, Action result = null)
+    public void AddItemInQueue(Transform target, List<AnimData> animDatas, bool coordinateShow = true, TransformGroup tg = null, Action result = null)
     {
         // itemQueue.Clear();
         if (animDatas.Count > 0)
         {
             int i = 0;
-            animDatas.ForEach(data => AddQueue(data.Duration, f =>
+            animDatas.ForEach(data =>
             {
-                if ((i++) == 0)
+                Action<float> action = data.Lerp(target, tg);
+                AddQueue(data.Duration, f =>
                 {
-                    target.gameObject.SetActive(true);
-                }
-                data.Lerp(target, f);
-                if (coordinateFollow)
-                {
-                    Coordinate.Target.SetTarget(target);
-                }
-            }));
+                    if ((i++) == 0)
+                    {
+                        target.gameObject.SetActive(true);
+                    }
+                    action(f);
+                    if (coordinateShow)
+                    {
+                        Coordinate.Target.SetTarget(target);
+                    }
+                });
+            });
         }
         else
         {
