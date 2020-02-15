@@ -7,13 +7,4 @@ public class TransformGroupSaveData : AbstractToStringObject
     {
 
     }
-    public static TransformGroupSaveData Zero()
-    {
-        return new TransformGroupSaveData()
-        {
-            Position = new Vector3SaveData(0, 0, 0),
-            EulerAngles = new Vector3SaveData(0, 0, 0),
-            Scale = new Vector3SaveData(1, 1, 1)
-        };
-    }
 }

@@ -110,6 +110,11 @@ public static class BuildingUtil
         GameObject obj = CreateGameObjcet(data);
         return AddComponentBuilding(obj.transform, data);
     }
+    /// <summary>
+    /// 从数据库储存数据加载building
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     public static Building Create(BuildingSaveData data)
     {
         Model model = LocalAssetUtil.GetModel(data.ModelDataId);
@@ -118,8 +123,14 @@ public static class BuildingUtil
             return null;
         }
         GameObject obj = CreateGameObjcet(model);
-        TransformGroupUtil.Parse(data.TransformGroup).Inject(obj.transform);
-        return AddComponentBuilding(obj.transform, model);
+        TransformGroupUtil.Parse(data.TransformGroupSaveData).Inject(obj.transform);
+        Building building = AddComponentBuilding(obj.transform, model);
+        #region animation
+        building.isAnimOn = data.IsAnimOn;
+        building.appearanceAnimDatas = AnimDataUtil.Parse(data.AppearanceAnimDataSaveDatas);
+        building.normalAnimDatas = AnimDataUtil.Parse(data.NormalAnimDataSaveDatas);
+        #endregion
+        return building;
     }
     private static GameObject CreateGameObjcet(Model data)
     {

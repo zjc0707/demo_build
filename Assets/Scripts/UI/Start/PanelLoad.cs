@@ -8,28 +8,33 @@ public class PanelLoad : PanelPage<PanelLoad>
     {
         WebUtil.PageSence(nowIndex, rs =>
         {
+            Debug.Log(rs);
             Page<Scene> page = Json.Parse<Page<Scene>>(rs);
-            List<GameObject> list = new List<GameObject>();
-            item.SetActive(true);
-            foreach (Scene scene in page.Records)
+            if (page.Records != null && page.Records.Count > 0)
             {
-                Transform clone = Instantiate(item, content).transform;
-                clone.Find("Name").GetComponentInChildren<Text>().text = scene.Name;
-                clone.Find("DeployTime").GetComponentInChildren<Text>().text = TimeUtil.Format(scene.DeployTime);
-                Transform operate = clone.Find("Operate");
-                operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
+                List<GameObject> list = new List<GameObject>();
+                item.SetActive(true);
+                foreach (Scene scene in page.Records)
                 {
-                    SaveUtil.Load(scene.Id);
-                    UGUITree.current.CloseStart();
-                });
-                operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate
-                {
+                    Transform clone = Instantiate(item, content).transform;
+                    clone.Find("Name").GetComponentInChildren<Text>().text = scene.Name;
+                    clone.Find("DeployTime").GetComponentInChildren<Text>().text = TimeUtil.Format(scene.DeployTime);
+                    Transform operate = clone.Find("Operate");
+                    operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
+                    {
+                        SaveUtil.Load(scene.Id);
+                        UGUITree.current.CloseStart();
+                    });
+                    operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate
+                    {
 
-                });
-                list.Add(clone.gameObject);
+                    });
+                    list.Add(clone.gameObject);
+                }
+                item.SetActive(false);
+                pageCache.Add(nowIndex, list);
             }
-            item.SetActive(false);
-            pageCache.Add(nowIndex, list);
+
             pages = page.Pages;
             FreshNavigation();
         });
