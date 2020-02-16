@@ -22,12 +22,12 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     /// seconds
     /// </summary>
     private const int TIMEOUT = 10;
-    public void Post<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true)
+    public void Post<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true) where T : class
     {
         Debug.Log(string.Format("Post: [url: {0}, data: {1}]", url, System.Text.Encoding.UTF8.GetString(form.data)));
         StartCoroutine(IPost(url, form, success, failure, closeLoadingBeforeAction));
     }
-    public void Get<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true)
+    public void Get<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true) where T : class
     {
         Debug.Log(string.Format("Get: [url: {0}]", url));
         StartCoroutine(IGet(url, success, failure, closeLoadingBeforeAction));
@@ -171,7 +171,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             PanelLoading.current.Close();
         }
     }
-    IEnumerator IPost<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction)
+    IEnumerator IPost<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction) where T : class
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, form);
         webRequest.timeout = TIMEOUT;
@@ -203,11 +203,12 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             }
             else if (success != null)
             {
-                success(Json.Parse<T>(rsData.Obj.ToString()));
+                Debug.Log("success:" + typeof(T));
+                success(typeof(T) == typeof(string) ? rsData.Obj.ToString() as T : Json.Parse<T>(rsData.Obj.ToString()));
             }
         }
     }
-    IEnumerator IGet<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction)
+    IEnumerator IGet<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction) where T : class
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
         webRequest.timeout = TIMEOUT;
@@ -239,7 +240,8 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             }
             else if (success != null)
             {
-                success(Json.Parse<T>(rsData.Obj.ToString()));
+                Debug.Log("success:" + typeof(T));
+                success(typeof(T) == typeof(string) ? rsData.Obj.ToString() as T : Json.Parse<T>(rsData.Obj.ToString()));
             }
         }
     }
