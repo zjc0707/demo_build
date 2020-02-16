@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 public class BuildingSaveData
 {
+    public string Name { get; set; }
     public TransformGroupSaveData TransformGroupSaveData { get; set; }
     public int ModelDataId { get; set; }
     public List<AnimDataSaveData> NormalAnimDataSaveDatas { get; set; }
@@ -8,6 +9,7 @@ public class BuildingSaveData
     public List<AnimDataSaveData> AppearanceAnimDataSaveDatas { get; set; }
     public BuildingSaveData(Building building)
     {
+        this.Name = building.name;
         this.ModelDataId = building.modelDataId;
         this.TransformGroupSaveData = TransformGroupUtil.ToSaveData(building.transformGroup);
         this.IsAnimOn = building.isAnimOn;

@@ -22,6 +22,7 @@ public class PanelLoad : PanelPage<PanelLoad>
                     operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
                     {
                         SaveUtil.Load(scene.Id);
+                        BuildingUtil.Fresh();
                         UGUITree.current.CloseStart();
                     });
                     operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate

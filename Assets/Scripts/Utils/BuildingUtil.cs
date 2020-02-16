@@ -15,8 +15,19 @@ public static class BuildingUtil
     /// 赋值给每个Building对象唯一标识符，自增
     /// </summary>
     private static int guid = 0;
+    /// <summary>
+    /// 点击物体和对应building的映射缓存
+    /// </summary>
+    /// <typeparam name="Transform"></typeparam>
+    /// <typeparam name="Building"></typeparam>
+    /// <returns></returns>
     private static Dictionary<Transform, Building> buildingCache = new Dictionary<Transform, Building>();
     #region util
+    public static void Fresh()
+    {
+        guid = 0;
+        dicCount.Clear();
+    }
     /// <summary>
     /// 根据centerAndSize添加包围盒
     /// </summary>
@@ -120,7 +131,7 @@ public static class BuildingUtil
         {
             return null;
         }
-        GameObject obj = CreateGameObjcet(model);
+        GameObject obj = CreateGameObjcet(model, model.Name);
         TransformGroupUtil.Parse(data.TransformGroupSaveData).Inject(obj.transform);
         Building building = AddComponentBuilding(obj.transform, model);
         #region animation
@@ -130,24 +141,31 @@ public static class BuildingUtil
         #endregion
         return building;
     }
-    private static GameObject CreateGameObjcet(Model data)
+    private static GameObject CreateGameObjcet(Model data, string goName = null)
     {
         GameObject rs = PoolOfAsset.current.Create(data.Id);
-        int count = 0;
-        string name = data.Name;
-        if (name.Contains("."))
+        if (goName == null)
         {
-            name = name.Substring(0, name.IndexOf('.'));
-        }
-        if (dicCount.TryGetValue(data.Id, out count))
-        {
-            rs.name = string.Format("{0}({1})", name, count);
-            dicCount[data.Id] = ++count;
+            string name = data.Name;
+            if (name.Contains("."))
+            {
+                name = name.Substring(0, name.IndexOf('.'));
+            }
+            int count = 0;
+            if (dicCount.TryGetValue(data.Id, out count))
+            {
+                rs.name = string.Format("{0}({1})", name, count);
+                dicCount[data.Id] = ++count;
+            }
+            else
+            {
+                dicCount.Add(data.Id, ++count);
+                rs.name = name;
+            }
         }
         else
         {
-            dicCount.Add(data.Id, ++count);
-            rs.name = name;
+            rs.name = goName;
         }
         return rs;
     }
