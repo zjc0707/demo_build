@@ -180,7 +180,7 @@ public class PanelAnim : BasePanel<PanelAnim>
             itemsCache.Add(targetBuilding.guid, items);
         }
         items.ForEach(p => p.gameObject.SetActive(false));
-        items.Clear();
+        // items.Clear();
     }
     private void FreshItems()
     {
@@ -189,15 +189,15 @@ public class PanelAnim : BasePanel<PanelAnim>
         {
             return;
         }
-        List<Transform> transforms;
-        if (itemsCache.TryGetValue(targetBuilding.guid, out transforms))
+        if (itemsCache.TryGetValue(targetBuilding.guid, out items))
         {
-            //缓存中存在则不重复加载
-            items = transforms;
             items.ForEach(p => p.gameObject.SetActive(true));
-            return;
         }
-        animDatas.ForEach(AddItem);
+        else
+        {
+            items = new List<Transform>();
+            animDatas.ForEach(AddItem);
+        }
     }
     /// <summary>
     /// 添加UI item
@@ -215,6 +215,7 @@ public class PanelAnim : BasePanel<PanelAnim>
                 data.Duration = rs.Duration;
                 data.End = rs.End;
                 data.Name = rs.Name;
+                data.IsRelative = rs.IsRelative;
             });
         });
         //delete

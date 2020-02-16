@@ -126,10 +126,6 @@ public class PanelControl : BasePanel<PanelControl>
         //toggle
         this.toggleAnim.onValueChanged.AddListener(isOn =>
         {
-            if (isChange)
-            {
-                return;
-            }
             targetBuilding.isAnimOn = isOn;
             if (isOn)
             {
@@ -137,17 +133,9 @@ public class PanelControl : BasePanel<PanelControl>
                 {
                     PanelDialog.current.Open("动画列表为空", () =>
                     {
-                        isChange = true;
                         this.toggleAnim.isOn = false;
-                        isChange = false;
                     });
-                    return;
                 }
-                PoolOfAnim.current.AddItemQueueInDic(targetBuilding.guid, targetBuilding.transform, targetBuilding.normalAnimDatas);
-            }
-            else
-            {
-                PoolOfAnim.current.RemoveItemQueueInDic(targetBuilding.guid);
             }
         });
     }

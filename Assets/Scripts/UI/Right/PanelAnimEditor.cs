@@ -10,6 +10,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
     private bool isRelative;
     private Action<AnimData> actionResult;
     private Button buttonPlay;
+    private Toggle toggleAbsolute, toggleRelative;
     private bool isAdd;
     /// <summary>
     /// open时记录对象在PanelAnim下的值，用于close时复原
@@ -23,6 +24,8 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         inputFieldDuration = transform.Find("Content/DataTime/InputField").GetComponent<InputField>();
         inputFieldName = transform.Find("Content/Name/InputField").GetComponent<InputField>();
         buttonPlay = transform.Find("Content/ButtonPlay").GetComponent<Button>();
+        toggleAbsolute = transform.Find("Content/ToggleGroup/ToggleAbsolute").GetComponent<Toggle>();
+        toggleRelative = transform.Find("Content/ToggleGroup/ToggleRelative").GetComponent<Toggle>();
         #region listener
         data.Position.AddValueChangedListener(delegate
         {
@@ -71,7 +74,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 buttonPlay.interactable = true;
             });
         });
-        transform.Find("Content/ToggleGroup/ToggleAbsolute").GetComponent<Toggle>().onValueChanged.AddListener(isOn =>
+        toggleAbsolute.onValueChanged.AddListener(isOn =>
         {
             if (isOn)
             {
@@ -80,7 +83,7 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 end.IsRelative = isRelative;
             }
         });
-        transform.Find("Content/ToggleGroup/ToggleRelative").GetComponent<Toggle>().onValueChanged.AddListener(isOn =>
+        toggleRelative.onValueChanged.AddListener(isOn =>
         {
             if (isOn)
             {
@@ -162,16 +165,34 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         Fresh();
         isAdd = false;
         openTransformGroup = building.transformGroup;
+        toggleAbsolute.isOn = !animData.IsRelative;
+        toggleRelative.isOn = animData.IsRelative;
         Transform target = building.transform;
         //修改已有项，全部锁定，物体处于End位置
         inputFieldName.text = animData.Name;
         inputFieldDuration.text = animData.Duration.ToString();
-        animData.Begin.Inject(target);
+
+        if (animData.IsRelative)
+        {
+            (PanelAnim.current.openTransformGroup + animData.Begin).Inject(target);
+        }
+        else
+        {
+            animData.Begin.Inject(target);
+        }
         begin.Target = target;
         begin.Lock();
-        animData.End.Inject(target);
+        if (animData.IsRelative)
+        {
+            (PanelAnim.current.openTransformGroup + animData.End).Inject(target);
+        }
+        else
+        {
+            animData.End.Inject(target);
+        }
         end.Target = target;
         end.Lock();
+
         data.Target = target;
         Coordinate.Target.SetTarget(target);
         this.actionResult = actionResult;
@@ -190,7 +211,10 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         Transform target = building.transform;
         if (animDatas.Count > 0)
         {
-            animDatas[animDatas.Count - 1].End.Inject(target);
+            AnimData animData = animDatas[animDatas.Count - 1];
+            toggleAbsolute.isOn = !animData.IsRelative;
+            toggleRelative.isOn = animData.IsRelative;
+            (animData.IsRelative ? (PanelAnim.current.openTransformGroup + animData.End) : animData.End).Inject(target);
             begin.Target = target;
             begin.Lock();
         }
@@ -257,16 +281,17 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
                 UpdateScale();
             }
         }
-        private TransformGroup openTransformGroup;
+        // private TransformGroup openTransformGroup;
         private TransformGroup OpenTransformGroup
         {
             get
             {
-                if (openTransformGroup == null)
-                {
-                    openTransformGroup = PanelAnim.current.openTransformGroup;
-                }
-                return openTransformGroup;
+                // if (openTransformGroup == null)
+                // {
+                //     openTransformGroup = PanelAnim.current.openTransformGroup;
+                // }
+                // return openTransformGroup;
+                return PanelAnim.current.openTransformGroup;
             }
         }
         private bool isRelative;
