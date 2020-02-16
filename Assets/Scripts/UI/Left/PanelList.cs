@@ -19,12 +19,15 @@ public class PanelList : BasePanel<PanelList>
         /// </summary>
         /// <value></value>
         private Image downArrow { get; set; }
+        public Text name { get; private set; }
         private bool isOpen;
         public Item(Building building, Transform ui)
         {
             this.building = building;
             this.ui = ui;
             this.background = ui.GetComponent<Image>();
+            this.name = ui.GetComponentInChildren<Text>();
+            this.name.text = building.gameObject.name;
             this.downArrow = ui.Find("Image").GetComponent<Image>();
             this.downArrow.GetComponent<Button>().onClick.AddListener(() =>
             {
@@ -191,7 +194,6 @@ public class PanelList : BasePanel<PanelList>
     {
         GameObject clone = Instantiate(baseItem.gameObject, content);
         clone.name = building.gameObject.name;
-        clone.GetComponentInChildren<Text>().text = clone.name;
         EventTriggerListener.Get(clone).onLeftDown += OnLeftDown;
         EventTriggerListener.Get(clone).onRightDown += OnRigheDown;
         clone.SetActive(true);
@@ -241,6 +243,10 @@ public class PanelList : BasePanel<PanelList>
     public void Select(Building building)
     {
         Select(items.Find(i => i.building == building));
+    }
+    public void UpdateSelectItemName(string name)
+    {
+        selectItem.name.text = name;
     }
     /// <summary>
     /// 缓存编辑状态下的building.tg

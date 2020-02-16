@@ -98,6 +98,12 @@ public class PanelControl : BasePanel<PanelControl>
             if (target == null || isChange) return;
             this.scale.Data = target.localScale;
         });
+        this.objectName.onEndEdit.AddListener(str =>
+        {
+            if (target == null || isChange) return;
+            this.targetBuilding.name = str;
+            PanelList.current.UpdateSelectItemName(str);
+        });
         //button 
         this.buttonClear.onClick.AddListener(delegate
         {

@@ -15,6 +15,7 @@ public static class BuildingUtil
     /// 赋值给每个Building对象唯一标识符，自增
     /// </summary>
     private static int guid = 0;
+    private const string CLONE_SUFFIX = "(clone)";
     /// <summary>
     /// 点击物体和对应building的映射缓存
     /// </summary>
@@ -104,7 +105,7 @@ public static class BuildingUtil
     /// <returns></returns>
     public static Building Clone(Building building)
     {
-        Building cloneBuilding = Create(LocalAssetUtil.GetModel(building.modelDataId));
+        Building cloneBuilding = Create(LocalAssetUtil.GetModel(building.modelDataId), building.gameObject.name + CLONE_SUFFIX);
         cloneBuilding.Build();
         building.transformGroup.Inject(cloneBuilding.transform);
         building.appearanceAnimDatas.ForEach(p => cloneBuilding.appearanceAnimDatas.Add(p.Clone()));
@@ -114,9 +115,9 @@ public static class BuildingUtil
     }
     #endregion
     #region create
-    public static Building Create(Model data)
+    public static Building Create(Model data, string goName = null)
     {
-        GameObject obj = CreateGameObjcet(data);
+        GameObject obj = CreateGameObjcet(data, goName);
         return AddComponentBuilding(obj.transform, data);
     }
     /// <summary>
@@ -131,7 +132,7 @@ public static class BuildingUtil
         {
             return null;
         }
-        GameObject obj = CreateGameObjcet(model, model.Name);
+        GameObject obj = CreateGameObjcet(model, data.Name);
         TransformGroupUtil.Parse(data.TransformGroupSaveData).Inject(obj.transform);
         Building building = AddComponentBuilding(obj.transform, model);
         #region animation
@@ -144,7 +145,7 @@ public static class BuildingUtil
     private static GameObject CreateGameObjcet(Model data, string goName = null)
     {
         GameObject rs = PoolOfAsset.current.Create(data.Id);
-        if (goName == null)
+        if (string.IsNullOrEmpty(goName))
         {
             string name = data.Name;
             if (name.Contains("."))

@@ -21,8 +21,8 @@ public class PanelLoad : PanelPage<PanelLoad>
                     Transform operate = clone.Find("Operate");
                     operate.Find("ButtonLoad").GetComponent<Button>().onClick.AddListener(delegate
                     {
-                        SaveUtil.Load(scene.Id);
                         BuildingUtil.Fresh();
+                        SaveUtil.Load(scene.Id);
                         UGUITree.current.CloseStart();
                     });
                     operate.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(delegate
