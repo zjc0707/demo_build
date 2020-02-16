@@ -40,14 +40,16 @@ public static class SaveUtil
             PanelLoading.current.Success(rs);
             PanelLoad.current.Fresh();
             action();
+        }, err =>
+        {
+            PanelLoading.current.Error(err);
         });
     }
     public static void Load(int id)
     {
-        WebUtil.DetailSence(id, rs =>
+        WebUtil.DetailSence(id, scene =>
         {
             PanelLoading.current.SceneLoading();
-            Scene scene = Json.Parse<Scene>(rs);
             string json = System.Text.Encoding.UTF8.GetString(scene.Content);
             Debug.Log(json);
             SenceSaveData saveData = Json.Parse<SenceSaveData>(json);
@@ -62,6 +64,9 @@ public static class SaveUtil
             //--camera
             MyCamera.current.MoveAnim(TransformGroupUtil.Parse(saveData.CameraTransformGroup));
             PanelLoading.current.Close();
+        }, err =>
+        {
+            PanelLoading.current.Error(err);
         });
     }
 }

@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using Newtonsoft.Json.Linq;
 public class MyWebRequest : BaseUniqueObject<MyWebRequest>
 {
     // private const string PATH_FOLDER_AB_INTERNET = "http://47.102.133.53/AB/";
@@ -21,12 +22,14 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     /// seconds
     /// </summary>
     private const int TIMEOUT = 10;
-    public void Post(string url, WWWForm form, Action<string> success, Action failure = null, bool closeLoadingBeforeAction = true)
+    public void Post<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true)
     {
+        Debug.Log(string.Format("Post: [url: {0}, data: {1}]", url, System.Text.Encoding.UTF8.GetString(form.data)));
         StartCoroutine(IPost(url, form, success, failure, closeLoadingBeforeAction));
     }
-    public void Get(string url, Action<string> success, Action failure = null, bool closeLoadingBeforeAction = true)
+    public void Get<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true)
     {
+        Debug.Log(string.Format("Get: [url: {0}]", url));
         StartCoroutine(IGet(url, success, failure, closeLoadingBeforeAction));
     }
     public void LoadAssetBundle(List<Model> internet, List<Manifest> local, Action action)
@@ -168,7 +171,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             PanelLoading.current.Close();
         }
     }
-    IEnumerator IPost(string url, WWWForm form, Action<string> success, Action failure, bool closeLoadingBeforeAction)
+    IEnumerator IPost<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction)
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, form);
         webRequest.timeout = TIMEOUT;
@@ -180,11 +183,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         }
         if (webRequest.isHttpError || webRequest.isNetworkError)
         {
-            PanelLoading.current.Error(webRequest.error);
             Debug.Log(webRequest.error);
             if (failure != null)
             {
-                failure();
+                failure(webRequest.error);
             }
         }
         else
@@ -193,13 +195,19 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 PanelLoading.current.Close();
             }
-            if (success != null)
+            ResultData<object> rsData = Json.Parse<ResultData<object>>(webRequest.downloadHandler.text);
+            Debug.Log(webRequest.downloadHandler.text);
+            if (!rsData.Success)
             {
-                success(webRequest.downloadHandler.text);
+                failure(rsData.Obj.ToString());
+            }
+            else if (success != null)
+            {
+                success(Json.Parse<T>(rsData.Obj.ToString()));
             }
         }
     }
-    IEnumerator IGet(string url, Action<string> success, Action failure, bool closeLoadingBeforeAction)
+    IEnumerator IGet<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction)
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
         webRequest.timeout = TIMEOUT;
@@ -211,11 +219,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         }
         if (webRequest.isHttpError || webRequest.isNetworkError)
         {
-            PanelLoading.current.Error(webRequest.error);
             Debug.Log(webRequest.error);
             if (failure != null)
             {
-                failure();
+                failure(webRequest.error);
             }
         }
         else
@@ -224,11 +231,51 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             {
                 PanelLoading.current.Close();
             }
-            if (success != null)
+            ResultData<object> rsData = Json.Parse<ResultData<object>>(webRequest.downloadHandler.text);
+            Debug.Log(webRequest.downloadHandler.text);
+            if (!rsData.Success)
             {
-                success(webRequest.downloadHandler.text);
+                failure(rsData.Obj.ToString());
+            }
+            else if (success != null)
+            {
+                success(Json.Parse<T>(rsData.Obj.ToString()));
             }
         }
     }
+    // IEnumerable IResult<T>(UnityWebRequest webRequest, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction)
+    // {
+    //     Debug.Log("result");
+    //     while (!webRequest.isDone)
+    //     {
+    //         yield return 1;
+    //     }
+    //     if (webRequest.isHttpError || webRequest.isNetworkError)
+    //     {
+    //         Debug.Log(webRequest.error);
+    //         if (failure != null)
+    //         {
+    //             failure(webRequest.error);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if (closeLoadingBeforeAction)
+    //         {
+    //             PanelLoading.current.Close();
+    //         }
+    //         ResultData<object> rsData = Json.Parse<ResultData<object>>(webRequest.downloadHandler.text);
+    //         Debug.Log(rsData.Obj.ToString());
+    //         if (!rsData.Success)
+    //         {
+    //             failure(rsData.Obj.ToString());
+    //         }
+    //         if (success != null)
+    //         {
+    //             success((rsData.Obj as JArray).ToObject<T>());
+    //         }
+    //     }
+    //     // yield return 1;
+    // }
 
 }

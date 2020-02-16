@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json.Linq;
 [UIType(UIStackType.START)]
 public class PanelLoad : PanelPage<PanelLoad>
 {
     protected override void LoadNewPage()
     {
-        WebUtil.PageSence(nowIndex, rs =>
+        WebUtil.PageSence(nowIndex, page =>
         {
-            Debug.Log(rs);
-            Page<Scene> page = Json.Parse<Page<Scene>>(rs);
             if (page.Records != null && page.Records.Count > 0)
             {
                 List<GameObject> list = new List<GameObject>();
@@ -37,6 +36,9 @@ public class PanelLoad : PanelPage<PanelLoad>
 
             pages = page.Pages;
             FreshNavigation();
+        }, err =>
+        {
+            PanelLoading.current.Error(err);
         });
     }
 }

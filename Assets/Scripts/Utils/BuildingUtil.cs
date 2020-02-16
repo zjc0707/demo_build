@@ -22,6 +22,7 @@ public static class BuildingUtil
     /// </summary>
     public static BoxCollider AddBoxCollider(GameObject obj)
     {
+        Vector3 pos = obj.transform.position;
         obj.transform.position = Vector3.zero;
         BoxCollider boxCollider = obj.GetComponent<BoxCollider>();
         if (boxCollider == null)
@@ -32,6 +33,7 @@ public static class BuildingUtil
             boxCollider.size = cs.Size;
             Debug.Log(obj.name + "-" + boxCollider.center + "-" + boxCollider.size);
         }
+        obj.transform.position = pos;
         return boxCollider;
     }
     /// <summary>
@@ -69,11 +71,6 @@ public static class BuildingUtil
         {
             result = target.gameObject.AddComponent<Building>();
         }
-        //目前忽视吊车相关脚本
-        // if (result == null)
-        // {
-        //     result = target.GetComponent<Crane>();
-        // }
         return result;
     }
     /// <summary>
@@ -101,6 +98,7 @@ public static class BuildingUtil
         building.transformGroup.Inject(cloneBuilding.transform);
         building.appearanceAnimDatas.ForEach(p => cloneBuilding.appearanceAnimDatas.Add(p.Clone()));
         building.normalAnimDatas.ForEach(p => cloneBuilding.normalAnimDatas.Add(p.Clone()));
+        cloneBuilding.isAnimOn = building.isAnimOn;
         return cloneBuilding;
     }
     #endregion
