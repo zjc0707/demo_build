@@ -12,7 +12,7 @@ public class PanelControl : BasePanel<PanelControl>
     private Toggle toggleAnim;
     private const int INPUT_FIELD_NUM = 10;
     private Transform target;
-    private Building targetBuilding;
+    public Building targetBuilding;
     private bool isChange;
     protected override void _Start()
     {
@@ -53,10 +53,6 @@ public class PanelControl : BasePanel<PanelControl>
         isChange = true;
         scale.Data = target.localScale;
         isChange = false;
-    }
-    public void SetTargetMaterial(Material material)
-    {
-        targetBuilding.SetMaterial(material);
     }
     /// <summary>
     /// 绑定事件

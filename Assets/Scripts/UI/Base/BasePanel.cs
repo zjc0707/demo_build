@@ -66,7 +66,7 @@ public abstract class BasePanel<T> : BaseUniqueObject<T> where T : MonoBehaviour
     {
         if (buttonClose == null && this.transform.Find("Top") != null)
         {
-            buttonClose = this.transform.Find("Top").Find("ButtonClose").GetComponent<Button>();
+            buttonClose = this.transform.Find("Top/ButtonClose").GetComponent<Button>();
         }
         if (buttonClose != null)
         {

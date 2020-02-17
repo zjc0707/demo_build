@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -70,6 +71,28 @@ public class Building : BaseObject
             renderer.sharedMaterials = materials;
         }
     }
+    public bool isChangeMaterial;
+    public Material Material
+    {
+        set
+        {
+            isChangeMaterial = true;
+            foreach (Renderer renderer in dicMaterial.Keys)
+            {
+                //下标替换无效，需整体数组替换
+                Material[] materials = new Material[renderer.sharedMaterials.Length];
+                for (int i = 0; i < materials.Length; ++i)
+                {
+                    materials.SetValue(value, i);
+                }
+                renderer.sharedMaterials = materials;
+            }
+        }
+        get
+        {
+            return dicMaterial.ElementAt(0).Key.sharedMaterials[0];
+        }
+    }
     /// <summary>
     /// 通过dic的value项进行复原材质
     /// </summary>
@@ -79,6 +102,7 @@ public class Building : BaseObject
         {
             t.Key.sharedMaterials = t.Value;
         }
+        isChangeMaterial = false;
     }
     /// <summary>
     /// 根据centerAndSize将物体落到地面上
