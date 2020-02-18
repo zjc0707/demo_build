@@ -6,7 +6,7 @@ public class MyCamera : BaseUniqueObject<MyCamera>
 {
 
     public readonly float y = 10;
-    public readonly TransformGroup initTransformGroup = new TransformGroup(new Vector3(0, 5, 0), new Vector3(45, 45, 0));
+    public readonly TransformGroup initTransformGroup = new TransformGroup(new Vector3(0, 5, 0), new Vector3(45, 45, 0), Vector3.one);
     private Camera _camera;
     public Camera Camera
     {

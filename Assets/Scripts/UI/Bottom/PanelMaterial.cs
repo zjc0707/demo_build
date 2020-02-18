@@ -36,8 +36,7 @@ public class PanelMaterial : BasePanel<PanelMaterial>
         this.material = null;
         ChangeData(PanelControl.current.targetBuilding.Material.color);
         //init data
-        this.material = new Material(Shader.Find("Standard"));
-        MaterialUtil.SetMaterialRenderingMode(this.material, MaterialUtil.RenderingMode.Transparent);
+        this.material = MaterialUtil.Create();
         isFirstChange = true;
     }
     public override void Close()

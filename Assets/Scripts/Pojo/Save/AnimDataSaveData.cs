@@ -9,4 +9,26 @@ public class AnimDataSaveData
     {
 
     }
+    public static explicit operator AnimData(AnimDataSaveData animDataSaveData)
+    {
+        return new AnimData()
+        {
+            Name = animDataSaveData.Name,
+            Begin = (TransformGroup)animDataSaveData.Begin,
+            End = (TransformGroup)animDataSaveData.End,
+            Duration = animDataSaveData.Duration,
+            IsRelative = animDataSaveData.IsRelative
+        };
+    }
+    public static explicit operator AnimDataSaveData(AnimData animData)
+    {
+        return new AnimDataSaveData()
+        {
+            Name = animData.Name,
+            Begin = (TransformGroupSaveData)animData.Begin,
+            End = (TransformGroupSaveData)animData.End,
+            Duration = animData.Duration,
+            IsRelative = animData.IsRelative
+        };
+    }
 }

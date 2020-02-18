@@ -71,12 +71,14 @@ public class Building : BaseObject
             renderer.sharedMaterials = materials;
         }
     }
+    private Material material;
     public bool isChangeMaterial;
     public Material Material
     {
         set
         {
             isChangeMaterial = true;
+            material = value;
             foreach (Renderer renderer in dicMaterial.Keys)
             {
                 //下标替换无效，需整体数组替换
@@ -90,7 +92,11 @@ public class Building : BaseObject
         }
         get
         {
-            return dicMaterial.ElementAt(0).Key.sharedMaterials[0];
+            if (material == null)
+            {
+                material = dicMaterial.ElementAt(0).Key.sharedMaterials[0];
+            }
+            return material;
         }
     }
     /// <summary>

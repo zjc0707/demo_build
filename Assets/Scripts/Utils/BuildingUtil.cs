@@ -133,8 +133,14 @@ public static class BuildingUtil
             return null;
         }
         GameObject obj = CreateGameObjcet(model, data.Name);
-        TransformGroupUtil.Parse(data.TransformGroupSaveData).Inject(obj.transform);
+        ((TransformGroup)data.TransformGroupSaveData).Inject(obj.transform);
         Building building = AddComponentBuilding(obj.transform, model);
+        if (data.MaterialColorSaveData != null)
+        {
+            Material material = MaterialUtil.Create();
+            material.color = (Color)data.MaterialColorSaveData;
+            building.Material = material;
+        }
         #region animation
         building.isAnimOn = data.IsAnimOn;
         building.appearanceAnimDatas = AnimDataUtil.Parse(data.AppearanceAnimDataSaveDatas);

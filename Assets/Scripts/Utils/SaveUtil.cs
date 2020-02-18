@@ -7,7 +7,7 @@ public static class SaveUtil
     {
         SenceSaveData saveData = new SenceSaveData()
         {
-            CameraTransformGroup = TransformGroupUtil.ToSaveData(MyCamera.current.transformGroup),
+            CameraTransformGroup = (TransformGroupSaveData)MyCamera.current.transformGroup,
             BuildingRoomSaveData = new BuildingRoomSaveData(),
             FloorSaveData = new FloorSaveData()
         };
@@ -62,7 +62,7 @@ public static class SaveUtil
                 PanelList.current.Add(BuildingUtil.Create(data));
             }
             //--camera
-            MyCamera.current.MoveAnim(TransformGroupUtil.Parse(saveData.CameraTransformGroup));
+            MyCamera.current.MoveAnim((TransformGroup)saveData.CameraTransformGroup);
             PanelLoading.current.Close();
         }, err =>
         {

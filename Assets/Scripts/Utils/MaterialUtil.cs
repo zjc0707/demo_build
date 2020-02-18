@@ -8,7 +8,12 @@ public static class MaterialUtil
         Fade,
         Transparent,
     }
-
+    public static Material Create(RenderingMode renderingMode = RenderingMode.Transparent)
+    {
+        Material material = new Material(Shader.Find("Standard"));
+        SetMaterialRenderingMode(material, renderingMode);
+        return material;
+    }
     public static void SetMaterialRenderingMode(Material material, RenderingMode renderingMode)
     {
         switch (renderingMode)

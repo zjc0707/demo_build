@@ -10,11 +10,11 @@ public class TransformGroup : AbstractToStringObject
         t.eulerAngles = this.EulerAngles;
         t.localScale = this.Scale;
     }
-    public TransformGroup(Vector3 position, Vector3 eulerAngles)
+    public TransformGroup(Vector3 position, Vector3 eulerAngles, Vector3 scale)
     {
         this.Position = position;
         this.EulerAngles = eulerAngles;
-        this.Scale = Vector3.one;
+        this.Scale = scale;
     }
     public TransformGroup(Transform transform)
     {
