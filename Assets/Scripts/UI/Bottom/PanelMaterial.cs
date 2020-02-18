@@ -42,11 +42,14 @@ public class PanelMaterial : BasePanel<PanelMaterial>
     public override void Close()
     {
         base.Close();
-        Image image = history[4];
-        history.RemoveAt(4);
-        history.Insert(0, image);
-        image.transform.SetAsFirstSibling();
-        image.color = main.color;
+        if (!isFirstChange)//未改动不加入历史记录
+        {
+            Image image = history[4];
+            history.RemoveAt(4);
+            history.Insert(0, image);
+            image.transform.SetAsFirstSibling();
+            image.color = main.color;
+        }
     }
     private void ChangeData(Color color)
     {

@@ -109,6 +109,7 @@ public class Building : BaseObject
             t.Key.sharedMaterials = t.Value;
         }
         isChangeMaterial = false;
+        material = null;
     }
     /// <summary>
     /// 根据centerAndSize将物体落到地面上

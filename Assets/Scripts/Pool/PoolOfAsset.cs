@@ -38,6 +38,7 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     }
     public void Destroy(Building building)
     {
+        building.RecovercyMaterial();
         Destroy(building.modelDataId, building.gameObject);
     }
     public void Destroy(int id, GameObject go)
@@ -61,22 +62,16 @@ public class PoolOfAsset : BaseUniqueObject<PoolOfAsset>
     }
     private void CheckOutOfAliveTime()
     {
-        List<int> listIndex = new List<int>();
         foreach (List<Item> list in dicGoPool.Values)
         {
-            listIndex.Clear();
-            for (int i = 0; i < list.Count; ++i)
+            for (int i = list.Count - 1; i >= 0; --i)
             {
                 Item item = list[i];
                 if (TimeUtil.UnixTimeSpan - item.saveTime > maxAliveTime)
                 {
                     GameObject.Destroy(item.gameObject);
-                    listIndex.Add(i);
+                    list.RemoveAt(i);
                 }
-            }
-            foreach (int index in listIndex)
-            {
-                list.RemoveAt(index);
             }
         }
     }
