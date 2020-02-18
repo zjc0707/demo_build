@@ -57,6 +57,7 @@ public static class SaveUtil
             Floor.current.Load(saveData.FloorSaveData.X, saveData.FloorSaveData.Z);
             //--building
             PanelList.current.Reset();
+            Coordinate.Target.SetTarget(null);
             foreach (BuildingSaveData data in saveData.BuildingRoomSaveData.BuildingSaveDatas)
             {
                 PanelList.current.Add(BuildingUtil.Create(data));

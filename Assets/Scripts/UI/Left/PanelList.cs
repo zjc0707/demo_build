@@ -212,6 +212,7 @@ public class PanelList : BasePanel<PanelList>
     }
     public void Reset()
     {
+        LastRecovery();
         items.ForEach(i =>
         {
             GameObject.DestroyImmediate(i.ui.gameObject);
