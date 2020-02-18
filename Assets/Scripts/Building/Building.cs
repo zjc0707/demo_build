@@ -136,17 +136,24 @@ public class Building : BaseObject
     }
     public void ShowHighLight()
     {
+        Debug.Log("Show:" + guid);
+        MyCamera.current.OutlineEffect.enabled = true;
         foreach (Outline outline in outlineList)
         {
-            outline.enabled = true;
+            // outline.enabled = true;
+            outline.eraseRenderer = false;
         }
     }
     public void HideHighLight()
     {
+        Debug.Log("Hide:" + guid);
+        Debug.Log("count:" + outlineList.Count);
         foreach (Outline outline in outlineList)
         {
-            outline.enabled = false;
+            // outline.enabled = false;
+            outline.eraseRenderer = true;
         }
+        MyCamera.current.OutlineEffect.enabled = false;
     }
     /// <summary>
     /// 加载材质到dic中
