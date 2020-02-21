@@ -17,10 +17,10 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             Directory.CreateDirectory(LOCAL_ASSET_PATH);
         }
     }
-    /// <summary>
-    /// seconds
-    /// </summary>
-    private const int TIMEOUT = 10;
+    // /// <summary>
+    // /// seconds
+    // /// </summary>
+    // private const int TIMEOUT = 10;
     public void Post<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction = true) where T : class
     {
         Debug.Log(string.Format("Post: [url: {0}, data: {1}]", url, System.Text.Encoding.UTF8.GetString(form.data)));
@@ -165,7 +165,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     IEnumerator IPost<T>(string url, WWWForm form, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction) where T : class
     {
         UnityWebRequest webRequest = UnityWebRequest.Post(url, form);
-        webRequest.timeout = TIMEOUT;
+        // webRequest.timeout = TIMEOUT;
         webRequest.SendWebRequest();
         PanelLoading.current.WebLoading();
         while (!webRequest.isDone)
@@ -202,7 +202,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     IEnumerator IGet<T>(string url, Action<T> success, Action<string> failure, bool closeLoadingBeforeAction) where T : class
     {
         UnityWebRequest webRequest = UnityWebRequest.Get(url);
-        webRequest.timeout = TIMEOUT;
+        // webRequest.timeout = TIMEOUT;
         webRequest.SendWebRequest();
         PanelLoading.current.WebLoading();
         while (!webRequest.isDone)

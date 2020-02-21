@@ -11,13 +11,13 @@ public class InputFieldVector3
     public InputField X { get; }
     public InputField Y { get; }
     public InputField Z { get; }
-    private Vector3 data;
+    // private Vector3 data;
     public Vector3 Data
     {
         set
         {
             // Debug.Log("Set:oldData=" + data + "value=" + value);
-            data = value;
+            // data = value;
             X.text = value.x.ToString("F2");
             Y.text = value.y.ToString("F2");
             Z.text = value.z.ToString("F2");
@@ -25,7 +25,12 @@ public class InputFieldVector3
         get
         {
             // Debug.Log("Get:" + data);
-            return data;
+            // return data;
+            float x, y, z;
+            float.TryParse(X.text, out x);
+            float.TryParse(Y.text, out y);
+            float.TryParse(Z.text, out z);
+            return new Vector3(x, y, z);
         }
     }
     public bool interactable

@@ -79,21 +79,21 @@ public class PanelControl : BasePanel<PanelControl>
             Coordinate.Target.SetTarget(target);
         });
         // 输入框编辑完监听事件
-        this.position.AddEndEditListener(delegate
-        {
-            if (target == null || isChange) return;
-            this.position.Data = target.localPosition;
-        });
-        this.rotation.AddEndEditListener(delegate
-        {
-            if (target == null || isChange) return;
-            this.rotation.Data = target.localEulerAngles;
-        });
-        this.scale.AddEndEditListener(delegate
-        {
-            if (target == null || isChange) return;
-            this.scale.Data = target.localScale;
-        });
+        // this.position.AddEndEditListener(delegate
+        // {
+        //     if (target == null || isChange) return;
+        //     this.position.Data = target.localPosition;
+        // });
+        // this.rotation.AddEndEditListener(delegate
+        // {
+        //     if (target == null || isChange) return;
+        //     this.rotation.Data = target.localEulerAngles;
+        // });
+        // this.scale.AddEndEditListener(delegate
+        // {
+        //     if (target == null || isChange) return;
+        //     this.scale.Data = target.localScale;
+        // });
         this.objectName.onEndEdit.AddListener(str =>
         {
             if (target == null || isChange) return;
