@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 using System;
-using System.IO;
-using System.Text;
 
 public class Json : MonoBehaviour
 {

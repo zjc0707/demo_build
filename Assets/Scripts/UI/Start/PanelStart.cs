@@ -6,6 +6,10 @@ public class PanelStart : BasePanel<PanelStart>
 {
     public Button buttonCreate, buttonLoad;
     public string platform;
+    private void Awake()
+    {
+        Screen.SetResolution(1920, 1080, false);
+    }
     protected override void _Start()
     {
         base.Open();

@@ -8,7 +8,6 @@ using System.Collections;
 using Newtonsoft.Json.Linq;
 public class MyWebRequest : BaseUniqueObject<MyWebRequest>
 {
-    // private const string PATH_FOLDER_AB_INTERNET = "http://47.102.133.53/AB/";
     public string LOCAL_ASSET_PATH;
     private void Awake()
     {
