@@ -5,8 +5,9 @@ using UnityEngine.UI;
 [UIType(UIStackType.BOTTOM)]
 public class PanelModel : BasePanel<PanelModel>
 {
-    public Transform baseItem;
+    public Transform baseItem, baseTypeItem;
     private bool load = false;
+    private Dictionary<int, Item> itemDic;
     protected override void _Start()
     {
 
@@ -22,15 +23,20 @@ public class PanelModel : BasePanel<PanelModel>
     private void Load()
     {
         Manifest manifest = LocalAssetUtil.Manifest;
+        itemDic = new Dictionary<int, Item>(manifest.ModelType.Count);
+        manifest.ModelType.ForEach(p =>
+        {
+            Transform clone = Instantiate(baseTypeItem.gameObject, baseTypeItem.parent).transform;
+            clone.GetComponentInChildren<Text>().text = p.Name;
+            itemDic.Add(p.Id, new Item(clone));
+        });
         manifest.Models.ForEach(model =>
         {
-            Transform clone = Instantiate(baseItem.gameObject).transform;
-            clone.GetComponentInChildren<Text>().text = model.Name;
+            Transform clone = Instantiate(baseItem.gameObject, baseItem.parent).transform;
+            clone.GetComponentInChildren<Text>().text = model.Name.Substring(0, model.Name.LastIndexOf('.'));
             clone.GetComponentInChildren<Button>().onClick.AddListener(delegate
             {
                 Building building = BuildingUtil.Create(model);
-                // PanelList.current.Select(building);
-                // MouseBehaviour.current.Catch(building);
                 PanelState.current.baseInputMouse.Catch(building);
                 int maxBuilding = building.IsTooBig();
                 if (maxBuilding != int.MinValue)
@@ -53,11 +59,14 @@ public class PanelModel : BasePanel<PanelModel>
                 }
             });
             clone.Find("Image").GetComponent<Image>().sprite = AssetBundleUtil.DicSprite[model.Id];
-
-            clone.SetParent(baseItem.parent);
+            clone.gameObject.SetActive(false);
+            itemDic[model.ModelTypeId].contents.Add(clone);
         });
 
+        baseTypeItem.gameObject.SetActive(false);
         baseItem.gameObject.SetActive(false);
+
+        itemDic[manifest.ModelType[0].Id].Select(true);
     }
     /// <summary>
     /// 当物体过大时进行相机的拉伸
@@ -74,6 +83,35 @@ public class PanelModel : BasePanel<PanelModel>
         {
             pos.y = cameraY;
             MyCamera.current.MoveAnim(pos);
+        }
+    }
+
+    class Item
+    {
+        public static Item lastClick;
+        public List<Transform> contents;
+        public Image background;
+        public Item(Transform type)
+        {
+            this.background = type.GetComponent<Image>();
+            this.contents = new List<Transform>();
+            type.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                if (lastClick != null)
+                {
+                    lastClick.Select(false);
+                }
+                this.Select(true);
+            });
+        }
+        public void Select(bool flag)
+        {
+            contents.ForEach(p => p.gameObject.SetActive(flag));
+            background.color = flag ? Color.yellow : Color.white;
+            if (flag)
+            {
+                lastClick = this;
+            }
         }
     }
 }
