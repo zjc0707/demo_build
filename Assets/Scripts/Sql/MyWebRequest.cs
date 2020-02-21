@@ -32,37 +32,26 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         Debug.Log(string.Format("Get: [url: {0}]", url));
         StartCoroutine(IGet(url, success, failure, closeLoadingBeforeAction));
     }
-    public void LoadAssetBundle(List<Model> internet, List<Manifest> local, Action action)
+    public void LoadAssetBundle(List<Model> internet, Manifest local, Action action)
     {
         StartCoroutine(ILoadAB(internet, local, action));
     }
-    IEnumerator ILoadAB(List<Model> internet, List<Manifest> local, Action action)
+    IEnumerator ILoadAB(List<Model> internet, Manifest local, Action action)
     {
         Debug.Log(string.Format("internet:{0}\nlocal:{1}", Json.Serialize(internet), Json.Serialize(local)));
         if (internet != null && internet.Count > 0)
         {
             int amount = 0;
+            //网络下载缺少的资源
             yield return IDownAssetBundle(internet, i => amount += i);
             if (amount != internet.Count)
             {
                 yield break;
             }
-            internet.ForEach(model =>
-            {
-                if (local.Exists(m => m.ModelType.Id == model.ModelTypeId))
-                {
-                    local.Find(m => m.ModelType.Id == model.ModelTypeId).Models.Add(model);
-                }
-                else
-                {
-                    local.Add(new Manifest()
-                    {
-                        ModelType = new ModelType() { Id = model.ModelTypeId },
-                        Models = new List<Model>() { model }
-                    });
-                }
-            });
+            //下载完毕后加入localManifest
+            local.Models.AddRange(internet);
         }
+        //加载ab包
         yield return ILoadAssetBundle(local);
         if (action != null)
         {
@@ -79,7 +68,13 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         PanelLoading.current.WebLoading();
         foreach (Model data in datas)
         {
-            string url = WebUtil.HOST + "fileServer/download/" + data.FileUrl;
+
+            string url = WebUtil.HOST + "fileServer/download/" + data.FileUrlMac;
+#if UNITY_STANDALONE_OSX
+            url = WebUtil.HOST + "fileServer/download/" + data.FileUrlMac;
+#elif UNITY_STANDLONE_WIN
+            url = WebUtil.HOST + "fileServer/download/" + data.FileUrlWindows;
+#endif
             Debug.Log(url);
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.SendWebRequest();
@@ -127,39 +122,36 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
         }
         action(request.assetBundle);
     }
-    IEnumerator ILoadAssetBundle(List<Manifest> datas)
+    IEnumerator ILoadAssetBundle(Manifest manifest)
     {
         int all = 0;
-        foreach (Manifest manifest in datas)
+        float amount = 0f;
+        foreach (Model data in manifest.Models)
         {
-            float amount = 0f;
-            foreach (Model data in manifest.Models)
+            AssetBundle assetBundle = null;
+            yield return IDownAssetBundleLocal(data, ab => assetBundle = ab);
+            AssetBundleRequest request = assetBundle.LoadAllAssetsAsync();
+            while (!request.isDone)
             {
-                AssetBundle assetBundle = null;
-                yield return IDownAssetBundleLocal(data, ab => assetBundle = ab);
-                AssetBundleRequest request = assetBundle.LoadAllAssetsAsync();
-                while (!request.isDone)
-                {
-                    string str = string.Format("类型{0} 已加载{1}%, 正在加载：{2}",
-                                         data.ModelTypeId, (int)((amount + request.progress) / manifest.Models.Count * 100), data.Name);
-                    PanelLoading.current.Progress(amount + request.progress, manifest.Models.Count, str);
-                    yield return 1;
-                }
-                amount++;
-                all++;
-                foreach (UnityEngine.Object obj in request.allAssets)
-                {
-                    if (obj.GetType() == typeof(GameObject))
-                    {
-                        AssetBundleUtil.DicPrefab.Add(data.Id, obj as GameObject);
-                    }
-                    if (obj.GetType() == typeof(Sprite))
-                    {
-                        AssetBundleUtil.DicSprite.Add(data.Id, obj as Sprite);
-                    }
-                }
-                assetBundle.Unload(false);
+                string str = string.Format("类型{0} 已加载{1}%, 正在加载：{2}",
+                                     data.ModelTypeId, (int)((amount + request.progress) / manifest.Models.Count * 100), data.Name);
+                PanelLoading.current.Progress(amount + request.progress, manifest.Models.Count, str);
+                yield return 1;
             }
+            amount++;
+            all++;
+            foreach (UnityEngine.Object obj in request.allAssets)
+            {
+                if (obj.GetType() == typeof(GameObject))
+                {
+                    AssetBundleUtil.DicPrefab.Add(data.Id, obj as GameObject);
+                }
+                if (obj.GetType() == typeof(Sprite))
+                {
+                    AssetBundleUtil.DicSprite.Add(data.Id, obj as Sprite);
+                }
+            }
+            assetBundle.Unload(false);
         }
         if (AssetBundleUtil.DicPrefab.Count != all)
         {

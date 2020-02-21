@@ -25,13 +25,16 @@ public static class AssetBundleUtil
     }
     public static void Load()
     {
-        List<Manifest> localManifests = LocalAssetUtil.Manifests;
+        Manifest localManifest = LocalAssetUtil.Manifest;
+        WebUtil.FindModelTypeList(rs =>
+        {
+            localManifest.ModelType = rs;
+        }, null);
         WebUtil.FindModelList(rs =>
         {
             Debug.Log(Json.Serialize(rs));
-            Manifest manifestType0 = localManifests.Find(m => m.ModelType.Id == 0);
             List<Model> needDownload;
-            if (null == manifestType0)
+            if (localManifest.Models.Count == 0)
             {
                 needDownload = rs;
             }
@@ -40,26 +43,25 @@ public static class AssetBundleUtil
                 needDownload = new List<Model>();
                 rs.ForEach(m =>
                 {
-                    if (!manifestType0.Models.Exists(i => i.Id == m.Id))
+                    if (!localManifest.Models.Exists(i => i.Id == m.Id))
                     {
                         needDownload.Add(m);
                     }
                 });
             }
-            MyWebRequest.current.LoadAssetBundle(needDownload, localManifests, () =>
+            MyWebRequest.current.LoadAssetBundle(needDownload, localManifest, () =>
             {
                 if (needDownload.Count == 0)
                 {
                     Debug.Log("无更新项");
-                    return;
                 }
-                LocalAssetUtil.Manifests = localManifests;
+                LocalAssetUtil.Manifest = localManifest;
             });
         },
         err =>
         {
             PanelLoading.current.Error("error:" + err + ",已加载缓存");
-            MyWebRequest.current.LoadAssetBundle(null, localManifests, null);
+            MyWebRequest.current.LoadAssetBundle(null, localManifest, null);
         });
     }
 }

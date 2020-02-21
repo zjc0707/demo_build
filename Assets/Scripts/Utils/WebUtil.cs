@@ -6,9 +6,9 @@ public static class WebUtil
     public const string HOST = "http://127.0.0.1:4567/unity/";
     // public const string HOST = "http://47.102.133.53:4567/unity";
     #region model相关操作
-    public static void FindModelList(Action<List<Model>> success, Action<string> failure, long typeId = 0)
+    public static void FindModelList(Action<List<Model>> success, Action<string> failure)
     {
-        MyWebRequest.current.Get(HOST + "model/findList?typeId=" + typeId, success, failure);
+        MyWebRequest.current.Get(HOST + "model/findList", success, failure);
     }
     public static void FindModelById(long id, Action<Model> success, Action<string> failure)
     {

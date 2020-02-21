@@ -23,9 +23,20 @@ public class PanelCache : PanelPage<PanelCache>
                 DirectoryInfo directoryInfo = new DirectoryInfo(MyWebRequest.current.LOCAL_ASSET_PATH);
                 foreach (FileInfo fi in directoryInfo.GetFiles())
                 {
+                    Debug.Log(fi.Name);
                     fi.Delete();
                 }
-                directoryInfo.Delete();
+                foreach (DirectoryInfo di in directoryInfo.GetDirectories())
+                {
+                    Debug.Log(di.Name);
+                    foreach (FileInfo fi in di.GetFiles())
+                    {
+                        Debug.Log(fi.Name);
+                        fi.Delete();
+                    }
+                    di.Delete();
+                }
+                // directoryInfo.Delete();
             });
             list.Add(clone.gameObject);
         }
@@ -41,6 +52,14 @@ public class PanelCache : PanelPage<PanelCache>
         foreach (FileInfo fi in directoryInfo.GetFiles())
         {
             size += fi.Length;
+        }
+        foreach (DirectoryInfo di in directoryInfo.GetDirectories())
+        {
+            foreach (FileInfo fi in di.GetFiles())
+            {
+                Debug.Log(fi.Name);
+                size += fi.Length;
+            }
         }
         return new List<Item>() { new Item() { name = directoryInfo.Name, size = FormatterUtil.GetSizeString(size) } };
     }
