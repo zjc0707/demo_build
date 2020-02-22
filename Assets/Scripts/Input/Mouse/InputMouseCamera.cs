@@ -5,7 +5,7 @@ using UnityEngine;
 /// </summary>
 public class InputMouseCamera : BaseInputMouse
 {
-    public const float moveSpeed = 0.6f;
+    public const float moveSpeed = 1f;
     protected override void OnMouseLeftClick()
     {
         MoveCamera(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), moveSpeed);

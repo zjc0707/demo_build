@@ -12,7 +12,7 @@ public abstract class BaseInputMouse
     /// 外部额外的点击事件
     /// </summary>
     public delegate void ClickDelegate();
-    public ClickDelegate leftClickUpDelegate;
+    public static ClickDelegate leftClickUpDelegate;
     public const float rotateSpeed = 180.0f;
     public const float scaleSpeed = 2f;
     protected Building catchBuilding;
@@ -64,7 +64,7 @@ public abstract class BaseInputMouse
         }
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("GetMouseButtonDown(0)");
+            // Debug.Log("GetMouseButtonDown(0)");
             OnMouseLeftClickDown();
         }
         float scroll = Input.GetAxis("Mouse ScrollWheel");

@@ -49,6 +49,22 @@ public class PanelState : BasePanel<PanelState>
     private void Update()
     {
         baseInputMouse.MyUpdate();
+        if (Input.GetKey(KeyCode.Q))
+        {
+            items[0].button.onClick.Invoke();
+        }
+        if (Input.GetKey(KeyCode.W))
+        {
+            items[1].button.onClick.Invoke();
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            items[2].button.onClick.Invoke();
+        }
+        if (Input.GetKey(KeyCode.R))
+        {
+            items[3].button.onClick.Invoke();
+        }
     }
     public void ViewModelTurnOn()
     {

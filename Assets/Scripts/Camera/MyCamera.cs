@@ -19,18 +19,18 @@ public class MyCamera : BaseUniqueObject<MyCamera>
             return _camera;
         }
     }
-    private OutlineEffect outlineEffect;
-    public OutlineEffect OutlineEffect
-    {
-        get
-        {
-            if (outlineEffect == null)
-            {
-                outlineEffect = this.transform.GetComponent<OutlineEffect>();
-            }
-            return outlineEffect;
-        }
-    }
+    // private OutlineEffect outlineEffect;
+    // public OutlineEffect OutlineEffect
+    // {
+    //     get
+    //     {
+    //         if (outlineEffect == null)
+    //         {
+    //             outlineEffect = this.transform.GetComponent<OutlineEffect>();
+    //         }
+    //         return outlineEffect;
+    //     }
+    // }
     // Use this for initialization
     void Awake()
     {
@@ -39,7 +39,7 @@ public class MyCamera : BaseUniqueObject<MyCamera>
     public void Reset()
     {
         MoveAnim(initTransformGroup);
-        OutlineEffect.enabled = false;
+        // OutlineEffect.enabled = false;
     }
     public void MoveAnim(Vector3 position)
     {

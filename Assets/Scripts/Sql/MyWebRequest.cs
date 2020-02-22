@@ -111,7 +111,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
     /// </summary>
     IEnumerator IDownAssetBundleLocal(Model data, Action<AssetBundle> action)
     {
-        PanelLoading.current.WebLoading();
+        // PanelLoading.current.WebLoading();
         string url = LOCAL_ASSET_PATH + data.ModelTypeId + '/' + data.Id;
         Debug.Log(url);
         AssetBundleCreateRequest request = AssetBundle.LoadFromFileAsync(url);

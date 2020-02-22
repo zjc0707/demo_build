@@ -47,7 +47,7 @@ public class PanelList : BasePanel<PanelList>
     /// </summary>
     private Item selectItem;
     #region UI对象
-    private Action rightClickPanelButtonCloneAction;
+    private Action rightClickPanelButtonCloneAction, rightClickPanelButtonDeleteAction;
     private GameObject rightClickPanel;
     private Transform content;
     private Transform baseItem;
@@ -103,8 +103,15 @@ public class PanelList : BasePanel<PanelList>
                 rightClickPanelButtonCloneAction();
             }
         });
+        rightClickPanel.transform.Find("ButtonDelete").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (rightClickPanelButtonDeleteAction != null)
+            {
+                rightClickPanelButtonDeleteAction();
+            }
+        });
         //action
-        PanelState.current.baseInputMouse.leftClickUpDelegate += delegate
+        BaseInputMouse.leftClickUpDelegate += delegate
         {
             rightClickPanel.SetActive(false);
         };
@@ -187,6 +194,12 @@ public class PanelList : BasePanel<PanelList>
             Item item = items.Find(p => p.ui.gameObject == go);
             BuildingUtil.Clone(item.building);
             Select(items[items.Count - 1]);
+        };
+        rightClickPanelButtonDeleteAction = delegate
+        {
+            Item item = items.Find(p => p.ui.gameObject == go);
+            Remove(item.building);
+            PanelControl.current.Close();
         };
     }
     #region BuildRoom Method
