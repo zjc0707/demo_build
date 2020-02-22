@@ -27,44 +27,44 @@ public static class AssetBundleUtil
     public static void Load()
     {
         Manifest localManifest = LocalAssetUtil.Manifest;
-        localManifest.Models = localManifest.Models.Where(p => p.ModelTypeId == 1).ToList();
-        MyWebRequest.current.LoadAssetBundle(null, localManifest, null);
-        // WebUtil.FindModelTypeList(rs =>
-        // {
-        //     localManifest.ModelType = rs;
-        // }, null);
-        // WebUtil.FindModelList(rs =>
-        // {
-        //     Debug.Log(Json.Serialize(rs));
-        //     List<Model> needDownload;
-        //     if (localManifest.Models.Count == 0)
-        //     {
-        //         needDownload = rs;
-        //     }
-        //     else
-        //     {
-        //         needDownload = new List<Model>();
-        //         rs.ForEach(m =>
-        //         {
-        //             if (!localManifest.Models.Exists(i => i.Id == m.Id))
-        //             {
-        //                 needDownload.Add(m);
-        //             }
-        //         });
-        //     }
-        //     MyWebRequest.current.LoadAssetBundle(needDownload, localManifest, () =>
-        //     {
-        //         if (needDownload.Count == 0)
-        //         {
-        //             Debug.Log("无更新项");
-        //         }
-        //         LocalAssetUtil.Manifest = localManifest;
-        //     });
-        // },
-        // err =>
-        // {
-        //     PanelLoading.current.Error("error:" + err + ",已加载缓存");
-        //     MyWebRequest.current.LoadAssetBundle(null, localManifest, null);
-        // });
+        // localManifest.Models = localManifest.Models.Where(p => p.ModelTypeId == 1).ToList();
+        // MyWebRequest.current.LoadAssetBundle(null, localManifest, null);
+        WebUtil.FindModelTypeList(rs =>
+        {
+            localManifest.ModelType = rs;
+        }, null);
+        WebUtil.FindModelList(rs =>
+        {
+            Debug.Log(Json.Serialize(rs));
+            List<Model> needDownload;
+            if (localManifest.Models.Count == 0)
+            {
+                needDownload = rs;
+            }
+            else
+            {
+                needDownload = new List<Model>();
+                rs.ForEach(m =>
+                {
+                    if (!localManifest.Models.Exists(i => i.Id == m.Id))
+                    {
+                        needDownload.Add(m);
+                    }
+                });
+            }
+            MyWebRequest.current.LoadAssetBundle(needDownload, localManifest, () =>
+            {
+                if (needDownload.Count == 0)
+                {
+                    Debug.Log("无更新项");
+                }
+                LocalAssetUtil.Manifest = localManifest;
+            });
+        },
+        err =>
+        {
+            PanelLoading.current.Error("error:" + err + ",已加载缓存");
+            MyWebRequest.current.LoadAssetBundle(null, localManifest, null);
+        });
     }
 }
