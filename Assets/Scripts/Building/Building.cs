@@ -136,7 +136,7 @@ public class Building : BaseObject
     }
     public void ShowHighLight()
     {
-        Debug.Log("Show:" + guid);
+        // Debug.Log("Show:" + guid);
         // MyCamera.current.OutlineEffect.enabled = true;
         foreach (Outline outline in outlineList)
         {
@@ -146,8 +146,8 @@ public class Building : BaseObject
     }
     public void HideHighLight()
     {
-        Debug.Log("Hide:" + guid);
-        Debug.Log("count:" + outlineList.Count);
+        // Debug.Log("Hide:" + guid);
+        // Debug.Log("count:" + outlineList.Count);
         foreach (Outline outline in outlineList)
         {
             outline.enabled = false;

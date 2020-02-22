@@ -30,26 +30,26 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         data.Position.AddValueChangedListener(delegate
         {
             if (data.Target == null) return;
-            begin.UpdatePosition();
-            end.UpdatePosition();
             data.Target.localPosition = data.Position.Data;
             Coordinate.Target.SetTarget(data.Target);
+            begin.UpdatePosition();
+            end.UpdatePosition();
         });
         data.Rotation.AddValueChangedListener(delegate
         {
             if (data.Target == null) return;
-            begin.UpdateRotation();
-            end.UpdateRotation();
             data.Target.localEulerAngles = data.Rotation.Data;
             Coordinate.Target.SetTarget(data.Target);
+            begin.UpdateRotation();
+            end.UpdateRotation();
         });
         data.Scale.AddValueChangedListener(delegate
         {
             if (data.Target == null) return;
-            begin.UpdateScale();
-            end.UpdateScale();
             data.Target.localScale = data.Scale.Data;
             Coordinate.Target.SetTarget(data.Target);
+            begin.UpdateScale();
+            end.UpdateScale();
         });
         transform.Find("Content/ButtonSave").GetComponent<Button>().onClick.AddListener(Save);
         buttonPlay.onClick.AddListener(delegate
@@ -378,6 +378,10 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
         {
             if (Target == null || IsLock) return;
             Scale.Data = isRelative ? Target.localScale - OpenTransformGroup.Scale : Target.localScale;
+        }
+        public override string ToString()
+        {
+            return string.Format("pos:{0};eul:{1};scale:{2}", Position.Data, Rotation.Data, Scale.Data);
         }
     }
 }

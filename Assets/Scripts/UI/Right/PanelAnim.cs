@@ -171,24 +171,17 @@ public class PanelAnim : BasePanel<PanelAnim>
         }
         if (items.Count == 0)
         {
-            Debug.Log("无内容不进行缓存");
             return;//无内容不进行缓存
         }
         if (!itemsCache.ContainsKey(targetBuilding.guid))
         {
-            Debug.Log("缓存guid：" + targetBuilding.guid);
             itemsCache.Add(targetBuilding.guid, items);
         }
         items.ForEach(p => p.gameObject.SetActive(false));
-        // items.Clear();
     }
     private void FreshItems()
     {
         buildingName.text = targetBuilding.gameObject.name;
-        if (animDatas.Count == 0)
-        {
-            return;
-        }
         if (itemsCache.TryGetValue(targetBuilding.guid, out items))
         {
             items.ForEach(p => p.gameObject.SetActive(true));
