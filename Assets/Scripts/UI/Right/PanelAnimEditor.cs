@@ -43,6 +43,11 @@ public class PanelAnimEditor : BasePanel<PanelAnimEditor>
             begin.UpdateRotation();
             end.UpdateRotation();
         });
+        data.Rotation.AddEndEditListener(delegate
+        {
+            if (data.Target == null) return;
+            data.UpdateRotation();
+        });
         data.Scale.AddValueChangedListener(delegate
         {
             if (data.Target == null) return;
