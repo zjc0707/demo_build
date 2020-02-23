@@ -27,10 +27,14 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
         }
     }
     protected List<Item> items;
+    // /// <summary>
+    // /// 在相机到目标物体的距离的比例
+    // /// </summary>
+    // protected const float multiple = 0.1f;
     /// <summary>
-    /// 在相机到目标物体的距离的比例
+    /// 坐标系在任意方向上与相机的距离
     /// </summary>
-    protected const float multiple = 0.3f;
+    protected const float distanceToCamera = 3f;
     /// <summary>
     /// 移动物体对象
     /// </summary>
@@ -101,7 +105,9 @@ public abstract class Coordinate : BaseUniqueObject<Coordinate>
         {
             return;
         }
-        this.transform.position = (1 - multiple) * MyCamera.current.transform.position + multiple * targetTransform.position;
+        // this.transform.position = (1 - multiple) * MyCamera.current.transform.position + multiple * targetTransform.position;
+        Vector3 distance = targetTransform.position - MyCamera.current.transform.position;
+        this.transform.position = MyCamera.current.transform.position + distance.normalized * distanceToCamera;
     }
     protected class Item
     {

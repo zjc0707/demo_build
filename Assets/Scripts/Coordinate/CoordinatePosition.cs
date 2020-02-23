@@ -14,8 +14,11 @@ public class CoordinatePosition : Coordinate
         if (hit != null)
         {
             Vector3 project = Vector3.Project(add, forward);
-            this.transform.position = beforeData + project;
-            targetTransform.position = beforeTargetData + project / multiple;
+            // this.transform.position = beforeData + project;
+            // targetTransform.position = beforeTargetData + project / multiple;
+            float f = (targetTransform.position - MyCamera.current.transform.position).magnitude / distanceToCamera;
+            targetTransform.position = beforeTargetData + project * f;
+            base.ChangeSizeByDistanceToCamera();
             PanelControl.current.UpdatePosData();
             PanelAnimEditor.current.UpdatePosition();
         }
