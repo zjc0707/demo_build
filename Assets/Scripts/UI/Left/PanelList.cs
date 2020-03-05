@@ -281,6 +281,7 @@ public class PanelList : BasePanel<PanelList>
         foreach (var p in itemDataDic)
         {
             p.Value.Inject(p.Key.building.transform);
+            p.Key.building.gameObject.SetActive(true);
         }
     }
     /// <summary>
