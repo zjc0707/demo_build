@@ -8,7 +8,11 @@ public class PanelStart : BasePanel<PanelStart>
     public string platform;
     private void Awake()
     {
-        Screen.SetResolution(1920, 1080, false);
+        // Screen.SetResolution(1920, 1080, false);
+    }
+    private void Update()
+    {
+        // Debug.Log("update");
     }
     protected override void _Start()
     {

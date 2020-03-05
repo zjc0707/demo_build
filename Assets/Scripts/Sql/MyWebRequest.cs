@@ -78,9 +78,19 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             Debug.Log(url);
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.SendWebRequest();
+            ulong downloadedSize = 0;
+            string speed = "0.00b";
+            float time = 0f;
             while (!webRequest.isDone)
             {
-                string str = string.Format("下载网络资源{0}%,正在下载：{1}", (int)((amount + webRequest.downloadProgress) / datas.Count * 100), data.Name);
+                time += Time.deltaTime;
+                if (time >= 1)
+                {
+                    speed = FormatterUtil.GetSizeString((webRequest.downloadedBytes - downloadedSize) / time);
+                    downloadedSize = webRequest.downloadedBytes;
+                    time = 0f;
+                }
+                string str = string.Format("下载网络资源{0}%,正在下载：{1},速度：{2}/s", (int)((amount + webRequest.downloadProgress) / datas.Count * 100), data.Name, speed);
                 PanelLoading.current.Progress(amount + webRequest.downloadProgress, datas.Count, str);
                 yield return 1;
             }
@@ -226,6 +236,7 @@ public class MyWebRequest : BaseUniqueObject<MyWebRequest>
             }
             ResultData<object> rsData = Json.Parse<ResultData<object>>(webRequest.downloadHandler.text);
             Debug.Log(webRequest.downloadHandler.text);
+
             if (!rsData.Success)
             {
                 failure(rsData.Obj.ToString());
